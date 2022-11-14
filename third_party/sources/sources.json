@@ -1,0 +1,86 @@
+{
+    "agenix": {
+        "branch": "main",
+        "description": "age-encrypted secrets for NixOS",
+        "homepage": "https://matrix.to/#/#agenix:nixos.org",
+        "owner": "ryantm",
+        "repo": "agenix",
+        "rev": "7e5e58b98c3dcbf497543ff6f22591552ebfe65b",
+        "sha256": "1cfdd2ja56g8clllygf91il7dignr90ij1bl29g3kl7dl977dhl4",
+        "type": "tarball",
+        "url": "https://github.com/ryantm/agenix/archive/7e5e58b98c3dcbf497543ff6f22591552ebfe65b.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "naersk": {
+        "branch": "master",
+        "description": "Build rust crates in Nix. No configuration, no code generation, no IFD. Sandbox friendly. [maintainer: @Patryk27]",
+        "homepage": "",
+        "owner": "nmattia",
+        "repo": "naersk",
+        "rev": "cddffb5aa211f50c4b8750adbec0bbbdfb26bb9f",
+        "sha256": "0l2bkzg4w9j94rjpb6yx5q3k4yi2nzp3q7dp6xjq5rdkwwbgq5gl",
+        "type": "tarball",
+        "url": "https://github.com/nmattia/naersk/archive/cddffb5aa211f50c4b8750adbec0bbbdfb26bb9f.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixos-vscode-server": {
+        "branch": "master",
+        "description": "Visual Studio Code Server support in NixOS",
+        "homepage": null,
+        "owner": "msteen",
+        "repo": "nixos-vscode-server",
+        "rev": "867d5691871acc039fb47d45018c69e9ac751d95",
+        "sha256": "1dr3v3mlf61nrs3f3d9qx74y8v5jihkk8wd1li4sglx22aqh4xf6",
+        "type": "tarball",
+        "url": "https://github.com/msteen/nixos-vscode-server/archive/867d5691871acc039fb47d45018c69e9ac751d95.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgs": {
+        "branch": "nixos-unstable",
+        "description": "Nix Packages collection",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "7b9be38c7250b22d829ab6effdee90d5e40c6e5c",
+        "sha256": "1jgcsgzvxnc27wby4n7jyp5w67461qm5x519xkpz2h14zbjjndm7",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/7b9be38c7250b22d829ab6effdee90d5e40c6e5c.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgs-stable": {
+        "branch": "nixos-21.11",
+        "description": "Nix Packages collection",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "a1fe662eb26ffc2a036b37c4670392ade632c413",
+        "sha256": "06wjkx8b527agyrmgm0kf51pgsxjwm8330iywa8a1dmlp1jmkl3k",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/a1fe662eb26ffc2a036b37c4670392ade632c413.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "otel-cli": {
+        "branch": "main",
+        "description": "OpenTelemetry command-line tool for sending events from shell scripts & similar environments",
+        "homepage": null,
+        "owner": "equinix-labs",
+        "repo": "otel-cli",
+        "rev": "ff5a4ebe99b32ffef24482f58409bc08e01641f5",
+        "sha256": "1z2a0n64gszm098dlq64iy7fnj54l8f0mksdvn42sp4nan6gym4m",
+        "type": "tarball",
+        "url": "https://github.com/equinix-labs/otel-cli/archive/ff5a4ebe99b32ffef24482f58409bc08e01641f5.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "smtprelay": {
+        "branch": "master",
+        "description": "Simple Golang SMTP relay/proxy server",
+        "homepage": "",
+        "owner": "decke",
+        "repo": "smtprelay",
+        "rev": "v1.8.0",
+        "sha256": "sha256:1vb2qlpd830y7fdmp82mh0qnp3i3l4vbrd9bj4c6sbglk73kdakx",
+        "type": "tarball",
+        "url": "https://github.com/decke/smtprelay/archive/v1.8.0.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    }
+}

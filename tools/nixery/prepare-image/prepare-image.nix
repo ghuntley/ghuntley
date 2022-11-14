@@ -1,0 +1,185 @@
+# Copyright 2022 The TVL Contributors
+# SPDX-License-Identifier: Apache-2.0
+
+# This file contains a derivation that outputs structured information
+# about the runtime dependencies of an image with a given set of
+# packages. This is used by Nixery to determine the layer grouping and
+# assemble each layer.
+#
+# In addition it creates and outputs a meta-layer with the symlink
+# structure required for using the image together with the individual
+# package layers.
+
+{
+  # Description of the package set to be used (will be loaded by load-pkgs.nix)
+  srcType ? "nixpkgs"
+, srcArgs ? "nixos-20.09"
+, system ? "x86_64-linux"
+, importArgs ? { }
+, # Path to load-pkgs.nix
+  loadPkgs ? ./load-pkgs.nix
+, # Packages to install by name (which must refer to top-level attributes of
+  # nixpkgs). This is passed in as a JSON-array in string form.
+  packages ? "[]"
+}:
+
+let
+  inherit (builtins)
+    foldl'
+    fromJSON
+    hasAttr
+    length
+    match
+    readFile
+    toFile
+    toJSON;
+
+  # Package set to use for sourcing utilities
+  nativePkgs = import loadPkgs { inherit srcType srcArgs importArgs; };
+  inherit (nativePkgs) coreutils jq openssl lib runCommand writeText symlinkJoin;
+
+  # Package set to use for packages to be included in the image. This
+  # package set is imported with the system set to the target
+  # architecture.
+  pkgs = import loadPkgs {
+    inherit srcType srcArgs;
+    importArgs = importArgs // {
+      inherit system;
+    };
+  };
+
+  # deepFetch traverses the top-level Nix package set to retrieve an item via a
+  # path specified in string form.
+  #
+  # For top-level items, the name of the key yields the result directly. Nested
+  # items are fetched by using dot-syntax, as in Nix itself.
+  #
+  # Due to a restriction of the registry API specification it is not possible to
+  # pass uppercase characters in an image name, however the Nix package set
+  # makes use of camelCasing repeatedly (for example for `haskellPackages`).
+  #
+  # To work around this, if no value is found on the top-level a second lookup
+  # is done on the package set using lowercase-names. This is not done for
+  # nested sets, as they often have keys that only differ in case.
+  #
+  # For example, `deepFetch pkgs "xorg.xev"` retrieves `pkgs.xorg.xev` and
+  # `deepFetch haskellpackages.stylish-haskell` retrieves
+  # `haskellPackages.stylish-haskell`.
+  deepFetch = with lib; s: n:
+    let
+      path = splitString "." n;
+      err = { error = "not_found"; pkg = n; };
+      # The most efficient way I've found to do a lookup against
+      # case-differing versions of an attribute is to first construct a
+      # mapping of all lowercased attribute names to their differently cased
+      # equivalents.
+      #
+      # This map is then used for a second lookup if the top-level
+      # (case-sensitive) one does not yield a result.
+      hasUpper = str: (match ".*[A-Z].*" str) != null;
+      allUpperKeys = filter hasUpper (attrNames s);
+      lowercased = listToAttrs (map
+        (k: {
+          name = toLower k;
+          value = k;
+        })
+        allUpperKeys);
+      caseAmendedPath = map (v: if hasAttr v lowercased then lowercased."${v}" else v) path;
+      fetchLower = attrByPath caseAmendedPath err s;
+    in
+    attrByPath path fetchLower s;
+
+  # allContents contains all packages successfully retrieved by name
+  # from the package set, as well as any errors encountered while
+  # attempting to fetch a package.
+  #
+  # Accumulated error information is returned back to the server.
+  allContents =
+    # Folds over the results of 'deepFetch' on all requested packages to
+    # separate them into errors and content. This allows the program to
+    # terminate early and return only the errors if any are encountered.
+    let
+      splitter = attrs: res:
+        if hasAttr "error" res
+        then attrs // { errors = attrs.errors ++ [ res ]; }
+        else attrs // { contents = attrs.contents ++ [ res ]; };
+      init = { contents = [ ]; errors = [ ]; };
+      fetched = (map (deepFetch pkgs) (fromJSON packages));
+    in
+    foldl' splitter init fetched;
+
+  # Contains the export references graph of all retrieved packages,
+  # which has information about all runtime dependencies of the image.
+  #
+  # This is used by Nixery to group closures into image layers.
+  runtimeGraph = runCommand "runtime-graph.json"
+    {
+      __structuredAttrs = true;
+      exportReferencesGraph.graph = allContents.contents;
+      PATH = "${coreutils}/bin";
+      builder = toFile "builder" ''
+        . .attrs.sh
+        cp .attrs.json ''${outputs[out]}
+      '';
+    } "";
+
+  # Create a symlink forest into all top-level store paths of the
+  # image contents.
+  contentsEnv = symlinkJoin {
+    name = "bulk-layers";
+    paths = allContents.contents;
+
+    # Provide a few essentials that many programs expect:
+    # - a /tmp directory,
+    # - a /usr/bin/env for shell scripts that require it.
+    #
+    # Note that in images that do not actually contain `coreutils`,
+    # /usr/bin/env will be a dangling symlink.
+    #
+    # TODO(tazjin): Don't link /usr/bin/env if coreutils is not included.
+    postBuild = ''
+      mkdir -p $out/tmp
+      mkdir -p $out/usr/bin
+      ln -s ${coreutils}/bin/env $out/usr/bin/env
+    '';
+  };
+
+  # Image layer that contains the symlink forest created above. This
+  # must be included in the image to ensure that the filesystem has a
+  # useful layout at runtime.
+  symlinkLayer = runCommand "symlink-layer.tar" { } ''
+    cp -r ${contentsEnv}/ ./layer
+    tar --transform='s|^\./||' -C layer --sort=name --mtime="@$SOURCE_DATE_EPOCH" --owner=0 --group=0 -cf $out .
+  '';
+
+  # Metadata about the symlink layer which is required for serving it.
+  # Two different hashes are computed for different usages (inclusion
+  # in manifest vs. content-checking in the layer cache).
+  symlinkLayerMeta = fromJSON (readFile (runCommand "symlink-layer-meta.json"
+    {
+      buildInputs = [ coreutils jq openssl ];
+    } ''
+    tarHash=$(sha256sum ${symlinkLayer} | cut -d ' ' -f1)
+    layerSize=$(stat --printf '%s' ${symlinkLayer})
+
+    jq -n -c --arg tarHash $tarHash --arg size $layerSize --arg path ${symlinkLayer} \
+      '{ size: ($size | tonumber), tarHash: $tarHash, path: $path }' >> $out
+  ''));
+
+  # Final output structure returned to Nixery if the build succeeded
+  buildOutput = {
+    runtimeGraph = fromJSON (readFile runtimeGraph);
+    symlinkLayer = symlinkLayerMeta;
+  };
+
+  # Output structure returned if errors occured during the build. Currently the
+  # only error type that is returned in a structured way is 'not_found'.
+  errorOutput = {
+    error = "not_found";
+    pkgs = map (err: err.pkg) allContents.errors;
+  };
+in
+writeText "build-output.json" (if (length allContents.errors) == 0
+then toJSON buildOutput
+else toJSON errorOutput
+)
