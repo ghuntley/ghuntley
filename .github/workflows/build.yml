@@ -11,4 +11,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: nix-env -i direnv
-      - run: direnv exe . depot build
+      - run: direnv exec . depot build
