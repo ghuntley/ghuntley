@@ -10,7 +10,7 @@ on:
 jobs:
   niv-updater:
     name: "Create PRs for niv-managed dependencies"
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       # notice there is no checkout step
       - name: niv-updater-action
