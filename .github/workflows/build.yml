@@ -10,5 +10,5 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
-      - run: direnv allow
-      - run: depot build
+      - run: nix-env -i direnv
+      - run: direnv exe . depot build
