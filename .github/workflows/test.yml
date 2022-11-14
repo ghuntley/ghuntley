@@ -18,4 +18,4 @@ jobs:
           name: ghuntley
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
       - run: nix-build
-      - run: nix-shell --run "echo OK"
+      - run: direnv allow
