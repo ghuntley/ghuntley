@@ -11,11 +11,11 @@ let
   '';
 
   depot-addlicense = pkgs.writeShellScriptBin "depot-addlicense" ''
-    exec ${depot.third_party.addlicense}/bin/addlicense -f ${config} ''${DEPOT_ROOT}
+    exec ${pkgs.addlicense}/bin/addlicense -f ${config} ''${DEPOT_ROOT}
   '';
 
   check = pkgs.writeShellScriptBin "depot-addlicense-check" ''
-    exec ${depot.third_party.addlicense}/bin/addlicense -chceck -f ${config} ''${DEPOT_ROOT}
+    exec ${pkgs.addlicense}/bin/addlicense -chceck -f ${config} ''${DEPOT_ROOT}
   '';
 
 in

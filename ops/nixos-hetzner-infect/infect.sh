@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright (c) 2022 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+# SPDX-License-Identifier: Proprietary
+
 
 # Installs NixOS on a Hetzner server, wiping the server.
 #
@@ -258,7 +261,7 @@ mount -t zfs rpool/root/srv /mnt/srv
 # Create a raid mirror for the efi boot
 # see https://docs.hetzner.com/robot/dedicated-server/operating-systems/efi-system-partition/
 # TODO check this though the following article says it doesn't work properly
-# https://outflux.net/blog/archives/2018/04/19/uefi-booting-and-raid1/ 
+# https://outflux.net/blog/archives/2018/04/19/uefi-booting-and-raid1/
 mdadm --create --run --verbose /dev/md127 \
     --level 1 \
     --raid-disks 2 \
@@ -348,7 +351,7 @@ echo "Determined DEFAULT_GATEWAY as $DEFAULT_GATEWAY"
 
 
 # Generate ssh boot unlock host key
-# 
+#
 mkdir -p /mnt/etc/ssh
 rm /mnt/etc/ssh/ssh_boot_ed25519_key || true
 ssh-keygen -t ed25519 -N "" -f /mnt/etc/ssh/ssh_boot_ed25519_key
@@ -372,7 +375,7 @@ cat > /mnt/etc/nixos/configuration.nix <<EOF
     enable = true;
     efiSupport = false;
     devices = ["$DISK1" "$DISK2"];
-    copyKernels = true; 
+    copyKernels = true;
   };
   boot.supportedFilesystems = [ "zfs" ];
 
@@ -391,11 +394,11 @@ cat > /mnt/etc/nixos/configuration.nix <<EOF
         enable = true;
         # To prevent ssh clients from freaking out because a different host key is used,
         # a different port for ssh is useful (assuming the same host has also a regular sshd running)
-        port = 2222; 
+        port = 2222;
 
         # hostKeys paths must be unquoted strings, otherwise you'll run into issues with boot.initrd.secrets
         # the keys are copied to initrd from the path specified; multiple keys can be set
-        # you can generate any number of host keys using 
+        # you can generate any number of host keys using
         # `ssh-keygen -t ed25519 -N "" -f /path/to/ssh_host_ed25519_key`
 
         hostKeys = [ /etc/ssh/ssh_boot_ed25519_key ];
@@ -453,7 +456,7 @@ cat > /mnt/etc/nixos/configuration.nix <<EOF
 
   services.sanoid.enable = true;
   services.sanoid.interval = "hourly";
-#   services.sanoid.settings = { 
+#   services.sanoid.settings = {
 #     autosnap=1;
 #     autoprune="yes";
 #     hourly=48;
