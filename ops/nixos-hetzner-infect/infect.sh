@@ -25,6 +25,7 @@ modprobe zfs
 
 #
 # Usage:
+#     scp zfs-encryption-key root@148.251.233.2:/tmp
 #     ssh root@YOUR_SERVERS_IP bash -s < hetzner-dedicated-wipe-and-install-nixos.sh
 #
 # When the script is done, make sure to boot the server from HD, not rescue mode again.
@@ -99,7 +100,9 @@ MY_HOSTID=deadbeef
 
 # Undo existing setups to allow running the script multiple times to iterate on it.
 # We allow these operations to fail for the case the script runs the first time.
-umount /mnt/boot/efi || true
+umount -a || true
+
+umount /mnt/boot || true
 vgchange -an || true
 mdadm --stop --scan
 
@@ -109,7 +112,10 @@ umount /mnt/home || true
 umount /mnt/nix || true
 umount /mnt/etc || true
 umount /mnt || true
-zfs destroy -r rpool || true
+zpool destroy -f rpool || true
+
+wipefs -a $DISK1-part3
+wipefs -a $DISK2-part3
 
 # Prevent mdadm from auto-assembling arrays.
 # Otherwise, as soon as we create the partition tables below, it will try to
@@ -187,19 +193,27 @@ zpool create -O mountpoint=none \
     -O xattr=sa \
     -O acltype=posixacl \
     -o ashift=12 \
-    -f \
-    rpool mirror $DISK1-part3 $DISK2-part3
+    -f rpool mirror $DISK1-part3 $DISK2-part3
 
 # Create the filesystems. This layout is designed so that /home is separate from the root
 # filesystem, as you'll likely want to snapshot it differently for backup purposes. It also
 # makes a "nixos" filesystem underneath the root, to support installing multiple OSes if
 # that's something you choose to do in future.
-zfs create -o mountpoint=legacy rpool/root
-zfs create -o mountpoint=legacy rpool/root/etc
-zfs create -o mountpoint=legacy rpool/root/nix
-zfs create -o mountpoint=legacy rpool/root/home
-zfs create -o mountpoint=legacy rpool/root/depot
-zfs create -o mountpoint=legacy rpool/root/srv
+
+ZFS_ENCRYPTION_KEY=`cat /tmp/zfs-encryption-key`
+for pool in rpool/root rpool/root/etc rpool/root/nix rpool/root/home rpool/root/depot rpool/root/srv
+do
+    echo "$ZFS_ENCRYPTION_KEY" | zfs create \
+        -o canmount=off \
+        -o mountpoint=legacy \
+        -o encryption=on \
+        -o keyformat=passphrase \
+        -o keylocation=prompt \
+        $pool
+done
+
+zfs create -o setuid=off -o devices=off -o sync=disabled -o mountpoint=legacy rpool/tmp
+
 # add 1G of reseved space in case the disk gets full
 # zfs needs space to delete files
 zfs create -o refreservation=1G -o mountpoint=none rpool/reserved
@@ -219,6 +233,9 @@ zfs create -o refreservation=1G -o mountpoint=none rpool/reserved
 mkdir /mnt || true
 mount -t zfs rpool/root /mnt
 
+mkdir /mnt/tmp || true
+mount -t zfs rpool/tmp /tmp
+
 mkdir /mnt/etc || true
 mount -t zfs rpool/root/etc /mnt/etc
 
@@ -233,6 +250,7 @@ mount -t zfs rpool/root/depot /mnt/depot
 
 mkdir -p /mnt/srv || true
 mount -t zfs rpool/root/srv /mnt/srv
+
 
 # mkdir -p /mnt/var/lib/postgres
 # mount -t zfs rpool/postgres /mnt/var/lib/postgres
@@ -264,7 +282,7 @@ wipefs -a /dev/md127
 echo 0 > /proc/sys/dev/raid/speed_limit_max
 
 # Filesystems (-F to not ask on preexisting FS)
-mkfs.vfat -F 32 /dev/md127
+mkfs.ext4 /dev/md127
 
 # Creating file systems changes their UUIDs.
 # Trigger udev so that the entries in /dev/disk/by-uuid get refreshed.
@@ -272,8 +290,8 @@ mkfs.vfat -F 32 /dev/md127
 # See https://github.com/NixOS/nixpkgs/issues/62444
 udevadm trigger
 
-mkdir -p /mnt/boot/efi
-mount /dev/md127 /mnt/boot/efi
+mkdir -p /mnt/boot
+mount /dev/md127 /mnt/boot
 
 # Installing nix
 
@@ -282,7 +300,7 @@ mount /dev/md127 /mnt/boot/efi
 mkdir -p /etc/nix
 echo "build-users-group =" > /etc/nix/nix.conf
 
-sh <(curl -L https://nixos.org/nix/install) --daemon
+sh <(curl -L https://nixos.org/nix/install) --daemon || true
 set +u +x # sourcing this may refer to unset variables that we have no control over
 . $HOME/.nix-profile/etc/profile.d/nix.sh
 set -u -x
@@ -328,6 +346,15 @@ echo "Determined IP_V6 as $IP_V6"
 read _ _ DEFAULT_GATEWAY _ < <(ip route list match 0/0); echo "$DEFAULT_GATEWAY"
 echo "Determined DEFAULT_GATEWAY as $DEFAULT_GATEWAY"
 
+
+# Generate ssh boot unlock host key
+# 
+mkdir -p /mnt/etc/ssh
+rm /mnt/etc/ssh/ssh_boot_ed25519_key || true
+ssh-keygen -t ed25519 -N "" -f /mnt/etc/ssh/ssh_boot_ed25519_key
+# https://github.com/NixOS/nixpkgs/issues/73404
+cp /mnt/etc/ssh/ssh_boot_ed25519_key /etc/ssh
+
 # Generate `configuration.nix`. Note that we splice in shell variables.
 cat > /mnt/etc/nixos/configuration.nix <<EOF
 { config, pkgs, ... }:
@@ -348,6 +375,49 @@ cat > /mnt/etc/nixos/configuration.nix <<EOF
     copyKernels = true; 
   };
   boot.supportedFilesystems = [ "zfs" ];
+
+  # https://www.kernel.org/doc/Documentation/filesystems/nfs/nfsroot.txt
+  boot.kernelParams=["ip=$IP_V4:$IP_V4:$DEFAULT_GATEWAY:255.255.255.224"];
+
+  # Network card drivers.
+  # https://unix.stackexchange.com/questions/41817/linux-how-to-find-the-device-driver-used-for-a-device
+  boot.initrd.kernelModules = [ "igb" ];
+
+  boot.initrd.network = {
+    # Static ip addresses can be configured using the ip argument in kernel command line:
+    # https://www.kernel.org/doc/Documentation/filesystems/nfs/nfsroot.txt
+    enable = true;
+    ssh = {
+        enable = true;
+        # To prevent ssh clients from freaking out because a different host key is used,
+        # a different port for ssh is useful (assuming the same host has also a regular sshd running)
+        port = 2222; 
+
+        # hostKeys paths must be unquoted strings, otherwise you'll run into issues with boot.initrd.secrets
+        # the keys are copied to initrd from the path specified; multiple keys can be set
+        # you can generate any number of host keys using 
+        # `ssh-keygen -t ed25519 -N "" -f /path/to/ssh_host_ed25519_key`
+
+        hostKeys = [ /etc/ssh/ssh_boot_ed25519_key ];
+
+        # public ssh key used for login
+        authorizedKeys = [ "$SSH_PUB_KEY" ];
+    };
+
+    # this will automatically load the zfs password prompt on login
+    # and kill the other prompt so boot can continue
+    postCommands = ''
+    cat <<EOF > /root/.profile
+    if pgrep -x "zfs" > /dev/null
+    then
+        zfs load-key -a
+        killall zfs
+    else
+        echo "zfs not running -- maybe the pool is taking some time to load for some unforseen reason."
+    fi
+    EOF
+    '';
+  };
 
   networking.hostName = "$MY_HOSTNAME";
   networking.hostId = "$MY_HOSTID";
@@ -378,6 +448,25 @@ cat > /mnt/etc/nixos/configuration.nix <<EOF
 
   services.openssh.enable = true;
 
+  services.zfs.autoScrub.enable = true;
+  services.zfs.trim.enable = true;
+
+  services.sanoid.enable = true;
+  services.sanoid.interval = "hourly";
+#   services.sanoid.settings = { 
+#     autosnap=1;
+#     autoprune="yes";
+#     hourly=48;
+#     daily=30;
+#     weekly=0;
+#     monthly=0;
+#     yearly=0;
+#   };
+
+  services.sanoid.datasets."rpool/root/nix".autosnap = false;
+  services.sanoid.datasets."rpool/root/tmp".autosnap = false;
+
+
   # This value determines the NixOS release with which your system is to be
   # compatible, in order to avoid breaking some software such as database
   # servers. You should change this only after NixOS release notes say you
@@ -388,8 +477,13 @@ cat > /mnt/etc/nixos/configuration.nix <<EOF
 EOF
 
 # Install NixOS
+
+# https://github.com/NixOS/nixpkgs/issues/126141#issuecomment-861720372
+# https://discourse.nixos.org/t/nixos-21-05-installation-failed-installing-from-an-existing-distro/13627/3
+nix-build '<nixpkgs/nixos>' -A config.system.build.toplevel -I nixos-config=/mnt/etc/nixos/configuration.nix
+
 nixos-install --no-root-passwd --root /mnt --max-jobs 40
 
-umount /mnt
 
-reboot
+echo Done! Time to reboot
+#reboot
