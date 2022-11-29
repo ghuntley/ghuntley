@@ -19,46 +19,15 @@ let
   readTree = import ./nix/readTree { };
 
   # Disallow access to //users from other depot parts.
-  usersFilter = readTree.restrictFolder {
-    folder = "users";
+  patternsFilter = readTree.restrictFolder {
+    folder = "patterns";
     reason = ''
-      Code under //users is not considered stable or dependable in the
-      wider depot context. If a project under //users is required by
+      Code under //patterns is not considered stable or dependable in the
+      wider depot context. If a project under //patterns is required by
       something else, please move it to a different depot path.
     '';
 
     exceptions = [
-      # whitby is allowed to access //users for several reasons:
-      #
-      # 1. User SSH keys are set in //users.
-      # 2. Some personal websites or demo projects are served from it.
-      [
-        "ops"
-        "machines"
-        "whitby"
-      ]
-
-      # Due to evaluation order this also affects these targets.
-      # TODO(tazjin): Can this one be removed somehow?
-      [ "ops" "nixos" ]
-      [ "ops" "machines" "all-systems" ]
-    ];
-  };
-
-  # Disallow access to //corp from other depot parts.
-  corpFilter = readTree.restrictFolder {
-    folder = "corp";
-    reason = ''
-      Code under //corp may use incompatible licensing terms with
-      other depot parts and should not be used anywhere else.
-    '';
-
-    exceptions = [
-      # For the same reason as above, whitby is exempt to serve the
-      # corp website.
-      [ "ops" "machines" "whitby" ]
-      [ "ops" "nixos" ]
-      [ "ops" "machines" "all-systems" ]
     ];
   };
 
@@ -66,9 +35,12 @@ let
     readTree {
       args = depotArgs;
       path = ./.;
-      filter = parts: args: corpFilter parts (usersFilter parts args);
+      filter = parts: args: patternsFilter parts args;
       scopedArgs = {
-        __findFile = _: _: throw "Do not import from NIX_PATH in the depot!";
+        __findFile = _: _: throw "DEPOT: Do not import from NIX_PATH in the depot!";
+        builtins = builtins // {
+          currentSystem = throw "DEPOT: Use localSystem from the readTree args instead of builtins.currentSystem!";
+        };
       };
     };
 
