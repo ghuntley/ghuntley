@@ -11,6 +11,18 @@
         "url": "https://github.com/ryantm/agenix/archive/a630400067c6d03c9b3e0455347dc8559db14288.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "microvm.nix": {
+        "branch": "main",
+        "description": "NixOS MicroVMs",
+        "homepage": "https://astro.github.io/microvm.nix/",
+        "owner": "astro",
+        "repo": "microvm.nix",
+        "rev": "c21a70fe1ac05ccdfceff6506625e9d44cd91da5",
+        "sha256": "1yswwbjx05nfr2si7wbcd8gp8g898hcsa9w7wkljaw34a9c5bb0p",
+        "type": "tarball",
+        "url": "https://github.com/astro/microvm.nix/archive/c21a70fe1ac05ccdfceff6506625e9d44cd91da5.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "naersk": {
         "branch": "master",
         "description": "Build rust crates in Nix. No configuration, no code generation, no IFD. Sandbox friendly. [maintainer: @Patryk27]",
@@ -41,10 +53,10 @@
         "homepage": "",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "690ffff026b4e635b46f69002c0f4e81c65dfc2e",
-        "sha256": "05iv6l5vbaga7whfkr7g1mn48fbvh4a5q3m29s2mg4slxzzil524",
+        "rev": "a115bb9bd56831941be3776c8a94005867f316a7",
+        "sha256": "1501jzl4661qwr45b9ip7c7bpmbl94816draybhh60s9wgxn068d",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/690ffff026b4e635b46f69002c0f4e81c65dfc2e.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/a115bb9bd56831941be3776c8a94005867f316a7.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-stable": {
@@ -77,10 +89,10 @@
         "homepage": "",
         "owner": "decke",
         "repo": "smtprelay",
-        "rev": "088fa4cfd86531d258c16b69bb207347fa239951",
-        "sha256": "0b302537rl8avfjpb2g2anph0qrzic0qd6lndak768lj0418ddwz",
+        "rev": "e8dc491e0fd2398b5a30f00840c1fa239e89379d",
+        "sha256": "09nvjyf913gp44hzklrzqlnd6jba8m5n0afbij16pz307ima3y0y",
         "type": "tarball",
-        "url": "https://github.com/decke/smtprelay/archive/088fa4cfd86531d258c16b69bb207347fa239951.tar.gz",
+        "url": "https://github.com/decke/smtprelay/archive/e8dc491e0fd2398b5a30f00840c1fa239e89379d.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
