@@ -39,21 +39,15 @@ depot.nix.lazy-deps {
   tmux.attr = "third_party.nixpkgs.tmux";
   wget.attr = "third_party.nixpkgs.wget";
 
-
-  dotnet.attr = "third_party.nixpkgs.dotnet-sdk";
-
+  # programming
   ghc.attr = "third_party.nixpkgs.haskell.compiler.ghc923";
-
   go.attr = "third_party.nixpkgs.go_1_17";
-
   node.attr = "third_party.nixpkgs.nodejs-18_x";
-
   python.attr = "third_party.nixpkgs.python38";
-
   rustc.attr = "third_party.nixpkgs.rustc";
 
   # ops
   gcloud.attr = "third_party.nixpkgs.google-cloud-sdk";
   terraform.attr = "third_party.nixpkgs.terraform";
-
+  microvm.attr = "third_party.";
 }
