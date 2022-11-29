@@ -4,3 +4,6 @@
 # Ignore Nix result symlinks
 result
 result-*
+
+# Ignore microvms overlays
+*.img
