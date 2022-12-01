@@ -117,9 +117,13 @@ umount /mnt/nix || true
 umount /mnt/etc || true
 umount /mnt || true
 zpool destroy -f rpool || true
+zpool destroy -f dpool || true
 
 wipefs -a $DISK1-part3
 wipefs -a $DISK2-part3
+wipefs -a /dev/sdc
+wipefs -a /dev/sdd
+
 
 # Prevent mdadm from auto-assembling arrays.
 # Otherwise, as soon as we create the partition tables below, it will try to
@@ -199,6 +203,16 @@ zpool create -O mountpoint=none \
     -o ashift=12 \
     -f rpool mirror $DISK1-part3 $DISK2-part3
 
+zpool create -O mountpoint=none \
+    -O atime=off \
+    -O compression=lz4 \
+    -O xattr=sa \
+    -O acltype=posixacl \
+    -o ashift=12 \
+    -f dpool \
+    /dev/sdc \
+    /dev/sdd
+    
 # Create the filesystems. This layout is designed so that /home is separate from the root
 # filesystem, as you'll likely want to snapshot it differently for backup purposes. It also
 # makes a "nixos" filesystem underneath the root, to support installing multiple OSes if
@@ -206,6 +220,18 @@ zpool create -O mountpoint=none \
 
 ZFS_ENCRYPTION_KEY=`cat /tmp/zfs-encryption-key`
 for pool in rpool/root rpool/root/etc rpool/root/nix rpool/root/home rpool/root/depot rpool/root/srv rpool/root/nixos-containers
+do
+    echo "$ZFS_ENCRYPTION_KEY" | zfs create \
+        -o canmount=off \
+        -o mountpoint=legacy \
+        -o encryption=on \
+        -o keyformat=passphrase \
+        -o keylocation=prompt \
+        $pool
+done
+
+ZFS_ENCRYPTION_KEY=`cat /tmp/zfs-encryption-key`
+for pool in dpool/data
 do
     echo "$ZFS_ENCRYPTION_KEY" | zfs create \
         -o canmount=off \
@@ -257,6 +283,9 @@ mount -t zfs rpool/root/srv /mnt/srv
 
 mkdir -p /mnt/var/lib/nixos-containers || true
 mount -t zfs rpool/root/nixos-containers /mnt/var/lib/nixos-containers
+
+mkdir -p /mnt/data || true
+mount -t zfs dpool/data /mnt/data
 
 
 # mkdir -p /mnt/var/lib/postgres
