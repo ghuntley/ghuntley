@@ -109,6 +109,7 @@ umount /mnt/boot || true
 vgchange -an || true
 mdadm --stop --scan
 
+umount /var/lib/nixos-containers || true
 umount /mnt/depot || true
 umount /mnt/srv || true
 umount /mnt/home || true
@@ -204,7 +205,7 @@ zpool create -O mountpoint=none \
 # that's something you choose to do in future.
 
 ZFS_ENCRYPTION_KEY=`cat /tmp/zfs-encryption-key`
-for pool in rpool/root rpool/root/etc rpool/root/nix rpool/root/home rpool/root/depot rpool/root/srv
+for pool in rpool/root rpool/root/etc rpool/root/nix rpool/root/home rpool/root/depot rpool/root/srv rpool/root/nixos-containers
 do
     echo "$ZFS_ENCRYPTION_KEY" | zfs create \
         -o canmount=off \
@@ -253,6 +254,9 @@ mount -t zfs rpool/root/depot /mnt/depot
 
 mkdir -p /mnt/srv || true
 mount -t zfs rpool/root/srv /mnt/srv
+
+mkdir -p /mnt/var/lib/nixos-containers || true
+mount -t zfs rpool/root/nixos-containers /mnt/var/lib/nixos-containers
 
 
 # mkdir -p /mnt/var/lib/postgres

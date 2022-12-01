@@ -11,7 +11,19 @@
         "url": "https://github.com/ryantm/agenix/archive/a630400067c6d03c9b3e0455347dc8559db14288.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "microvm.nix": {
+    "flake-compat": {
+        "branch": "master",
+        "description": null,
+        "homepage": null,
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "rev": "009399224d5e398d03b22badca40a37ac85412a1",
+        "sha256": "0xcr9fibnapa12ywzcnlf54wrmbqqb96fmmv8043zhsycws7bpqy",
+        "type": "tarball",
+        "url": "https://github.com/edolstra/flake-compat/archive/009399224d5e398d03b22badca40a37ac85412a1.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "microvm": {
         "branch": "main",
         "description": "NixOS MicroVMs",
         "homepage": "https://astro.github.io/microvm.nix/",

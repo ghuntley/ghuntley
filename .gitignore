@@ -7,3 +7,4 @@ result-*
 
 # Ignore microvms overlays
 *.img
+*.qcow2

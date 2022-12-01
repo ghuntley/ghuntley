@@ -50,5 +50,8 @@ depot.nix.lazy-deps {
   # ops
   gcloud.attr = "third_party.nixpkgs.google-cloud-sdk";
   terraform.attr = "third_party.nixpkgs.terraform";
-  microvm.attr = "third_party.microvms";
+  nixos-shell.attr = "third_party.nixpkgs.nixos-shell";
+
+  # experimental
+  microvm.attr = "third_party.microvm";
 }
