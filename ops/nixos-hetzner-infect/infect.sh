@@ -198,6 +198,7 @@ udevadm trigger
 zpool create -O mountpoint=none \
     -O atime=off \
     -O compression=lz4 \
+    -O dedupe=on \
     -O xattr=sa \
     -O acltype=posixacl \
     -o ashift=12 \
@@ -206,6 +207,7 @@ zpool create -O mountpoint=none \
 zpool create -O mountpoint=none \
     -O atime=off \
     -O compression=lz4 \
+    -O dedupe=on \
     -O xattr=sa \
     -O acltype=posixacl \
     -o ashift=12 \
