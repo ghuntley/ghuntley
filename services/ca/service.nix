@@ -5,15 +5,15 @@
 
 {
 
-      environment.systemPackages = [
-        pkgs.cfssl
-      ];
+  environment.systemPackages = [
+    pkgs.cfssl
+  ];
 
-      services.cfssl = {
-        enable = true;
-        address = "0.0.0.0";
-        port = 8888;
-      };
+  services.cfssl = {
+    enable = true;
+    address = "0.0.0.0";
+    port = 8888;
+  };
 
 
 }

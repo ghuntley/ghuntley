@@ -17,7 +17,7 @@
         "/var/lib/cfssl" = {
           hostPath = "/srv/ca/var/lib/cfssl";
           isReadOnly = false;
-        };        
+        };
       };
 
     config = [ ./service.nix ];

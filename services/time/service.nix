@@ -5,25 +5,25 @@
 
 {
 
-      services.timesyncd.enable = true;
-      networking.timeServers = [
-        "time.core"
-      ];
+  services.timesyncd.enable = true;
+  networking.timeServers = [
+    "time.core"
+  ];
 
-      services.openntpd = {
-        enable = true;
-        servers = [
-          "0.au.pool.ntp.org"
-          "1.au.pool.ntp.org"
-          "2.au.pool.ntp.org"
-          "3.au.pool.ntp.org"
-        ];
-      };
+  services.openntpd = {
+    enable = true;
+    servers = [
+      "0.au.pool.ntp.org"
+      "1.au.pool.ntp.org"
+      "2.au.pool.ntp.org"
+      "3.au.pool.ntp.org"
+    ];
+  };
 
-      networking.firewall = {
-        enable = true;
-        allowedUDPPorts = [ 123 ];
-      };
+  networking.firewall = {
+    enable = true;
+    allowedUDPPorts = [ 123 ];
+  };
 
 
 }

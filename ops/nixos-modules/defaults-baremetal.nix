@@ -24,6 +24,8 @@ in
     (mod "automatic-gc.nix")
 
     (mod "boot.nix")
+    (mod "initrd-zfs-unlock.nix")
+    (mod "sshd.nix")
 
     (mod "mdadm.nix")
     (mod "nvme.nix")
@@ -34,5 +36,16 @@ in
   ];
 
   powerManagement.cpuFreqGovernor = "performance";
+
+
+  # Configure secrets for services that need them.
+  age.secrets =
+    let
+      secretFile = name: depot.ops.secrets."${name}.age";
+    in
+    {
+      ssh-initrd-ed25519-key.file = secretFile "ssh-initrd-ed25519-key";
+      ssh-initrd-ed25519-pub.file = secretFile "ssh-initrd-ed25519-pub";
+    };
 
 };
