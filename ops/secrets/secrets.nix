@@ -4,13 +4,9 @@
 
 let
   # users
-  ghuntley = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFiX7qvQS3QjzL8y31KxMPn5EOyufjgz2YuRD3GNWcuR ghuntley@ghuntley.com"
-  ];
+  ghuntley = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFiX7qvQS3QjzL8y31KxMPn5EOyufjgz2YuRD3GNWcuR ghuntley@ghuntley.com";
 
-  mgmt = [
-    "TBA";
-  ];
+  mgmt = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFiX7qvQS3QjzL8y31KxMPn5EOyufjgz2YuRD3GNWcuR ghuntley@ghuntley.com";
 
   allDefault.publicKeys = [
     ghuntley
@@ -23,23 +19,21 @@ let
   prd-fsn1-dc11-1880953 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGstvAIecEPv1bgozIC/faiCs3bwPWLn4sekKj+hbgN2 root@prd-fsn1-dc11-1880953";
   prd-fsn1-dc11-1880953-boot = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH9wN51lVteNd8hUtx9QerSBZUFVI6K9U1yc3N97wbiv root@rescue";
 
-  nixcache-core-corp.publicKeys = [
-    allDefault.publicKeys
+  service-nixcache.publicKeys = allDefault.publicKeys ++ [
     prd-fsn1-dc11-1880953
   ];
 
-  smtp-core-corp.publicKeys = [
-    allDefault.publicKeys
-    fsn1-dc11-1880953
+  service-smtp.publicKeys = allDefault.publicKeys ++ [
+    prd-fsn1-dc11-1880953
   ];
 
 
   # development
-  devDefault.publicKeys = ghuntley ++ [ dev ];
+  devDefault.publicKeys = ghuntley;
 
 in
 {
-  "nix-cache-priv.age" = nixcache-core-corp;
-  "nix-cache-pub.age" = nixcache-core-corp;
-  "smtprelay.age" = smtp-core-corp;
+  "nix-cache-priv.age" = service-nixcache;
+  "nix-cache-pub.age" = service-nixcache;
+  "smtprelay.age" = service-smtp;
 }
