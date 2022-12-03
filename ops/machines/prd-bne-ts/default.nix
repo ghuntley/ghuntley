@@ -1,7 +1,7 @@
 # Copyright (c) 2022 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
 
-{ depot, lib, pkgs, modulesPath, ... }: # readTree options
+{ depot, lib, pkgs, ... }: # readTree options
 { config, ... }: # passed by module system
 
 let
@@ -14,7 +14,7 @@ in
 {
   imports = [
     (mod "defaults.nix")
-    (modulesPath + "/profiles/qemu-guest.nix")
+    # (modulesPath + "/profiles/qemu-guest.nix")
   ];
 
   boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "sr_mod" "virtio_blk" ];
@@ -63,14 +63,14 @@ in
   # TODO(security): migrate from public ssh to tailscale only ssh
   networking.firewall.interfaces."ens3".allowedTCPPorts = lib.optionals (config.services.openssh.enable) [ 22 ];
 
-  # Automatically collect garbage from the Nix store.
-  services.depot.automatic-gc = {
-    enable = true;
-    interval = "1 hour";
-    diskThreshold = 64; # GiB
-    maxFreed = 128; # GiB
-    preserveGenerations = "31d";
-  };
+  # # Automatically collect garbage from the Nix store.
+  # services.depot.automatic-gc = {
+  #   enable = true;
+  #   interval = "1 hour";
+  #   diskThreshold = 64; # GiB
+  #   maxFreed = 128; # GiB
+  #   preserveGenerations = "31d";
+  # };
 
   environment.systemPackages = with pkgs; [
     headscale

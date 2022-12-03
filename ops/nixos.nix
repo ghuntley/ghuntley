@@ -6,8 +6,7 @@
 { depot, lib, pkgs, ... }@args:
 
 let inherit (lib) findFirst isAttrs;
-in
-rec {
+in rec {
   # This provides our standard set of arguments to all NixOS modules.
   baseModule = { ... }: {
     # Ensure that pkgs == third_party.nix
@@ -62,6 +61,10 @@ rec {
   '';
 
   # Systems that should be built in CI
-  devSystem = (nixosFor depot.ops.machines.dev).system;
-  meta.ci.targets = [ "devSystem" ];
+  prd-bne-ts-System = (nixosFor depot.ops.machines.prd-bne-ts).system;
+  # prd-fsn1-dc11-1880953-System = (nixosFor depot.ops.machines.prd-fsn1-dc11-1880953).system;
+  meta.ci.targets = [
+    "prd-bne-ts-System"
+    # "prd-fsn1-dc11-1880953-System"
+  ];
 }

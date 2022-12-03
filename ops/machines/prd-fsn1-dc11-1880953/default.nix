@@ -55,7 +55,6 @@ in
 
   boot.loader.systemd-boot.enable = false;
   boot.loader.grub = {
-    enable = true;
     efiSupport = false;
     devices = [ "/dev/disk/by-id/ata-SAMSUNG_MZ7LM480HCHP-00003_S1YJNXAG800126" "/dev/disk/by-id/ata-SAMSUNG_MZ7LM480HCHP-00003_S1YJNXAG800130" ];
     copyKernels = true;
@@ -141,38 +140,35 @@ in
     }
   ];
 
-  # https://docs.hetzner.com/robot/dedicated-server/network/vswitch/
-  networking.vlans = {
-    enp4s0-vswitch = {
-      id = 4000;
-      interface = "enp4s0";
-    }
-      };
+  # # https://docs.hetzner.com/robot/dedicated-server/network/vswitch/
+  # networking.vlans = {
+  #   enp4s0-vswitch = {
+  #     id = 4000;
+  #     interface = "enp4s0";
+  #   };
+  # };
 
-    # https://docs.hetzner.com/robot/dedicated-server/network/vswitch/
-    networking.interfaces."enp4s0-vswitch".ipv4.addresses = [
-      {
-        address = "192.168.100.1";
-        prefixLength = 24;
-        mtu = 1400;
-      }
-    ];
+  #   # https://docs.hetzner.com/robot/dedicated-server/network/vswitch/
+  #   networking.interfaces."enp4s0-vswitch".ipv4.addresses = [
+  #     {
+  #       address = "192.168.100.1";
+  #       prefixLength = 24;
+  #       mtu = 1400;
+  #     }
+  #   ];
 
-    networking.defaultGateway = "148.251.233.1";
+  networking.defaultGateway = "148.251.233.1";
 
-    networking.nameservers = [ "8.8.8.8" ];
-
-
-    # Automatically collect garbage from the Nix store.
-    services.depot.automatic-gc = {
-      enable = true;
-      interval = "1 hour";
-      diskThreshold = 64; # GiB
-      maxFreed = 128; # GiB
-      preserveGenerations = "31d";
-    };
+  networking.nameservers = [ "8.8.8.8" ];
 
 
-    system.stateVersion = "20.05";
+  # Automatically collect garbage from the Nix store.
+  # services.depot.automatic-gc = {
+  #   enable = true;
+  #   interval = "1 hour";
+  #   diskThreshold = 64; # GiB
+  #   maxFreed = 128; # GiB
+  #   preserveGenerations = "31d";
+  # };
 
-  }
+}

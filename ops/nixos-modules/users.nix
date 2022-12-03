@@ -13,12 +13,12 @@
       shell = pkgs.bash;
       openssh.authorizedKeys.keys = depot.users.mgmt.keys.all;
     };
+    users.ghuntley = {
+      isNormalUser = true;
+      extraGroups = [ "git" "wheel" ];
+      shell = pkgs.bash;
+      openssh.authorizedKeys.keys = depot.users.ghuntley.keys.all;
+    };
   };
-  users.ghuntley = {
-    isNormalUser = true;
-    extraGroups = [ "git" "wheel" ];
-    shell = pkgs.bash;
-    openssh.authorizedKeys.keys = depot.users.ghuntley.keys.all;
-  };
-};
+
 }
