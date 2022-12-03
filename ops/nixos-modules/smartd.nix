@@ -7,7 +7,7 @@ let
   host = "${config.networking.hostName}.${config.networking.domain}";
 in
 
- {
+{
 
   environment.systemPackages = with pkgs; [ smartmontools ];
 

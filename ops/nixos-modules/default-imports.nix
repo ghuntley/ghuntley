@@ -17,13 +17,11 @@ let
 in
 {
   imports = [
-    (mod "automatic-gc.nix")
-    (mod "boot.nix")
     (mod "cache.nix")
+    (mod "documentation.nix")
     (mod "fail2ban.nix")
     (mod "i18n.nix")
     (mod "known-hosts.nix")
-    (mod "microcode.nix")
     (mod "pkgs.nix")
     (mod "sudo.nix")
     (mod "sysctl.nix")
@@ -33,6 +31,5 @@ in
     (mod "users.nix")
 
     (depot.third_party.agenix.src + "/modules/age.nix")
-
 
   ];

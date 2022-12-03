@@ -21,9 +21,18 @@ in
 
     (mod "nginx/self-redirect.nix")
 
-    (mod "nvme.nix")
+    (mod "automatic-gc.nix")
+
+    (mod "boot.nix")
+
     (mod "mdadm.nix")
+    (mod "nvme.nix")
     (mod "smartd.nix")
     (mod "zfs.nix")
 
+    (mod "microcode.nix")
   ];
+
+  powerManagement.cpuFreqGovernor = "performance";
+
+};

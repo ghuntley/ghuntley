@@ -13,7 +13,7 @@ let
 in
 {
   imports = [
-    (mod "default-imports-baremetal.nix")
+    (mod "defaults-baremetal.nix")
 
     (mod "sshd.nix")
   ];
