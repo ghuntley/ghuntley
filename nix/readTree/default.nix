@@ -155,7 +155,8 @@ let
   # attribute, which is deprecated in favour of `meta.ci.targets`.
   subtargets = node:
     let targets = (node.meta.targets or [ ]) ++ (node.meta.ci.targets or [ ]);
-    in if node ? meta.targets then
+    in
+    if node ? meta.targets then
       builtins.trace ''
         [1;31mWarning: The meta.targets attribute is deprecated.
 

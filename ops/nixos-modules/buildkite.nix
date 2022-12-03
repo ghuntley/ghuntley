@@ -1,7 +1,7 @@
-# Copyright (c) 2022 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
-# SPDX-License-Identifier: Proprietary
+# Copyright (c) 2019 Vincent Ambo
+# Copyright (c) 2020-2021 The TVL Authors
+# SPDX-License-Identifier: MIT
 
-# Configuration for the TVL buildkite agents.
 { config, depot, pkgs, lib, ... }:
 
 let
@@ -9,21 +9,13 @@ let
   agents = lib.range 1 cfg.agentCount;
   description = "Buildkite agents";
 
-  besadiiWithConfig = name: pkgs.writeShellScript "besadii-dev" ''
-    export BESADII_CONFIG=/run/agenix/buildkite-besadii-config
-    exec -a ${name} ${depot.ops.besadii}/bin/besadii "$@"
+  post-command = name: pkgs.writeShellScript "post-command" ''
+    echo ""
   '';
 
-  # All Buildkite hooks are actually besadii, but it's being invoked
-  # with different names.
   buildkiteHooks = pkgs.runCommandNoCC "buildkite-hooks" { } ''
     mkdir -p $out/bin
-    ln -s ${besadiiWithConfig "post-command"} $out/bin/post-command
-  '';
-
-  credentialHelper = pkgs.writeShellScriptBin "git-credential-gerrit-creds" ''
-    echo 'username=buildkite'
-    echo "password=$(jq -r '.gerritPassword' /run/agenix/buildkite-besadii-config)"
+    ln -s ${post-command "post-command"} $out/bin/post-command
   '';
 in
 {
@@ -39,7 +31,7 @@ in
     # Run the Buildkite agents using the default upstream module.
     services.buildkite-agents = builtins.listToAttrs (map
       (n: rec {
-        name = "dev-${toString n}";
+        name = "buildkite-agent-${toString n}";
         value = {
           inherit name;
           enable = true;
@@ -67,7 +59,7 @@ in
       groups.buildkite-agents = { };
       users = builtins.listToAttrs (map
         (n: rec {
-          name = "buildkite-agent-dev-${toString n}";
+          name = "buildkite-agent-${toString n}";
           value = {
             isSystemUser = true;
             group = lib.mkForce "buildkite-agents";

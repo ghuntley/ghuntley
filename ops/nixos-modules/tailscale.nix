@@ -43,7 +43,7 @@
   #     fi
 
   #     # otherwise authenticate with tailscale
-  #     ${tailscale}/bin/tailscale up -authkey tskey-examplekeyhere
+  #     ${tailscale}/bin/tailscale up --login-server=https://ts.fediversehosting.net -authkey=tskey-examplekeyhere
   #   '';
 
 }

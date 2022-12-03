@@ -55,7 +55,8 @@ let
   # Build a Go program out of the specified files and dependencies.
   program = { name, srcs, deps ? [ ], x_defs ? { } }:
     let uniqueDeps = allDeps (map (d: d.gopkg) deps);
-    in runCommand name { } ''
+    in
+    runCommand name { } ''
       ${go}/bin/go tool compile -o ${name}.a -trimpath=$PWD -trimpath=${go} ${includeSources uniqueDeps} ${spaceOut srcs}
       mkdir -p $out/bin
       export GOROOT_FINAL=go

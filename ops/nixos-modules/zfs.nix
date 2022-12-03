@@ -6,17 +6,20 @@
   boot.initrd.supportedFilesystems = [ "zfs" ];
   boot.supportedFilesystems = [ "zfs" ];
 
+  nixpkgs.config.packageOverrides = pkgs: {
+    zfsStable = pkgs.zfsStable.override { enableMail = true; };
+  };
+
+  services.zfs.zed.enableMail = true;
+  services.zfs.zed.settings = {
+    ZED_EMAIL_ADDR = [ "support@fediversehosting.com" ];
+    ZED_NOTIFY_VERBOSE = true;
+  };
+
   services.zfs = {
     autoScrub = {
       enable = true;
       interval = "weekly";
-    };
-    autoSnapshot = {
-      enable = true;
-      frequent = 32; # 4 hours.
-      daily = 14;
-      weekly = 4;
-      monthly = 4;
     };
     trim.enable = true;
   };

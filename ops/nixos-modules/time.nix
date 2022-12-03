@@ -2,29 +2,17 @@
 # SPDX-License-Identifier: Proprietary
 
 { depot, lib, pkgs, ... }: # readTree options
-
-let
-  inherit (builtins) listToAttrs;
-  inherit (lib) range;
-
-  mod = name: depot.path.origSrc + ("/ops/nixos-modules/" + name);
-
-in
 {
-  imports = [
-    # (mod "timesyncd.nix")
-  ];
+
+  environment.systemPackages = with pkgs; [ ntp ];
 
   services.ntp.enable = true;
   services.ntp.servers = [
-    "0.au.pool.ntp.org"
-    "1.au.pool.ntp.org"
-    "2.au.pool.ntp.org"
-    "3.au.pool.ntp.org"
+    "time.core"
   ];
 
   services.timesyncd.enable = true;
   networking.timeServers = [
-    "127.0.0.1"
+    "time.core"
   ];
 }

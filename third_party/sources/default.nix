@@ -136,7 +136,8 @@ let
   # fetchTarball version that is compatible between all the versions of Nix
   builtins_fetchTarball = { url, name, sha256 }@attrs:
     let inherit (builtins) lessThan nixVersion fetchTarball;
-    in if lessThan nixVersion "1.12" then
+    in
+    if lessThan nixVersion "1.12" then
       fetchTarball { inherit name url; }
     else
       fetchTarball attrs;
@@ -144,7 +145,8 @@ let
   # fetchurl version that is compatible between all the versions of Nix
   builtins_fetchurl = { url, sha256 }@attrs:
     let inherit (builtins) lessThan nixVersion fetchurl;
-    in if lessThan nixVersion "1.12" then
+    in
+    if lessThan nixVersion "1.12" then
       fetchurl { inherit url; }
     else
       fetchurl attrs;

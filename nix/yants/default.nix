@@ -66,7 +66,8 @@ with builtins; let
       # function.
       __functor = self: value:
         let result = self.checkType value;
-        in if checkToBool result then value
+        in
+        if checkToBool result then value
         else throw (toError value result);
     };
 
@@ -81,7 +82,8 @@ with builtins; let
     inherit name;
     checkType = v:
       let res = check v;
-      in {
+      in
+      {
         ok = res;
       } // (lib.optionalAttrs (!res) {
         err = typeError name v;
@@ -131,7 +133,8 @@ lib.fix (self: {
     name = "option<${t.name}>";
     checkType = v:
       let res = t.checkType v;
-      in {
+      in
+      {
         ok = isNull v || (self.type t).checkToBool res;
         err = "expected type ${name}, but value does not conform to '${t.name}': "
           + t.toError v res;
@@ -185,7 +188,8 @@ lib.fix (self: {
       # its definition and creates a typecheck result. These results
       # are aggregated during the actual checking.
       checkField = def: name: value:
-        let result = def.checkType value; in rec {
+        let result = def.checkType value; in
+        rec {
           ok = def.checkToBool result;
           err =
             if !ok && isNull value
@@ -277,7 +281,8 @@ lib.fix (self: {
         inherit name def;
         checkType = (x:
           let variant = elemAt (attrNames x) 0;
-          in if isAttrs x && length (attrNames x) == 1 && hasAttr variant def
+          in
+          if isAttrs x && length (attrNames x) == 1 && hasAttr variant def
           then
             let
               t = def."${variant}";
@@ -346,7 +351,8 @@ lib.fix (self: {
   # value is checked with the predicate, so the predicate can already
   # depend on the value being of the wrapped type.
   restrict = name: pred: t:
-    let restriction = "${t.name}[${name}]"; in typedef' {
+    let restriction = "${t.name}[${name}]"; in
+    typedef' {
       name = restriction;
       checkType = v:
         let res = t.checkType v;

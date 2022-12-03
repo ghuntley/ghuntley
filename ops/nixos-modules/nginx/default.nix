@@ -7,7 +7,7 @@
   config = {
     security.acme = {
       acceptTerms = true;
-      defaults.email = "services+letsencrypt@21kbh.com";
+      defaults.email = "support@fediversehosting.com";
     };
 
     services.nginx = {

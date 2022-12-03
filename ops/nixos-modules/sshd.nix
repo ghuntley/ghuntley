@@ -4,30 +4,22 @@
 { pkgs, config, lib, ... }:
 
 {
-  imports = [
-    ./mosh.nix
-  ];
-
-
-
   services.openssh = {
     enable = true;
-    forwardX11 = true;
     kbdInteractiveAuthentication = false;
     openFirewall = false;
     passwordAuthentication = false;
-    permitRootLogin = "no";
+    permitRootLogin = "prohibit-password";
 
     useDns = false;
-
-    # unbind gnupg sockets if they exists
-    extraConfig = ''
-      StreamLocalBindUnlink yes
-    '';
   };
 
   networking.firewall.interfaces."tailscale0".allowedTCPPorts = lib.optionals (config.services.openssh.enable) [ 22 ];
 
-  # Allow sudo-ing via the forwarded SSH agent.
-  # security.pam.enableSSHAgentAuth = true;
+  # Mosh
+  programs.mosh.enable = true;
+  networking.firewall.interfaces."tailscale0".allowedUDPPortRanges = lib.optionals (config.services.openssh.enable) [
+    { from = 60000; to = 60010; }
+  ];
+
 }

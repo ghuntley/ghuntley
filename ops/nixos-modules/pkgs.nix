@@ -2,33 +2,30 @@
 # SPDX-License-Identifier: Proprietary
 
 { pkgs, config, lib, depot, ... }: {
+
   environment.systemPackages = [
-    pkgs.ack
+    depot.third_party.agenix.cli
     pkgs.bind
     pkgs.cachix
-    pkgs.curl
-    pkgs.direnv
-    pkgs.dos2unix
     pkgs.git-lfs
     pkgs.gitAndTools.gitFull
     pkgs.htop
     pkgs.iftop
     pkgs.inetutils
     pkgs.iotop
+    pkgs.lazygit
     pkgs.lsof
     pkgs.neovim
-    pkgs.ntp
+    pkgs.nixpkgs-fmt
     pkgs.opentelemetry-collector
-    pkgs.p7zip
-    pkgs.rpl
+    pkgs.starship
     pkgs.tmux
     pkgs.tree
-    pkgs.unzip
-    pkgs.wget
-    pkgs.zip
-    depot.third_party.agenix.cli
   ];
 
+  programs.bash.interactiveShellInit = ''
+    eval "$(starship init bash)"
+  '';
 
   programs.mtr.enable = true;
 

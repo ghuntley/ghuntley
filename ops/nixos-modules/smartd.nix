@@ -9,5 +9,10 @@
     enable = true;
     autodetect = true;
     notifications.wall.enable = true;
+    notifications.mail = {
+      enable = true;
+      sender = "support@fediversehosting.net";
+      recipient = "support@fediversehosting.net";
+    };
   };
 }

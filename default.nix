@@ -54,52 +54,52 @@ let
 
 in
 readTree.fix (self:
-(readDepot {
-  inherit localSystem;
-  depot = self;
+  (readDepot {
+    inherit localSystem;
+    depot = self;
 
-  # Pass third_party as 'pkgs' (for compatibility with external
-  # imports for certain subdirectories)
-  pkgs = self.third_party.nixpkgs;
+    # Pass third_party as 'pkgs' (for compatibility with external
+    # imports for certain subdirectories)
+    pkgs = self.third_party.nixpkgs;
 
-  # Expose lib attribute to packages.
-  lib = self.third_party.nixpkgs.lib;
+    # Expose lib attribute to packages.
+    lib = self.third_party.nixpkgs.lib;
 
-  # Pass arguments passed to the entire depot through, for packages
-  # that would like to add functionality based on this.
-  #
-  # Note that it is intended for exceptional circumstance, such as
-  # debugging by bisecting nixpkgs.
-  externalArgs = args;
-}) // {
-  # Make the path to the depot available for things that might need it
-  # (e.g. NixOS module inclusions)
-  path = self.third_party.nixpkgs.lib.cleanSourceWith {
-    name = "depot";
-    src = ./.;
-    filter = self.third_party.nixpkgs.lib.cleanSourceFilter;
-  };
+    # Pass arguments passed to the entire depot through, for packages
+    # that would like to add functionality based on this.
+    #
+    # Note that it is intended for exceptional circumstance, such as
+    # debugging by bisecting nixpkgs.
+    externalArgs = args;
+  }) // {
+    # Make the path to the depot available for things that might need it
+    # (e.g. NixOS module inclusions)
+    path = self.third_party.nixpkgs.lib.cleanSourceWith {
+      name = "depot";
+      src = ./.;
+      filter = self.third_party.nixpkgs.lib.cleanSourceFilter;
+    };
 
-  # List of all buildable targets, for CI purposes.
-  #
-  # Note: To prevent infinite recursion, this *must* be a nested
-  # attribute set (which does not have a __readTree attribute).
-  ci.targets = readTree.gather eligible (self // {
-    # remove the pipelines themselves from the set over which to
-    # generate pipelines because that also leads to infinite
-    # recursion.
-    ops = self.ops // { pipelines = null; };
+    # List of all buildable targets, for CI purposes.
+    #
+    # Note: To prevent infinite recursion, this *must* be a nested
+    # attribute set (which does not have a __readTree attribute).
+    ci.targets = readTree.gather eligible (self // {
+      # remove the pipelines themselves from the set over which to
+      # generate pipelines because that also leads to infinite
+      # recursion.
+      ops = self.ops // { pipelines = null; };
 
-    # remove nixpkgs from the set, for obvious reasons.
-    third_party = self.third_party // { nixpkgs = null; };
-  });
+      # remove nixpkgs from the set, for obvious reasons.
+      third_party = self.third_party // { nixpkgs = null; };
+    });
 
-  # Derivation that gcroots all depot targets.
-  ci.gcroot = with self.third_party.nixpkgs;
-    makeSetupHook
-      {
-        name = "depot-gcroot";
-        deps = self.ci.targets;
-      }
-      emptyFile;
-})
+    # Derivation that gcroots all depot targets.
+    ci.gcroot = with self.third_party.nixpkgs;
+      makeSetupHook
+        {
+          name = "depot-gcroot";
+          deps = self.ci.targets;
+        }
+        emptyFile;
+  })

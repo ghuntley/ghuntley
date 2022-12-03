@@ -212,6 +212,7 @@ zpool create -O mountpoint=none \
     -O acltype=posixacl \
     -o ashift=12 \
     -f dpool \
+    mirror \
     /dev/sdc \
     /dev/sdd
     
@@ -344,7 +345,7 @@ set +u +x # sourcing this may refer to unset variables that we have no control o
 set -u -x
 
 # Keep in sync with `system.stateVersion` set below!
-nix-channel --add https://nixos.org/channels/nixos-22.05 nixpkgs
+nix-channel --add https://nixos.org/channels/nixos-22.11 nixpkgs
 nix-channel --update
 
 # Getting NixOS installation tools
@@ -509,7 +510,7 @@ cat > /mnt/etc/nixos/configuration.nix <<EOF
   # compatible, in order to avoid breaking some software such as database
   # servers. You should change this only after NixOS release notes say you
   # should.
-  system.stateVersion = "22.05"; # Did you read the comment?
+  system.stateVersion = "22.11"; # Did you read the comment?
 
 }
 EOF

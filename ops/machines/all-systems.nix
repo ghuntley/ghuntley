@@ -4,5 +4,5 @@
 { depot, ... }:
 
 (with depot.ops.machines; [
-  dev
+  net.fsn1-dc11-1880953
 ])

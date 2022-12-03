@@ -23,7 +23,7 @@ in
 
     extraConfig = ''
       location = / {
-        return 302 https://at.21kbh.com/?q=%2F%2Fops%2Fmachines%2F${config.networking.hostName};
+        return 302 https://sourcegraph.com/search?q=context:global+repo:fediversehosting/depot+${config.networking.hostName};
       }
     '';
   };

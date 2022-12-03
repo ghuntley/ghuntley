@@ -17,22 +17,13 @@ let
 in
 {
   imports = [
-    (mod "automatic-gc.nix")
-    (mod "boot.nix")
-    (mod "cache.nix")
-    (mod "fail2ban.nix")
-    (mod "i18n.nix")
-    (mod "known-hosts.nix")
-    (mod "microcode.nix")
-    (mod "pkgs.nix")
-    (mod "sudo.nix")
-    (mod "sysctl.nix")
-    (mod "tailscale.nix")
-    (mod "time.nix")
-    (mod "timezone.nix")
-    (mod "users.nix")
+    (mod "default-imports.nix")
 
-    (depot.third_party.agenix.src + "/modules/age.nix")
+    (mod "nginx/self-redirect.nix")
 
+    (mod "nvme.nix")
+    (mod "mdadm.nix")
+    (mod "smartd.nix")
+    (mod "zfs.nix")
 
   ];

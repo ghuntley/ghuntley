@@ -4,6 +4,7 @@
 { ... }:
 
 let withAll = keys: keys // { all = builtins.attrValues keys; };
-in withAll {
-  ghuntley-1password = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFiX7qvQS3QjzL8y31KxMPn5EOyufjgz2YuRD3GNWcuR ghuntley@1password";
+in
+withAll {
+  mgmt = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFiX7qvQS3QjzL8y31KxMPn5EOyufjgz2YuRD3GNWcuR ghuntley@ghuntley.com";
 }

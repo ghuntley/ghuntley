@@ -51,7 +51,8 @@ let
   # to use `ok` and `err` instead of `right` and `wrong`.
   partitionTests = pred: xs:
     let res = builtins.partition pred xs;
-    in {
+    in
+    {
       ok = res.right;
       err = res.wrong;
     };
