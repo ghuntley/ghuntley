@@ -1,7 +1,13 @@
 # Copyright (c) 2022 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
 
-{ pkgs, config, lib, ... }: {
+{ pkgs, config, lib, ... }:
+
+let
+  host = "${config.networking.hostName}.${config.networking.domain}";
+in
+
+ {
 
   environment.systemPackages = with pkgs; [ smartmontools ];
 
@@ -11,8 +17,8 @@
     notifications.wall.enable = true;
     notifications.mail = {
       enable = true;
-      sender = "support@fediversehosting.net";
-      recipient = "support@fediversehosting.net";
+      sender = "${host}@noreply.fediversehosting.com";
+      recipient = "support@fediversehosting.com";
     };
   };
 }

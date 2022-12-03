@@ -21,6 +21,13 @@
       enable = true;
       interval = "weekly";
     };
+    autoSnapshot = {
+      enable = true;
+      frequent = 32; # 4 hours.
+      daily = 14;
+      weekly = 4;
+      monthly = 4;
+    };
     trim.enable = true;
   };
 }
