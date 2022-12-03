@@ -33,3 +33,4 @@ in
     (depot.third_party.agenix.src + "/modules/age.nix")
 
   ];
+}
