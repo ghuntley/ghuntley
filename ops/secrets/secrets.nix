@@ -14,15 +14,15 @@ let
   ];
 
   # production
-  initrd-rescue = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH9wN51lVteNd8hUtx9QerSBZUFVI6K9U1yc3N97wbiv root@rescue";
-  prd-bne-ca = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICS26s/wN6eyyM2/JcNAGA74bI54s5ALk0u8mOVbxSz+ root@ca";
-  prd-bne-cache = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObx9zfI6Zk40Dxk2GvBoQzZukj41O5wdf4XnaF5cjOG root@cache";
-  prd-bne-code = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILtAec+y9nUZ0bbJmypLf6DKBwEtN7s76rIfwoGhnU8P root@code";
-  prd-bne-proxy = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEG0iV1HBOqhR8J1AEMWFHB5WeBkMX6HN7n7EPF0Ap1e root@proxy";
-  prd-bne-smtp = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIQEX+nJtbsJikHs5MqRGfPA1HzbSdqD0LPq9TcmBZdV root@smtp";
-  prd-bne-time = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMeKTNstopArcJk5z7Ag6WO8MXlROSxWQ+4cP9rhlpUp root@time";
-  prd-bne-ts = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObx9zfI6Zk40Dxk2GvBoQzZukj41O5wdf4XnaF5cjOG root@ts";
-  prd-fsn1-dc11-1880953 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGstvAIecEPv1bgozIC/faiCs3bwPWLn4sekKj+hbgN2 root@prd-fsn1-dc11-1880953";
+  initrd-rescue = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH9wN51lVteNd8hUtx9QerSBZUFVI6K9U1yc3N97wbiv";
+  prd-bne-ca = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICS26s/wN6eyyM2/JcNAGA74bI54s5ALk0u8mOVbxSz+";
+  prd-bne-cache = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObx9zfI6Zk40Dxk2GvBoQzZukj41O5wdf4XnaF5cjOG";
+  prd-bne-code = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILtAec+y9nUZ0bbJmypLf6DKBwEtN7s76rIfwoGhnU8P";
+  prd-bne-proxy = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEG0iV1HBOqhR8J1AEMWFHB5WeBkMX6HN7n7EPF0Ap1e";
+  prd-bne-smtp = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIQEX+nJtbsJikHs5MqRGfPA1HzbSdqD0LPq9TcmBZdV";
+  prd-bne-time = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMeKTNstopArcJk5z7Ag6WO8MXlROSxWQ+4cP9rhlpUp";
+  prd-bne-ts = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObx9zfI6Zk40Dxk2GvBoQzZukj41O5wdf4XnaF5cjOG";
+  prd-fsn1-dc11-1880953 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGstvAIecEPv1bgozIC/faiCs3bwPWLn4sekKj+hbgN2";
 
   prdDefault.publicKeys = allDefault.publicKeys ++ [
     initrd-rescue
