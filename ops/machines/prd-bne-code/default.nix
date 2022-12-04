@@ -13,13 +13,8 @@ let
 in
 {
   imports = [
-    (mod "defaults.nix")
+    (mod "defaults-binarylane.nix")
   ];
-
-  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "sr_mod" "virtio_blk" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ ];
-  boot.extraModulePackages = [ ];
 
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
@@ -65,19 +60,11 @@ in
   services.openssh.enable = true;
 
   # # Automatically collect garbage from the Nix store.
-  # services.depot.automatic-gc = {
-  #   enable = true;
-  #   interval = "1 hour";
-  #   diskThreshold = 64; # GiB
-  #   maxFreed = 128; # GiB
-  #   preserveGenerations = "31d";
-  # };
-
-  environment.systemPackages = with pkgs; [
-    tailscale
-  ];
-
-  services.tailscale.enable = true;
-
-
+  services.depot.automatic-gc = {
+    enable = true;
+    interval = "1 hour";
+    diskThreshold = 10; # GiB
+    maxFreed = 5; # GiB
+    preserveGenerations = "14d";
+  };
 }

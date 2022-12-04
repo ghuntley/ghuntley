@@ -12,6 +12,8 @@ in
     depot.third_party.agenix.cli
     pkgs.bind
     pkgs.cachix
+    pkgs.direnv
+    pkgs.gitAndTools.gitFull
     pkgs.htop
     pkgs.iftop
     pkgs.inetutils
@@ -22,6 +24,7 @@ in
     pkgs.neovim
     pkgs.nixpkgs-fmt
     pkgs.opentelemetry-collector
+    pkgs.pre-commit
     pkgs.starship
     pkgs.tmux
     pkgs.tree
