@@ -13,8 +13,6 @@
     };
 
     postCommands = ''
-      echo 'cryptsetup open ${disk} root --type luks && echo > /tmp/continue' >> /root/.profile
-
       cat <<EOF > /root/unlock.sh
       cryptsetup open /dev/vda2 root --type luks && echo > /tmp/continue
       EOF
@@ -26,13 +24,14 @@
       ls -ltr
       EOF
     '';
+};
 
-    postDeviceCommands = ''
+
+boot.initrd.postDeviceCommands = ''
       echo 'waiting for root device to be opened...'
       mkfifo /tmp/continue
       cat /tmp/continue
     '';
 
-  };
 
 }
