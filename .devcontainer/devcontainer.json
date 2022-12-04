@@ -18,7 +18,8 @@
 				"ms-python.python",
 				"4ops.terraform",
 				"HashiCorp.terraform",
-				"ms-vscode.cpptools-extension-pack"
+				"ms-vscode.cpptools-extension-pack",
+				"jnoortheen.nix-ide"
 			]
 		}
 	}
