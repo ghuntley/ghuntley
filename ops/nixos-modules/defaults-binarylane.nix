@@ -24,7 +24,8 @@ in
     (mod "automatic-gc.nix")
 
     (mod "boot.nix")
-    (mod "initrd-luks-unlock.nix")
+    # TODO(security): luks ssh unencrypt is currently broken
+    #(mod "initrd-luks-unlock.nix")
     (mod "sshd.nix")
 
   ];
