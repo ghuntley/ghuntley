@@ -15,6 +15,8 @@ in
 
   imports = [
     (mod "defaults-binarylane.nix")
+    (mod "josh.nix")
+    (mod "sourcegraph.nix")
   ];
 
   boot.loader.grub.enable = true;
@@ -70,4 +72,56 @@ in
   };
 
   system.stateVersion = "22.11";
+
+  services.depot.josh.enable = true;
+  services.depot.sourcegraph.enable = true;
+
+  services.nginx.virtualHosts.cs = {
+    serverName = "cs.fediversehosting.net";
+    enableACME = true;
+    forceSSL = true;
+
+    extraConfig = ''
+      location = / {
+        return 301 https://cs.fediversehosting.net/depot;
+      }
+
+      location / {
+        proxy_set_header X-Sg-Auth "Anonymous";
+        proxy_pass http://localhost:${toString config.services.depot.sourcegraph.port};
+      }
+
+      location /users/Anonymous/settings {
+        return 301 https://cs.fediversehosting.net;
+      }
+    '';
+  };
+
+  services.nginx.virtualHosts.code = {
+    serverName = "code.fediversehosting.net";
+    enableACME = true;
+    forceSSL = true;
+
+    extraConfig = ''
+      # Git operations on depot.git hit josh
+      location /depot.git {
+          proxy_pass http://localhost:${toString config.services.depot.josh.port};
+      }
+
+      # Git clone operations on '/' should be redirected to josh now.
+      location = /info/refs {
+          return 302 https://code.fediversehosting.net/depot.git/info/refs$is_args$args;
+      }
+
+      # Static assets must always hit the root.
+      location ~ ^/(favicon\.ico|cgit\.(css|png))$ {
+         proxy_pass http://localhost:2448;
+      }
+
+      # Everything else is forwarded to cgit for the web view
+      location / {
+          proxy_pass http://localhost:2448/cgit.cgi/depot/;
+      }
+    '';
+  };
 }
