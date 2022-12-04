@@ -4,7 +4,8 @@
 { depot, ... }:
 
 (with depot.ops.machines; [
-  prd-bne-ts
+  prd-bne-ca
   prd-bne-code
+  prd-bne-ts
   prd-fsn1-dc11-1880953
 ])
