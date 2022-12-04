@@ -62,10 +62,12 @@ rec {
   '';
 
   # Systems that should be built in CI
+  prd-bne-code-System = (nixosFor depot.ops.machines.prd-bne-code).system;
   prd-bne-ts-System = (nixosFor depot.ops.machines.prd-bne-ts).system;
   prd-fsn1-dc11-1880953-System = (nixosFor depot.ops.machines.prd-fsn1-dc11-1880953).system;
   meta.ci.targets = [
-    # "prd-bne-ts-System"
+    "prd-bne-code-System"
+    "prd-bne-ts-System"
     "prd-fsn1-dc11-1880953-System"
   ];
 }

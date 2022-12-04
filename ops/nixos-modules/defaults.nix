@@ -19,7 +19,9 @@ in
   imports = [
     (mod "cache.nix")
     (mod "documentation.nix")
-    (mod "fail2ban.nix")
+
+    # TODO(security): enable fail2ban by default
+    #(mod "fail2ban.nix")
     (mod "i18n.nix")
     (mod "known-hosts.nix")
     (mod "pkgs.nix")
@@ -29,6 +31,9 @@ in
     (mod "time.nix")
     (mod "timezone.nix")
     (mod "users.nix")
+
+    # TODO(security): don't include vscode support by default in everything
+    (mod "nixos-vscode-server.nix")
 
     (depot.third_party.agenix.src + "/modules/age.nix")
 

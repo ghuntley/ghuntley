@@ -33,6 +33,8 @@ in
 
   programs.mtr.enable = true;
 
+  programs.mosh.enable = true;
+
   programs.git = {
     enable = true;
     lfs.enable = true;
