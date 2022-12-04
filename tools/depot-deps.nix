@@ -29,6 +29,7 @@ depot.nix.lazy-deps {
 
   # devshell
   ack.attr = "third_party.nixpkgs.ack";
+  agenix.attr = "third_party.agenix.cli";
   bat.attr = "third_party.nixpkgs.bat";
   curl.attr = "third_party.nixpkgs.curl";
   elinks.attr = "third_party.nixpkgs.elinks";
