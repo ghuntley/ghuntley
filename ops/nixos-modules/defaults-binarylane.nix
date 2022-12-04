@@ -24,6 +24,7 @@ in
     (mod "automatic-gc.nix")
 
     (mod "boot.nix")
+    (mod "initrd-zfs-unlock.nix")
     (mod "sshd.nix")
 
   ];

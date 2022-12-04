@@ -76,14 +76,15 @@ in
   services.depot.josh.enable = true;
   services.depot.sourcegraph.enable = true;
 
-  services.nginx.virtualHosts.cs = {
-    serverName = "cs.fediversehosting.net";
+  services.nginx.virtualHosts.search = {
+    serverName = "search.fediversehosting.net";
+
     enableACME = true;
     forceSSL = true;
 
     extraConfig = ''
       location = / {
-        return 301 https://cs.fediversehosting.net/depot;
+        return 301 https://search.fediversehosting.net/depot;
       }
 
       location / {
@@ -92,13 +93,14 @@ in
       }
 
       location /users/Anonymous/settings {
-        return 301 https://cs.fediversehosting.net;
+        return 301 https://search.fediversehosting.net;
       }
     '';
   };
 
   services.nginx.virtualHosts.code = {
     serverName = "code.fediversehosting.net";
+    serverAliases = [ "code" "code.dmz" ];
     enableACME = true;
     forceSSL = true;
 
