@@ -18,8 +18,9 @@ in
 
   boot.loader.grub = {
     enable = true;
-    version = 2;
-    device = "/dev/vda";
+    efiSupport = false;
+    devices = [ "/dev/disk/by-id/ata-SAMSUNG_MZ7LM480HCHP-00003_S1YJNXAG800126" "/dev/disk/by-id/ata-SAMSUNG_MZ7LM480HCHP-00003_S1YJNXAG800130" ];
+    copyKernels = true;
   };
 
   boot.initrd.kernelModules = [
@@ -51,14 +52,6 @@ in
     "virtio_scsi"
     "xhci_pci"
   ];
-
-
-  boot.loader.systemd-boot.enable = false;
-  boot.loader.grub = {
-    efiSupport = false;
-    devices = [ "/dev/disk/by-id/ata-SAMSUNG_MZ7LM480HCHP-00003_S1YJNXAG800126" "/dev/disk/by-id/ata-SAMSUNG_MZ7LM480HCHP-00003_S1YJNXAG800130" ];
-    copyKernels = true;
-  };
 
   boot.supportedFilesystems = [ "zfs" ];
 

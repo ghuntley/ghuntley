@@ -18,6 +18,7 @@ in
     pkgs.iotop
     pkgs.lazygit
     pkgs.lsof
+    pkgs.molly-guard
     pkgs.neovim
     pkgs.nixpkgs-fmt
     pkgs.opentelemetry-collector

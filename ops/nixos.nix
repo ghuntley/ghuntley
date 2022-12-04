@@ -6,7 +6,8 @@
 { depot, lib, pkgs, ... }@args:
 
 let inherit (lib) findFirst isAttrs;
-in rec {
+in
+rec {
   # This provides our standard set of arguments to all NixOS modules.
   baseModule = { ... }: {
     # Ensure that pkgs == third_party.nix
