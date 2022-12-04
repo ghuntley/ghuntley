@@ -7,5 +7,8 @@
   prd-bne-ca
   prd-bne-code
   prd-bne-ts
+  prd-bne-time
+  prd-bne-proxy
+  prd-bne-smtp
   prd-fsn1-dc11-1880953
 ])

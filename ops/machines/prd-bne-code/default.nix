@@ -58,7 +58,7 @@ in
   networking.interfaces.ens3.useDHCP = true;
 
   # TODO(security): migrate from public ssh to tailscale only ssh
-  networking.firewall.interfaces."ens3".allowedTCPPorts = lib.optionals (config.services.openssh.enable) [ 22 ];
+  networking.firewall.interfaces."ens3".allowedTCPPorts = [ 22 ];
 
   services.openssh.enable = true;
 
@@ -75,6 +75,19 @@ in
 
   services.depot.josh.enable = true;
   services.depot.sourcegraph.enable = true;
+
+  services.nginx.virtualHosts.install = {
+    serverName = "install.fediversehosting.net";
+
+    enableACME = true;
+    forceSSL = true;
+
+    extraConfig = ''
+      location = / {
+        return 301 https://temp.sh/bwCYU/nixos-23.05pre-git-x86_64-linux.iso;
+      }
+    '';
+  };
 
   services.nginx.virtualHosts.search = {
     serverName = "search.fediversehosting.net";

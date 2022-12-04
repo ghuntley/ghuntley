@@ -65,12 +65,18 @@ rec {
   prd-bne-ca-System = (nixosFor depot.ops.machines.prd-bne-ca).system;
   prd-bne-cache-System = (nixosFor depot.ops.machines.prd-bne-cache).system;
   prd-bne-code-System = (nixosFor depot.ops.machines.prd-bne-code).system;
+  prd-bne-proxy-System = (nixosFor depot.ops.machines.prd-bne-proxy).system;
+  prd-bne-smtp-System = (nixosFor depot.ops.machines.prd-bne-smtp).system;
+  prd-bne-time-System = (nixosFor depot.ops.machines.prd-bne-time).system;
   prd-bne-ts-System = (nixosFor depot.ops.machines.prd-bne-ts).system;
   prd-fsn1-dc11-1880953-System = (nixosFor depot.ops.machines.prd-fsn1-dc11-1880953).system;
   meta.ci.targets = [
     "prd-bne-ca-System"
     "prd-bne-cache-System"
     "prd-bne-code-System"
+    "prd-bne-proxy-System"
+    "prd-bne-smtp-System"
+    "prd-bne-time-System"
     "prd-bne-ts-System"
     "prd-fsn1-dc11-1880953-System"
   ];

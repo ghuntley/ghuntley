@@ -49,7 +49,7 @@ in
   }];
 
 
-  networking.hostName = "ca";
+  networking.hostName = "time";
   networking.domain = "core.corp";
 
   networking.useDHCP = true;

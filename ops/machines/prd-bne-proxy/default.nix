@@ -49,7 +49,7 @@ in
   }];
 
 
-  networking.hostName = "ca";
+  networking.hostName = "proxy";
   networking.domain = "core.corp";
 
   networking.useDHCP = true;
