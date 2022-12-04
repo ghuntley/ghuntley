@@ -12,6 +12,7 @@ let
 
 in
 {
+
   imports = [
     (mod "defaults-binarylane.nix")
   ];
@@ -67,4 +68,6 @@ in
     maxFreed = 5; # GiB
     preserveGenerations = "14d";
   };
+
+  system.stateVersion = "22.11";
 }

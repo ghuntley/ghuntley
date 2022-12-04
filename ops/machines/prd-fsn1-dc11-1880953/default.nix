@@ -164,4 +164,5 @@ in
   #   preserveGenerations = "31d";
   # };
 
+  system.stateVersion = "22.11";
 }
