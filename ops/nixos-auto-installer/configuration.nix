@@ -37,6 +37,7 @@
     curl
     direnv
     file
+    gh
     git
     htop
     lsof
