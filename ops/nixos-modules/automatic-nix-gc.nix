@@ -8,7 +8,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.services.depot.automatic-gc;
+  cfg = config.services.depot.automatic-nix-gc;
   description = "Automatically collect Nix garbage";
 
   GiBtoKiB = n: n * 1024 * 1024;
