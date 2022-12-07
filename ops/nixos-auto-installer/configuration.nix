@@ -35,6 +35,7 @@
 
   environment.systemPackages = with pkgs; [
     curl
+    direnv
     file
     git
     htop
@@ -42,9 +43,11 @@
     nano
     openssl
     pciutils
+    pre-commit
     pv
     tmux
     tree
+    tmux
     unar
     vim_configurable
     wget
