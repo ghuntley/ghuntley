@@ -35,7 +35,7 @@ let
   '';
 in
 {
-  options.services.depot.automatic-gc = {
+  options.services.depot.automatic-nix-gc = {
     enable = lib.mkEnableOption description;
 
     interval = lib.mkOption {
@@ -76,7 +76,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    systemd.services.automatic-gc = {
+    systemd.services.automatic-nix-gc = {
       inherit description;
       script = "${gcScript}";
       serviceConfig.Type = "oneshot";
