@@ -156,7 +156,7 @@ in
 
 
   # Automatically collect garbage from the Nix store.
-  # services.depot.automatic-gc = {
+  # services.depot.automatic-nix-gc = {
   #   enable = true;
   #   interval = "1 hour";
   #   diskThreshold = 64; # GiB

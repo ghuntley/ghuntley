@@ -24,14 +24,14 @@
       ls -ltr
       EOF
     '';
-};
+  };
 
 
-boot.initrd.postDeviceCommands = ''
-      echo 'waiting for root device to be opened...'
-      mkfifo /tmp/continue
-      cat /tmp/continue
-    '';
+  boot.initrd.postDeviceCommands = ''
+    echo 'waiting for root device to be opened...'
+    mkfifo /tmp/continue
+    cat /tmp/continue
+  '';
 
 
 }

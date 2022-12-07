@@ -21,7 +21,7 @@ in
 
     (mod "nginx/self-redirect.nix")
 
-    (mod "automatic-gc.nix")
+    (mod "automatic-nix-gc.nix")
 
     (mod "boot.nix")
     (mod "initrd-zfs-unlock.nix")

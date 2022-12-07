@@ -82,7 +82,7 @@ in
       serviceConfig.Type = "oneshot";
     };
 
-    systemd.timers.automatic-gc = {
+    systemd.timers.automatic-nix-gc = {
       inherit description;
       requisite = [ "nix-daemon.service" ];
       wantedBy = [ "multi-user.target" ];

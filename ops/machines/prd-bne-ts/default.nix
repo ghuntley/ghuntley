@@ -63,7 +63,7 @@ in
   networking.firewall.interfaces."ens3".allowedTCPPorts = lib.optionals (config.services.openssh.enable) [ 22 ];
 
   # # Automatically collect garbage from the Nix store.
-  # services.depot.automatic-gc = {
+  # services.depot.automatic-nix-gc = {
   #   enable = true;
   #   interval = "1 hour";
   #   diskThreshold = 64; # GiB

@@ -16,7 +16,7 @@ let
   '';
 in
 {
-  options.services.depot.automatic-gc = {
+  options.services.depot.automatic-nix-gc = {
     enable = lib.mkEnableOption description;
 
     interval = lib.mkOption {
