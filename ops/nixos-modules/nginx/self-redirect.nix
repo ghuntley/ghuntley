@@ -16,15 +16,15 @@ in
     ./default.nix
   ];
 
-  config.services.nginx.virtualHosts."${host}" = {
-    serverName = host;
-    addSSL = true; # SSL is not forced on these redirects
-    enableACME = true;
+  # config.services.nginx.virtualHosts."${host}" = {
+  #   serverName = host;
+  #   addSSL = true; # SSL is not forced on these redirects
+  #   enableACME = true;
 
-    extraConfig = ''
-      location = / {
-        return 302 https://sourcegraph.com/search?q=context:global+repo:fediversehosting/depot+${config.networking.hostName};
-      }
-    '';
-  };
+  #   extraConfig = ''
+  #     location = / {
+  #       return 302 https://sourcegraph.com/search?q=context:global+repo:fediversehosting/depot+${config.networking.hostName};
+  #     }
+  #   '';
+  # };
 }

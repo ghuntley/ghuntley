@@ -47,8 +47,8 @@ in
       ];
 
       volumes = [
-        "/var/lib/sourcegraph/etc:/etc/sourcegraph"
-        "/var/lib/sourcegraph/data:/var/opt/sourcegraph"
+        "/srv/sourcegraph/etc:/etc/sourcegraph"
+        "/srv/sourcegraph/data:/var/opt/sourcegraph"
       ];
 
       # TODO(tazjin): Figure out what changed in the protocol.

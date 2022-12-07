@@ -84,7 +84,7 @@ in
 
     extraConfig = ''
       location = / {
-        return 301 https://temp.sh/bwCYU/nixos-23.05pre-git-x86_64-linux.iso;
+        return 301 https://ghuntley.com/linktree/install.iso;
       }
     '';
   };
@@ -113,7 +113,6 @@ in
 
   services.nginx.virtualHosts.code = {
     serverName = "code.fediversehosting.net";
-    serverAliases = [ "code" "code.dmz" ];
     enableACME = true;
     forceSSL = true;
 
