@@ -15,6 +15,7 @@ in
   imports = [
     (mod "defaults-baremetal.nix")
     (mod "libvirt.nix")
+    (mod "tailscale-exit-node.nix")
   ];
 
   boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
