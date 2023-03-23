@@ -3,6 +3,7 @@
 
 { pkgs, config, lib, ... }: {
 
+  nix.autoOptimiseStore = true;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
 }
