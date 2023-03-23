@@ -1,0 +1,110 @@
+{
+    "agenix": {
+        "branch": "main",
+        "description": "age-encrypted secrets for NixOS",
+        "homepage": "https://matrix.to/#/#agenix:nixos.org",
+        "owner": "ryantm",
+        "repo": "agenix",
+        "rev": "03b51fe8e459a946c4b88dcfb6446e45efb2c24e",
+        "sha256": "05hx6zz9ah8a4mympc8pazi6wsk84lh8myzi8zcv0d2chrjpz2h0",
+        "type": "tarball",
+        "url": "https://github.com/ryantm/agenix/archive/03b51fe8e459a946c4b88dcfb6446e45efb2c24e.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "flake-compat": {
+        "branch": "master",
+        "description": null,
+        "homepage": null,
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "rev": "35bb57c0c8d8b62bbfd284272c928ceb64ddbde9",
+        "sha256": "1prd9b1xx8c0sfwnyzkspplh30m613j42l1k789s521f4kv4c2z2",
+        "type": "tarball",
+        "url": "https://github.com/edolstra/flake-compat/archive/35bb57c0c8d8b62bbfd284272c928ceb64ddbde9.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "microvm": {
+        "branch": "main",
+        "description": "NixOS MicroVMs",
+        "homepage": "https://astro.github.io/microvm.nix/",
+        "owner": "astro",
+        "repo": "microvm.nix",
+        "rev": "31d3c1a05fba175e5d96f16256296ad4088ca9f5",
+        "sha256": "14mkjfyhj6f58kzx46clsmw1b6kzwbc2cb2h2c631zi7f57cf1id",
+        "type": "tarball",
+        "url": "https://github.com/astro/microvm.nix/archive/31d3c1a05fba175e5d96f16256296ad4088ca9f5.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "naersk": {
+        "branch": "master",
+        "description": "Build rust crates in Nix. No configuration, no code generation, no IFD. Sandbox friendly. [maintainer: @Patryk27]",
+        "homepage": "",
+        "owner": "nmattia",
+        "repo": "naersk",
+        "rev": "88cd22380154a2c36799fe8098888f0f59861a15",
+        "sha256": "1wxi05lz4p2484w7iyw4k4fkxsqq8lkcsyjb87i34i40yz6fxwk6",
+        "type": "tarball",
+        "url": "https://github.com/nmattia/naersk/archive/88cd22380154a2c36799fe8098888f0f59861a15.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixos-vscode-server": {
+        "branch": "master",
+        "description": "Visual Studio Code Server support in NixOS",
+        "homepage": null,
+        "owner": "msteen",
+        "repo": "nixos-vscode-server",
+        "rev": "57f1716bc625d2892579294cc207956679e3d94c",
+        "sha256": "0ahgyd2swkapimvf70ah2y55wpn2hdh1wymfh6492xrkv5x91sqz",
+        "type": "tarball",
+        "url": "https://github.com/msteen/nixos-vscode-server/archive/57f1716bc625d2892579294cc207956679e3d94c.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgs": {
+        "branch": "nixos-unstable",
+        "description": "Nix Packages collection",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "19cf008bb18e47b6e3b4e16e32a9a4bdd4b45f7e",
+        "sha256": "0myq7fnykna5qazbk6hdgahy148yd7f5l8nrxhzllj67y86a5sxw",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/19cf008bb18e47b6e3b4e16e32a9a4bdd4b45f7e.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgs-stable": {
+        "branch": "nixos-21.11",
+        "description": "Nix Packages collection",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "eabc38219184cc3e04a974fe31857d8e0eac098d",
+        "sha256": "04ffwp2gzq0hhz7siskw6qh9ys8ragp7285vi1zh8xjksxn1msc5",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/eabc38219184cc3e04a974fe31857d8e0eac098d.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "otel-cli": {
+        "branch": "main",
+        "description": "OpenTelemetry command-line tool for sending events from shell scripts & similar environments",
+        "homepage": null,
+        "owner": "equinix-labs",
+        "repo": "otel-cli",
+        "rev": "6018f76ee976e4d80d24c7aa1a0fb0f6df71a4be",
+        "sha256": "083d2s2y7j747adb3256v2h62l8k4fyjvq78kh2nxvddfy6gzv45",
+        "type": "tarball",
+        "url": "https://github.com/equinix-labs/otel-cli/archive/6018f76ee976e4d80d24c7aa1a0fb0f6df71a4be.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "smtprelay": {
+        "branch": "master",
+        "description": "Simple Golang SMTP relay/proxy server",
+        "homepage": "",
+        "owner": "decke",
+        "repo": "smtprelay",
+        "rev": "10100b140d086f3dbb1fc339e274fdc4da67a0ba",
+        "sha256": "1084d91hr5fz8hirgs5qzxrqs46xxd8wfzz749cg2qhn5jgqyqfj",
+        "type": "tarball",
+        "url": "https://github.com/decke/smtprelay/archive/10100b140d086f3dbb1fc339e274fdc4da67a0ba.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    }
+}

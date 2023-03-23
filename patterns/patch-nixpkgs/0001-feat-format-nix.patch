@@ -1,0 +1,11 @@
+--- a/main.go	2022-07-14 01:32:58.081741158 +1000
++++ b/main.go	2022-07-14 01:34:03.289023749 +1000
+@@ -293,7 +293,7 @@
+ 		lic, err = executeTemplate(tmpl, data, "/**", " * ", " */")
+ 	case ".cc", ".cpp", ".cs", ".go", ".hcl", ".hh", ".hpp", ".m", ".mm", ".proto", ".rs", ".swift", ".dart", ".groovy", ".v", ".sv":
+ 		lic, err = executeTemplate(tmpl, data, "", "// ", "")
+-	case ".py", ".sh", ".yaml", ".yml", ".dockerfile", "dockerfile", ".rb", "gemfile", ".tcl", ".bzl", ".pl", ".pp":
++	case ".py", ".sh", ".yaml", ".yml", ".dockerfile", "dockerfile", ".rb", "gemfile", ".tcl", ".bzl", ".pl", ".pp", ".nix":
+ 		lic, err = executeTemplate(tmpl, data, "", "# ", "")
+ 	case ".el", ".lisp":
+ 		lic, err = executeTemplate(tmpl, data, "", ";; ", "")

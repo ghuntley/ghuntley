@@ -1,0 +1,6 @@
+{
+  "schedule": "daily",
+  "ignoredFiles": ["third_party/*"],
+  "aggressiveCompression": "true",
+  "compressWiki": "false"
+}

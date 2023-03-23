@@ -1,0 +1,110 @@
+# Copyright (c) 2019 Vincent Ambo
+# Copyright (c) 2020-2021 The TVL Authors
+# SPDX-License-Identifier: MIT
+
+# This file defines the static Buildkite pipeline which attempts to
+# create the dynamic pipeline of all depot targets.
+#
+# If something fails during the creation of the pipeline, the fallback
+# is executed instead which will simply report an error to Gerrit.
+---
+env:
+  BUILDKITE_TOKEN_PATH: /run/agenix/buildkite-graphql-token
+steps:
+  # Create a revision number for the current commit for builds on
+  # canon.
+  #
+  # This writes data back to Gerrit using the Buildkite agent
+  # credentials injected through a git credentials helper.
+  #
+  # Revision numbers are defined as the number of commits in the
+  # lineage of HEAD, following only the first parent of merges.
+  - label: ":git:"
+    branches: "refs/heads/canon"
+    command: |
+      git -c 'credential.helper=gerrit-creds' \
+        push origin "HEAD:refs/r/$(git rev-list --count --first-parent HEAD)"
+
+  # Generate & upload dynamic build steps
+  - label: ":llama:"
+    key: "pipeline-gen"
+    command: |
+      set -ue
+
+      if test -n "$${GERRIT_CHANGE_URL-}"; then
+        echo "This is a build of [cl/$$GERRIT_CHANGE_ID]($$GERRIT_CHANGE_URL) (at patchset #$$GERRIT_PATCHSET)" | \
+          buildkite-agent annotate
+      fi
+
+      # Attempt to fetch a target map from a parent commit on canon,
+      # except on builds of canon itself.
+      [ "${BUILDKITE_BRANCH}" != "refs/heads/canon" ] && \
+        nix/buildkite/fetch-parent-targets.sh
+
+      PIPELINE_ARGS=""
+      if [[ -f tmp/parent-target-map.json ]]; then
+        PIPELINE_ARGS="--arg parentTargetMap tmp/parent-target-map.json"
+      fi
+
+      nix-build --option restrict-eval true --include "depot=$${PWD}"\
+        --allowed-uris 'https://' \
+        -A ops.pipelines.depot \
+        -o pipeline --show-trace $$PIPELINE_ARGS
+
+      # Steps need to be uploaded in reverse order because pipeline
+      # upload prepends instead of appending.
+      ls pipeline/build-chunk-*.json | tac | while read chunk; do
+        buildkite-agent pipeline upload $$chunk
+      done
+
+      buildkite-agent artifact upload "pipeline/*"
+
+  # Wait for all previous steps to complete.
+  - wait: null
+    continue_on_failure: true
+
+  # Exit with success or failure depending on whether any other steps
+  # failed.
+  #
+  # This information is checked by querying the Buildkite GraphQL API
+  # and fetching the count of failed steps.
+  #
+  # This step must be :duck: (yes, really!) because the post-command
+  # hook will inspect this name.
+  #
+  # Note that this step has requirements for the agent environment, which
+  # are enforced in our NixOS configuration:
+  #
+  #  * curl and jq must be on the $PATH of build agents
+  #  * besadii configuration must be readable to the build agents
+  - label: ":duck:"
+    key: ":duck:"
+    command: |
+      set -ueo pipefail
+
+      readonly FAILED_JOBS=$(curl 'https://graphql.buildkite.com/v1' \
+        --silent \
+        -H "Authorization: Bearer $(cat ${BUILDKITE_TOKEN_PATH})" \
+        -d "{\"query\": \"query BuildStatusQuery { build(uuid: \\\"$BUILDKITE_BUILD_ID\\\") { jobs(passed: false) { count } } }\"}" | \
+        jq -r '.data.build.jobs.count')
+
+      echo "$$FAILED_JOBS build jobs failed."
+
+      if (( $$FAILED_JOBS > 0 )); then
+        exit 1
+      fi
+
+  # After duck, on success, upload and run any release steps that were
+  # output by the dynamic pipeline.
+  - label: ":arrow_heading_down:"
+    depends_on:
+      - step: ":duck:"
+        allow_failure: false
+    command: |
+      set -ueo pipefail
+
+      buildkite-agent artifact download "pipeline/*" .
+
+      find ./pipeline -name 'release-chunk-*.json' | tac | while read chunk; do
+        buildkite-agent pipeline upload $$chunk
+      done

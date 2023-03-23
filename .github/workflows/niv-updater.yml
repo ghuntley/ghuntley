@@ -1,0 +1,19 @@
+# Copyright (c) 2022 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+# SPDX-License-Identifier: Proprietary
+
+name: Automated niv-managed dependency updates
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    # run this every day at 4:00am
+    - cron: "0 4 * * *"
+jobs:
+  niv-updater:
+    name: "Create PRs for niv-managed dependencies"
+    runs-on: self-hosted
+    steps:
+      # notice there is no checkout step
+      - name: niv-updater-action
+        uses: knl/niv-updater-action@v10
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

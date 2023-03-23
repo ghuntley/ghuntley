@@ -1,0 +1,27 @@
+{
+	"name": "Existing Dockerfile",
+
+	"context": "..",
+
+	"dockerFile": "../.gitpod.Dockerfile",
+
+	"remoteUser": "gitpod",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"bbenoist.Nix",
+				"haskell.haskell",
+				"RobbOwen.synthwave-vscode",
+				"golang.go",
+				"ms-dotnettools.csharp",
+				"EditorConfig.EditorConfig",
+				"ms-python.python",
+				"4ops.terraform",
+				"HashiCorp.terraform",
+				"ms-vscode.cpptools-extension-pack",
+				"jnoortheen.nix-ide",
+				"coder.coder-remote"
+			]
+		}
+	}
+}
