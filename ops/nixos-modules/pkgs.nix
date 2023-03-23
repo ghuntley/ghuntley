@@ -35,6 +35,8 @@ in
     eval "$(starship init bash)"
   '';
 
+  programs.neovim.defaultEditor = true;
+
   programs.mtr.enable = true;
 
   programs.mosh.enable = true;
