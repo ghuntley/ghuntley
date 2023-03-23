@@ -1,0 +1,47 @@
+# Copyright (c) 2022 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+# SPDX-License-Identifier: Proprietary
+
+name: Automated dependency updates
+on:
+  workflow_dispatch:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    # run this every day at 4:00am
+    - cron: "0 4 * * *"
+
+# Cancel in-progress runs for pull requests when developers push
+# additional changes
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  depot-src-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - uses: cachix/install-nix-action@v20
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - uses: cachix/cachix-action@v12
+        with:
+          name: ghuntley
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - uses: JRMurr/direnv-nix-action@v2
+        with:
+          install-nix: "false"
+          cache-store: "true"
+
+      - run: direnv exec . depot-src-update
+
+      - uses: gr2m/create-or-update-pull-request-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          title:  "feat(depot-src-update): automated dependency update"
+          commit-message: "feat(depot-src-update): automated dependency update"
