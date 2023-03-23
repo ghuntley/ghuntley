@@ -5,10 +5,35 @@ name: "Build"
 on:
   pull_request:
   push:
+  workflow_dispatch:
+
+# Cancel in-progress runs for pull requests when developers push
+# additional changes
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: nix-env -i direnv
+
+      - uses: cachix/install-nix-action@v20
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - uses: cachix/cachix-action@v12
+        with:
+          name: ghuntley
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - uses: JRMurr/direnv-nix-action@v2
+        with:
+          install-nix: "false"
+          cache-store: "true"
+
+      - run: direnv exec . pre-commit run --all-files
+
       - run: direnv exec . depot build
+      - run: direnv exec . depot build //ops/nixos
