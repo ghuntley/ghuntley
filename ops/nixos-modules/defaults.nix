@@ -23,6 +23,7 @@ in
     (mod "fail2ban.nix")
     (mod "i18n.nix")
     (mod "known-hosts.nix")
+    (mod "nix.nix")
     (mod "pkgs.nix")
     (mod "sudo.nix")
     (mod "sysctl.nix")
