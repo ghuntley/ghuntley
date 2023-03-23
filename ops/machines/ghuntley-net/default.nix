@@ -14,6 +14,7 @@ in
 {
   imports = [
     (mod "defaults-baremetal.nix")
+    (mod "docker.nix")
     (mod "libvirt.nix")
     (mod "tailscale-exit-node.nix")
   ];
