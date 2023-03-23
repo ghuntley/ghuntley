@@ -14,6 +14,7 @@ in
 {
   imports = [
     (mod "defaults-baremetal.nix")
+    (mod "cachix-agent.nix")
     (mod "docker.nix")
     (mod "libvirt.nix")
     (mod "tailscale-exit-node.nix")
@@ -194,6 +195,18 @@ in
     maxFreed = 128; # GiB
     preserveGenerations = "31d";
   };
+
+  # Configure secrets for services that need them.
+  age.secrets =
+    let
+      secretFile = name: depot.ops.secrets."${name}.age";
+    in
+    {
+      cachix-agent-token.file = secretFile "ghuntley-net-cachix-agent-token";
+      cachix-agent-token.path = "/etc/cachix-agent.token";
+      cachix-agent-token.symlink = false;
+    };
+
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

@@ -38,4 +38,6 @@ in
 {
   "ssh-initrd-ed25519-key.age" = prdDefault;
   "ssh-initrd-ed25519-pub.age" = prdDefault;
+
+  "ghuntley-net-cachix-agent-token.age" = prdDefault;
 }
