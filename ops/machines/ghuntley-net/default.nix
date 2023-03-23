@@ -14,6 +14,7 @@ in
 {
   imports = [
     (mod "defaults-baremetal.nix")
+    (mod "libvirt.nix")
   ];
 
   boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
