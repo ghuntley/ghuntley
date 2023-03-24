@@ -10,6 +10,7 @@ let
     IFS=$'\n\t'
 
     cd $DEPOT_ROOT/ops/dns
+    terraform init
     terraform "$@"
   '';
 
