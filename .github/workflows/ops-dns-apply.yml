@@ -7,6 +7,10 @@ on:
     branches:
       - trunk
   workflow_dispatch:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    # run this every day at 1:00am
+    - cron: "0 1 * * *"
 
 # Cancel in-progress runs for pull requests when developers push
 # additional changes
