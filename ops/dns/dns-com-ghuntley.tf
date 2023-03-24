@@ -6,6 +6,7 @@ resource "cloudflare_record" "com_ghuntley_apex" {
   name    = "@"
   type    = "A"
   value   = var.com_ghuntley_ipv4
+  proxied = true
 }
 
 # resource "cloudflare_record" "com_ghuntley_apex_ipv6" {
@@ -13,6 +14,7 @@ resource "cloudflare_record" "com_ghuntley_apex" {
 #   name    = "@"
 #   type    = "AAAA"
 #   value   = var.com_ghuntley_ipv6
+#   proxied = true
 # }
 
 /**
@@ -144,6 +146,7 @@ resource "cloudflare_record" "com_ghuntley_fediverse" {
   name    = "fediverse"
   type    = "A"
   value   = var.com_ghuntley_ipv4
+  proxied = true
 }
 
 # resource "cloudflare_record" "com_ghuntley_fediverse_ipv6" {
@@ -151,6 +154,7 @@ resource "cloudflare_record" "com_ghuntley_fediverse" {
 #   name    = "fediverse"
 #   type    = "AAAA"
 #   value   = var.com_ghuntley_ipv6
+#  proxied = true
 # }
 
 resource "cloudflare_record" "com_ghuntley_calendar" {
@@ -186,6 +190,7 @@ resource "cloudflare_record" "com_ghuntley_www" {
   name    = "www"
   type    = "A"
   value   = var.com_ghuntley_ipv4
+  proxied = true
 }
 
 # resource "cloudflare_record" "com_ghuntley_www_ipv6" {
@@ -193,4 +198,5 @@ resource "cloudflare_record" "com_ghuntley_www" {
 #   name    = "www"
 #   type    = "AAAA"
 #   value   = var.com_ghuntley_ipv6
+#   proxied = true
 # }
