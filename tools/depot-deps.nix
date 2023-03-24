@@ -47,6 +47,7 @@ depot.nix.lazy-deps {
   tmate.attr = "third_party.nixpkgs.tmate";
   tmux.attr = "third_party.nixpkgs.tmux";
   wget.attr = "third_party.nixpkgs.wget";
+  unzip.attr = "third_party.nixpkgs.unzip";
 
   # programming
   ghc.attr = "third_party.nixpkgs.haskell.compiler.ghc923";
