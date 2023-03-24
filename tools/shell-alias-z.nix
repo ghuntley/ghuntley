@@ -11,6 +11,7 @@ let
 
     ${depot.tools.depot-addlicense}/bin/depot-addlicense
     ${depot.tools.depot-fmt}/bin/depot-fmt
+    ${depot.tools.shell-alias-deploy-dns}/bin/deploy-dns validate
     ${pkgs.lazygit}/bin/lazygit
   '';
 

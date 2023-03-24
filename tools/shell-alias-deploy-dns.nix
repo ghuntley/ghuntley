@@ -10,7 +10,9 @@ let
     IFS=$'\n\t'
 
     cd $DEPOT_ROOT/ops/dns
-    terraform init
+    if [ ! -d ".terraform" ]; then
+      terraform init
+    fi
     terraform "$@"
   '';
 
