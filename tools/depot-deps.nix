@@ -9,6 +9,7 @@
 depot.nix.lazy-deps {
 
   # shell aliases
+  deploy-nixos.attr = "tools.shell-alias-deploy-nixos";
   lg.attr = "tools.shell-alias-lg";
   z.attr = "tools.shell-alias-z";
 
