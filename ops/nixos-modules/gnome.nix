@@ -6,4 +6,5 @@
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
   networking.networkmanager.enable = false;
+  services.openssh.settings.X11Forwarding = true;
 }
