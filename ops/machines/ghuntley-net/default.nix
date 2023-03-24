@@ -175,17 +175,18 @@ in
 
   #networking.firewall.interfaces."eno1".allowedTCPPorts = lib.optionals (config.services.openssh.enable) [ 22 ];
 
-  networking.interfaces."eno1".ipv4.addresses = [
-    {
-      address = "51.161.196.125";
-      prefixLength = 24;
-    }
-  ];
-
-  networking.defaultGateway = "51.161.196.254";
+  networking.interfaces."eno1".useDHCP = true;
+  networking.interfaces."br0".useDHCP = true;
 
   networking.nameservers = [ "8.8.8.8" ];
 
+  networking.bridges."br0".interfaces = [ "eno1" ];
+  networking.interfaces."br0".ipv4.addresses = [
+    {
+      address = "172.16.65.1";
+      prefixLength = 24;
+    }
+  ];
 
   # Automatically collect garbage from the Nix store.
   services.depot.automatic-nix-gc = {

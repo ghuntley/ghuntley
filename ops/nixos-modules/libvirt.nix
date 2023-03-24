@@ -9,9 +9,11 @@
   virtualisation.libvirtd.enable = true;
   virtualisation.libvirtd.onBoot = "start";
   virtualisation.libvirtd.onShutdown = "suspend";
+  virtualisation.libvirtd.allowedBridges = [ "br0" ];
 
   environment.systemPackages = with pkgs; [
+    qemu_kvm
     libguestfs
+    virt-manager
   ];
-
 }
