@@ -20,7 +20,8 @@
 				"HashiCorp.terraform",
 				"ms-vscode.cpptools-extension-pack",
 				"jnoortheen.nix-ide",
-				"coder.coder-remote"
+				"coder.coder-remote",
+				"vscodevim.vim"
 			]
 		}
 	}
