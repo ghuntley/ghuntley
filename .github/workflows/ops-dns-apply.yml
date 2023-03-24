@@ -11,7 +11,7 @@ on:
 # Cancel in-progress runs for pull requests when developers push
 # additional changes
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-ops-dns-apply-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
