@@ -6,6 +6,9 @@ on:
   push:
     branches:
       - '!trunk'
+    paths:
+      - 'ops/dns/**'
+
   pull_request:
   workflow_dispatch:
 
