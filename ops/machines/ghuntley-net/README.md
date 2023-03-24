@@ -71,6 +71,7 @@ zpool create \
     -O dnodesize=auto \
     -O normalization=formD \
     -O relatime=on \
+    -O dedup=on \
     -O xattr=sa \
     -O mountpoint=/ \
     rpool \
