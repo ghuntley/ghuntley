@@ -10,4 +10,8 @@
   virtualisation.libvirtd.onBoot = "start";
   virtualisation.libvirtd.onShutdown = "suspend";
 
+  environment.systemPackages = with pkgs; [
+    libguestfs
+  ];
+
 }
