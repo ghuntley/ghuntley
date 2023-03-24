@@ -1,0 +1,59 @@
+# Copyright (c) 2022 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+# SPDX-License-Identifier: Proprietary
+
+name: "//services/dev-ghuntley: coder push"
+
+on:
+  push:
+    branches:
+      - trunk
+    paths:
+      - 'services/dev-ghuntley/templates/**'
+
+  workflow_dispatch:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    # run this every day at 4:00am
+    - cron: "0 4 * * *"
+
+# Cancel in-progress runs for pull requests when developers push
+# additional changes
+concurrency:
+  group: ${{ github.workflow }}-services-dev-ghuntley-templates-push-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  services-dev-ghuntley-templates-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Get short commit SHA # to use as template version name
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+      - name: "Install latest version of Coder"
+        run: |
+          curl -L https://coder.com/install.sh | sh
+
+      - name: "Push template"
+        run: |
+          cd services/dev-ghuntley/templates
+          coder templates push --directory ./docker \
+            --name ${{ steps.vars.outputs.sha_short }} \
+            --yes
+
+          coder templates push --directory ./gcp-windows-server-2022 \
+            --name ${{ steps.vars.outputs.sha_short }} \
+            --yes
+
+          coder templates push --directory ./docker-vnc-ubuntu \
+            --name ${{ steps.vars.outputs.sha_short }} \
+            --yes
+        env:
+          # Consumed by Coder CLI
+          CODER_URL: https://ghuntley.dev
+          CODER_SESSION_TOKEN: ${{ secrets.DEV_GHUNTLEY_CODER_SESSION_TOKEN }}
