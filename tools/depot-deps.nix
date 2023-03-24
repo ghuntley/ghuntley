@@ -33,6 +33,7 @@ depot.nix.lazy-deps {
   pre-commit.attr = "third_party.nixpkgs.pre-commit";
 
   # devshell
+  ag.attr = "third_party.nixpkgs.silver-searcher";
   ack.attr = "third_party.nixpkgs.ack";
   agenix.attr = "third_party.agenix.cli";
   bat.attr = "third_party.nixpkgs.bat";
