@@ -31,7 +31,7 @@ jobs:
         with:
           name: ghuntley
 
-      - run: direnv exec . cd ops/dns && terraform apply >> $GITHUB_STEP_SUMMARY
+      - run: direnv exec . "cd ops/dns && terraform apply" >> $GITHUB_STEP_SUMMARY
         env:
           TF_VAR_cloudflare_email: ${{ secrets.TF_VAR_cloudflare_email }}
           TF_VAR_cloudflare_api_key: ${{ secrets.TF_VAR_cloudflare_api_key }}
