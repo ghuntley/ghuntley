@@ -34,7 +34,8 @@ depot.nix.lazy-deps {
   curl.attr = "third_party.nixpkgs.curl";
   elinks.attr = "third_party.nixpkgs.elinks";
   hash-password.attr = "tools.hash-password";
-  lazyfgit.attr = "third_party.nixpkgs.lazygit";
+  lazygit.attr = "third_party.nixpkgs.lazygit";
+  lg.attr = "tools.shell-aliases";
   moreutils.attr = "third_party.nixpkgs.moreutils";
   otel-cli.attr = "third_party.otel-cli";
   tmate.attr = "third_party.nixpkgs.tmate";
