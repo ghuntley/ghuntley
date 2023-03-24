@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Proprietary
 
 { pkgs, config, lib, ... }: {
-  # disable documentation to speed up build
-  documentation.doc.enable = false;
-  documentation.enable = false;
-  documentation.info.enable = false;
-  documentation.man.enable = false;
-  documentation.nixos.enable = false;
+  # TODO(perf): disable documentation to speed up build
+  documentation.doc.enable = true;
+  documentation.enable = true;
+  documentation.info.enable = true;
+  documentation.man.enable = true;
+  documentation.nixos.enable = true;
 }
