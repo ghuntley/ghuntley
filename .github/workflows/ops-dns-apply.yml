@@ -32,7 +32,7 @@ jobs:
           install-nix: "false"
           cache-store: "false"
           
-      - run: direnv exec . "cd ops/dns && terraform plan" >> $GITHUB_STEP_SUMMARY
+      - run: direnv exec . deploy-dns plan >> $GITHUB_STEP_SUMMARY
         env:
           TF_VAR_cloudflare_email: ${{ secrets.TF_VAR_cloudflare_email }}
           TF_VAR_cloudflare_api_key: ${{ secrets.TF_VAR_cloudflare_api_key }}
