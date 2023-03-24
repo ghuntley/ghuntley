@@ -51,5 +51,5 @@ jobs:
 
       - uses: GrantBirki/comment@v2.0.3
         with:
-          body: $GITHUB_STEP_SUMMARY
+          file: $GITHUB_STEP_SUMMARY
           issue-number: ${{ github.event.number }}
