@@ -11,7 +11,8 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - uses: hmarr/auto-approve-action@v3.1.0
+      - uses: hmarr/auto-approve-action@v3
         if: github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]' || github.actor == 'imgbot'
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
+          review-message: "Auto approved automated PR"

@@ -153,11 +153,32 @@ resource "cloudflare_record" "com_ghuntley_fediverse" {
 #   value   = var.com_ghuntley_ipv6
 # }
 
+resource "cloudflare_record" "com_ghuntley_calendar" {
+  zone_id = var.com_ghuntley_cloudflare_zone_id
+  name    = "calendar"
+  type    = "CNAME"
+  value   = "ghs.googlehosted.com"
+}
+
+resource "cloudflare_record" "com_ghuntley_docs" {
+  zone_id = var.com_ghuntley_cloudflare_zone_id
+  name    = "docs"
+  type    = "CNAME"
+  value   = "ghs.googlehosted.com"
+}
+
 resource "cloudflare_record" "com_ghuntley_mg_email" {
   zone_id = var.com_ghuntley_cloudflare_zone_id
   name    = "email.mg"
   type    = "CNAME"
   value   = "mailgun.org"
+}
+
+resource "cloudflare_record" "com_ghuntley_mail" {
+  zone_id = var.com_ghuntley_cloudflare_zone_id
+  name    = "mail"
+  type    = "CNAME"
+  value   = "ghs.googlehosted.com"
 }
 
 resource "cloudflare_record" "com_ghuntley_www" {

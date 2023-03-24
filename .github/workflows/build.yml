@@ -5,6 +5,8 @@ name: "Build"
 on:
   pull_request:
   push:
+    branches:
+      - 'trunk'
   workflow_dispatch:
 
 # Cancel in-progress runs for pull requests when developers push
