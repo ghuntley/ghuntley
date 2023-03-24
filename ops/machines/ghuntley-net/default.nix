@@ -207,7 +207,7 @@ in
       cachix-agent-token.path = "/etc/cachix-agent.token";
       cachix-agent-token.symlink = false;
 
-      gcp-ghuntley-dev-json.file = secretFile "gcp-ghuntley-dev-json";
+      gcp-service-account-ghuntley-dev-token.file = secretFile "gcp-service-account-ghuntley-dev-token";
 
     };
 
