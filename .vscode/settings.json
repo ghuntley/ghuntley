@@ -1,0 +1,59 @@
+{
+  "cSpell.language": "en-GB",
+  "breadcrumbs.enabled": true,
+  "editor.fontLigatures": true,
+  "editor.minimap.enabled": true,
+  "editor.tabCompletion": "on",
+  "files.autoSave": "afterDelay",
+  "files.eol": "\n",
+  "git.autofetch": true,
+  "git.decorations.colors": true,
+  "git.fetchOnPull": true,
+  "git.ignoreLimitWarning": true,
+  "material-icon-theme.activeIconPack": "react",
+  "search.showLineNumbers": true,
+  "search.exclude": {
+    "**/gc-roots/**": true,
+    "**/result/*/**": true
+  },
+  "telemetry.enableTelemetry": false,
+  "terminal.integrated.copyOnSelection": true,
+  "todo.file.exclude": [
+    "**/gc-roots/**",
+    "**/third_party/*/**"
+  ],
+  "todo.timekeeping.created.enabled": true,
+  "todo.embedded.provider": "ag",
+  "vim.easymotion": true,
+  "vim.hlsearch": true,
+  "vim.incsearch": true,
+  "vim.useCtrlKeys": true,
+  "vim.useSystemClipboard": true,
+  "vim.insertModeKeyBindings": [
+    {
+      "before": ["j", "j"],
+      "after": ["<Esc>"]
+    }
+  ],
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": ["<leader>", "d"],
+      "after": ["d", "d"]
+    },
+    {
+      "before": ["<C-n>"],
+      "commands": [":nohl"]
+    },
+    {
+      "before": ["K"],
+      "commands": ["lineBreakInsert"],
+      "silent": true
+    }
+  ],
+  "vim.leader": "<space>",
+  "vim.handleKeys": {
+    "<C-a>": false,
+    "<C-f>": false
+  },
+  "workbench.colorTheme": "SynthWave '84"
+}

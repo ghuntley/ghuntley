@@ -11,6 +11,11 @@
         "jnoortheen.nix-ide",
         "coder.coder-remote",
         "vscodevim.vim",
-        "github.copilot"
+        "github.copilot",
+        "equinusocio.vsc-material-theme",
+        "fabiospampinato.vscode-todo-plus",
+        "formulahendry.auto-close-tag",
+        "formulahendry.auto-rename-tag",
+        "streetsidesoftware.code-spell-checker"
     ]
 }
