@@ -8,9 +8,14 @@ terraform {
     cloudflare = {
       source  = "cloudflare/cloudflare"
     }
-    aws = {
-      source  = "hashicorp/aws"
+    google = {
+      source  = "hashicorp/google"
     }
+  }
+
+  backend "gcs" {
+    bucket = "tfstate-ghuntley-net"
+    prefix = "terraform/dns"
   }
 }
 
@@ -20,6 +25,6 @@ provider "cloudflare" {
 }
 
 provider "google" {
-  project = "kbh-com"
+  project = "ghuntley-net"
   region  = "australia-southeast1"
 }

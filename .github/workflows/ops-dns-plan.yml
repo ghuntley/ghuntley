@@ -35,6 +35,7 @@ jobs:
 
       - run: direnv exec . deploy-dns plan > $GITHUB_STEP_SUMMARY
         env:
+          GOOGLE_CREDENTIALS: ${{ secrets.TFSTATE_GOOGLE_CREDENTIALS }}
           TF_VAR_cloudflare_email: ${{ secrets.TF_VAR_cloudflare_email }}
           TF_VAR_cloudflare_api_key: ${{ secrets.TF_VAR_cloudflare_api_key }}
           TF_VAR_com_ghuntley_cloudflare_zone_id: ${{ secrets.TF_VAR_com_ghuntley_cloudflare_zone_id }}
