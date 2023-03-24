@@ -30,7 +30,7 @@ jobs:
           name: ghuntley
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - uses: JRMurr/direnv-nix-action@v2
+      - uses: JRMurr/direnv-nix-action@v3
         with:
           install-nix: "false"
           cache-store: "true"

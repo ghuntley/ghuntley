@@ -31,7 +31,7 @@ jobs:
         with:
           nix_path: nixpkgs=channel:nixos-unstable
 
-      - uses: JRMurr/direnv-nix-action@v2
+      - uses: JRMurr/direnv-nix-action@v3
         with:
           install-nix: "false"
           cache-store: "false"
