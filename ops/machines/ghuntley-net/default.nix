@@ -14,6 +14,7 @@ in
 {
   imports = [
     (mod "defaults-baremetal.nix")
+    (mod "gnome.nix")
     (mod "cachix-agent.nix")
     (mod "docker.nix")
     (mod "libvirt.nix")
