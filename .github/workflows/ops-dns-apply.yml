@@ -47,7 +47,7 @@ jobs:
 
       - uses: GrantBirki/comment@v2.0.3
         with:
-          body: ${{ core.summary }}
+          body: $GITHUB_STEP_SUMMARY
           TF_VAR_cloudflare_email: ""
           TF_VAR_cloudflare_api_key: ""
           TF_VAR_com_ghuntley_cloudflare_zone_id: ""
