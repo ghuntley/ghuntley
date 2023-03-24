@@ -41,5 +41,7 @@ in
 
   "gcp-service-account-ghuntley-dev-token.age" = prdDefault;
 
+  "acme-cloudflare-api-token.age" = prdDefault;
+
   "ghuntley-net-cachix-agent-token.age" = prdDefault;
 }

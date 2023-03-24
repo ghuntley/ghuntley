@@ -207,6 +207,8 @@ in
       cachix-agent-token.path = "/etc/cachix-agent.token";
       cachix-agent-token.symlink = false;
 
+      acme-cloudflare-api-token.file = secretFile "acme-cloudflare-api-token";
+
       gcp-service-account-ghuntley-dev-token.file = secretFile "gcp-service-account-ghuntley-dev-token";
 
     };
