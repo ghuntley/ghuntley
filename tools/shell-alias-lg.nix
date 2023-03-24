@@ -5,8 +5,8 @@
 
 let
   lg = pkgs.writeShellScriptBin "lg" ''
-    exec ${pkgs.lazygit}/bin/lg "$@"
+    exec ${pkgs.lazygit}/bin/lazygit "$@"
   '';
 
 in
-depot-src.overrideAttrs (_: { })
+lg.overrideAttrs (_: { })

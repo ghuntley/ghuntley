@@ -8,6 +8,10 @@
 
 depot.nix.lazy-deps {
 
+  # shell aliases
+  lg.attr = "tools.shell-alias-lg";
+  z.attr = "tools.shell-alias-z";
+
   # depot
   age-keygen.attr = "third_party.nixpkgs.age";
   age.attr = "third_party.nixpkgs.age";
@@ -35,7 +39,6 @@ depot.nix.lazy-deps {
   elinks.attr = "third_party.nixpkgs.elinks";
   hash-password.attr = "tools.hash-password";
   lazygit.attr = "third_party.nixpkgs.lazygit";
-  lg.attr = "tools.shell-aliases";
   moreutils.attr = "third_party.nixpkgs.moreutils";
   otel-cli.attr = "third_party.otel-cli";
   tmate.attr = "third_party.nixpkgs.tmate";
