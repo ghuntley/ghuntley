@@ -12,7 +12,6 @@ let
     cd $DEPOT_ROOT/ops/dns
     terraform init
     terraform "$@"
-    exit $?
   '';
 
 in
