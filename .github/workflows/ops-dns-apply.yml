@@ -22,21 +22,7 @@ jobs:
   ops-dns-apply:
     runs-on: ubuntu-latest
     steps:
-      with:
-        TF_VAR_cloudflare_email: ${{ secrets.TF_VAR_cloudflare_email }}
-        TF_VAR_cloudflare_api_key: ${{ secrets.TF_VAR_cloudflare_api_key }}
-        TF_VAR_com_ghuntley_cloudflare_zone_id: ${{ secrets.TF_VAR_com_ghuntley_cloudflare_zone_id }}
-        TF_VAR_dev_ghuntley_cloudflare_zone_id: ${{ secrets.TF_VAR_dev_ghuntley_cloudflare_zone_id }}
-        TF_VAR_net_ghuntley_cloudflare_zone_id: ${{ secrets.TF_VAR_net_ghuntley_cloudflare_zone_id }}
-        TF_VAR_com_ghuntley_ipv4: ${{ secrets.TF_VAR_com_ghuntley_ipv4 }}
-        TF_VAR_com_ghuntley_ipv6: ${{ secrets.TF_VAR_com_ghuntley_ipv6 }}
-        TF_VAR_dev_ghuntley_ipv4: ${{ secrets.TF_VAR_dev_ghuntley_ipv4 }}
-        TF_VAR_dev_ghuntley_ipv6: ${{ secrets.TF_VAR_dev_ghuntley_ipv6 }}
-        TF_VAR_net_ghuntley_ipv4: ${{ secrets.TF_VAR_net_ghuntley_ipv4 }}
-        TF_VAR_net_ghuntley_ipv6: ${{ secrets.TF_VAR_net_ghuntley_ipv6 }}
-
-      - uses: actions/checkout@v3
-
+      - uses: actions/checkout@v3      
       - uses: cachix/install-nix-action@v20
         with:
           nix_path: nixpkgs=channel:nixos-unstable
@@ -45,20 +31,31 @@ jobs:
         with:
           name: ghuntley
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          TF_VAR_cloudflare_email: ${{ secrets.TF_VAR_cloudflare_email }}
+          TF_VAR_cloudflare_api_key: ${{ secrets.TF_VAR_cloudflare_api_key }}
+          TF_VAR_com_ghuntley_cloudflare_zone_id: ${{ secrets.TF_VAR_com_ghuntley_cloudflare_zone_id }}
+          TF_VAR_dev_ghuntley_cloudflare_zone_id: ${{ secrets.TF_VAR_dev_ghuntley_cloudflare_zone_id }}
+          TF_VAR_net_ghuntley_cloudflare_zone_id: ${{ secrets.TF_VAR_net_ghuntley_cloudflare_zone_id }}
+          TF_VAR_com_ghuntley_ipv4: ${{ secrets.TF_VAR_com_ghuntley_ipv4 }}
+          TF_VAR_com_ghuntley_ipv6: ${{ secrets.TF_VAR_com_ghuntley_ipv6 }}
+          TF_VAR_dev_ghuntley_ipv4: ${{ secrets.TF_VAR_dev_ghuntley_ipv4 }}
+          TF_VAR_dev_ghuntley_ipv6: ${{ secrets.TF_VAR_dev_ghuntley_ipv6 }}
+          TF_VAR_net_ghuntley_ipv4: ${{ secrets.TF_VAR_net_ghuntley_ipv4 }}
+          TF_VAR_net_ghuntley_ipv6: ${{ secrets.TF_VAR_net_ghuntley_ipv6 }}
 
       - run: direnv exec . cd ops/dns && terraform apply >> $GITHUB_STEP_SUMMARY
 
-    - uses: GrantBirki/comment@v2.0.3
-      with:
-        body: ${{ core.summary }}"
-        TF_VAR_cloudflare_email: ""
-        TF_VAR_cloudflare_api_key: ""
-        TF_VAR_com_ghuntley_cloudflare_zone_id: ""
-        TF_VAR_dev_ghuntley_cloudflare_zone_id: ""
-        TF_VAR_net_ghuntley_cloudflare_zone_id: ""
-        TF_VAR_com_ghuntley_ipv4: ""
-        TF_VAR_com_ghuntley_ipv6: ""
-        TF_VAR_dev_ghuntley_ipv4: ""
-        TF_VAR_dev_ghuntley_ipv6: ""
-        TF_VAR_net_ghuntley_ipv4: ""
-        TF_VAR_net_ghuntley_ipv6: ""
+      - uses: GrantBirki/comment@v2.0.3
+        with:
+          body: ${{ core.summary }}"
+          TF_VAR_cloudflare_email: ""
+          TF_VAR_cloudflare_api_key: ""
+          TF_VAR_com_ghuntley_cloudflare_zone_id: ""
+          TF_VAR_dev_ghuntley_cloudflare_zone_id: ""
+          TF_VAR_net_ghuntley_cloudflare_zone_id: ""
+          TF_VAR_com_ghuntley_ipv4: ""
+          TF_VAR_com_ghuntley_ipv6: ""
+          TF_VAR_dev_ghuntley_ipv4: ""
+          TF_VAR_dev_ghuntley_ipv6: ""
+          TF_VAR_net_ghuntley_ipv4: ""
+          TF_VAR_net_ghuntley_ipv6: ""
