@@ -127,6 +127,18 @@ in
       fsType = "zfs";
     };
 
+  fileSystems."/var/lib/libvirt" =
+    {
+      device = "rpool/nixos/var/lib/libvirt";
+      fsType = "zfs";
+    };
+
+  fileSystems."/var/lib/libvirt/images" =
+    {
+      device = "rpool/nixos/var/lib/libvirt/images";
+      fsType = "zfs";
+    };
+
   fileSystems."/var/log" =
     {
       device = "rpool/nixos/var/log";

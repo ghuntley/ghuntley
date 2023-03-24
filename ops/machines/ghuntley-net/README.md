@@ -99,11 +99,6 @@ zfs set com.sun:auto-snapshot=false rpool/nixos/nix
 mkdir /mnt/nix
 mount -t zfs rpool/nixos/nix /mnt/nix
 
-zfs create -o mountpoint=legacy     rpool/nixos/tmp
-zfs set com.sun:auto-snapshot=false rpool/nixos/tmp
-mkdir /mnt/tmp
-mount -t zfs rpool/nixos/tmp /mnt/tmp
-
 zfs create -o mountpoint=legacy rpool/nixos/home
 mkdir /mnt/home
 mount -t zfs  rpool/nixos/home /mnt/home
@@ -115,6 +110,15 @@ mount -t zfs  rpool/nixos/var /mnt/var
 zfs create -o mountpoint=legacy rpool/nixos/var/lib
 mkdir /mnt/var/lib
 mount -t zfs  rpool/nixos/var/lib /mnt/var/lib
+
+zfs create -o mountpoint=legacy rpool/nixos/var/lib/libvirt
+mkdir /mnt/var/lib/libvirt
+mount -t zfs  rpool/nixos/var/lib/libvirt /mnt/var/lib/libvirt
+
+zfs create -o mountpoint=legacy rpool/nixos/var/lib/libvirt/images
+mkdir /mnt/var/lib/libvirt/images
+mount -t zfs  rpool/nixos/var/lib/libvirt/images /mnt/var/lib/libvirt/images
+
 
 zfs create -o mountpoint=legacy rpool/nixos/var/log
 mkdir /mnt/var/log
