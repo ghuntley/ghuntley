@@ -99,11 +99,51 @@ in
       fsType = "zfs";
     };
 
+  services.sanoid = {
+    enable = true;
+    templates.extra = {
+      hourly = 7;
+      daily = 31;
+      monthly = 1;
+      yearly = 0;
+
+      autosnap = true;
+    };
+    templates.libvirt = {
+      hourly = 7;
+      daily = 14;
+      monthly = 1;
+      yearly = 0;
+
+      autosnap = true;
+    };
+    templates.standard = {
+      hourly = 7;
+      daily = 7;
+      monthly = 0;
+      yearly = 0;
+
+      autosnap = true;
+    };
+    templates.none = {
+      hourly = 0;
+      daily = 0;
+      monthly = 0;
+      yearly = 0;
+
+      autosnap = false;
+    };
+  };
+
+  services.sanoid.datasets."rpool/nixos/root".useTemplate = [ "standard" ];
+
   fileSystems."/etc" =
     {
       device = "rpool/nixos/etc";
       fsType = "zfs";
     };
+
+  services.sanoid.datasets."rpool/nixos/etc".useTemplate = [ "standard" ];
 
   fileSystems."/nix" =
     {
@@ -111,11 +151,15 @@ in
       fsType = "zfs";
     };
 
+  services.sanoid.datasets."rpool/nixos/nix".useTemplate = [ "none" ];
+
   fileSystems."/home" =
     {
       device = "rpool/nixos/home";
       fsType = "zfs";
     };
+
+  services.sanoid.datasets."rpool/nixos/home".useTemplate = [ "standard" ];
 
   fileSystems."/var" =
     {
@@ -123,11 +167,15 @@ in
       fsType = "zfs";
     };
 
+  services.sanoid.datasets."rpool/nixos/var".useTemplate = [ "standard" ];
+
   fileSystems."/var/lib" =
     {
       device = "rpool/nixos/var/lib";
       fsType = "zfs";
     };
+
+  services.sanoid.datasets."rpool/nixos/var/lib".useTemplate = [ "standard" ];
 
   fileSystems."/var/lib/libvirt" =
     {
@@ -135,11 +183,15 @@ in
       fsType = "zfs";
     };
 
+  services.sanoid.datasets."rpool/nixos/var/lib/libvirt".useTemplate = [ "libvirt" ];
+
   fileSystems."/var/lib/libvirt/images" =
     {
       device = "rpool/nixos/var/lib/libvirt/images";
       fsType = "zfs";
     };
+
+  services.sanoid.datasets."rpool/nixos/var/lib/libvirt/images".useTemplate = [ "libvirt" ];
 
   fileSystems."/var/log" =
     {
@@ -147,11 +199,15 @@ in
       fsType = "zfs";
     };
 
+  services.sanoid.datasets."rpool/nixos/var/log".useTemplate = [ "standard" ];
+
   fileSystems."/boot" =
     {
       device = "bpool/nixos/root";
       fsType = "zfs";
     };
+
+  services.sanoid.datasets."bpool/nixos/root".useTemplate = [ "standard" ];
 
   fileSystems."/depot" =
     {
@@ -159,11 +215,15 @@ in
       fsType = "zfs";
     };
 
+  services.sanoid.datasets."rpool/data/depot".useTemplate = [ "extra" ];
+
   fileSystems."/srv" =
     {
       device = "rpool/data/srv";
       fsType = "zfs";
     };
+
+  services.sanoid.datasets."rpool/data/srv".useTemplate = [ "extra" ];
 
   fileSystems."/boot/efis/nvme-WDC_CL_SN720_SDAQNTW-1T00-2000_21116M800595-part1" =
     {

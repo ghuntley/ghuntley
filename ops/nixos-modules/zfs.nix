@@ -37,14 +37,8 @@ in
       enable = true;
       interval = "daily";
     };
-    autoSnapshot = {
-      enable = true;
-      frequent = 32; # 4 hours.
-      daily = 14;
-      weekly = 4;
-      monthly = 1;
-    };
     trim.enable = true;
   };
 
+  services.sanoid.enable = true;
 }

@@ -62,7 +62,7 @@ or other application using the libvirt API.
     </disk>
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
-      <source file='/srv/isos/Win11_22H2_English_x64v1.iso'/>
+      <source file=''/>
       <target dev='sdb' bus='sata'/>
       <readonly/>
       <boot order='1'/>
@@ -70,7 +70,7 @@ or other application using the libvirt API.
     </disk>
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
-      <source file='/srv/isos/virtio-win-0.1.229.iso'/>
+      <source file='/var/lib/libvirt/images/virtio-win-0.1.229.iso'/>
       <target dev='sdc' bus='sata'/>
       <readonly/>
       <boot order='2'/>
