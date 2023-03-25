@@ -18,7 +18,7 @@ in
 {
   imports = [
     (mod "cache.nix")
-    (mod "documentation.nix")
+    (mod "disable-documentation.nix")
 
     (mod "fail2ban.nix")
     (mod "i18n.nix")

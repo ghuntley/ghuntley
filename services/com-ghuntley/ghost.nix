@@ -1,4 +1,5 @@
-{
+{ pkgs, config, lib, ... }: {
+
   services.nginx.virtualHosts."ghuntley.com" = {
 
     forceSSL = true;

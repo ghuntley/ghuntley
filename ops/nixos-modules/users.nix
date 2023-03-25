@@ -9,13 +9,13 @@
   users = {
     users.mgmt = {
       isNormalUser = true;
-      extraGroups = [ "git" "wheel" "docker" "libvirtd" ];
+      extraGroups = [ "git" "wheel" "docker" "podman" "libvirtd" ];
       shell = pkgs.bash;
       openssh.authorizedKeys.keys = depot.users.mgmt.keys.all;
     };
     users.ghuntley = {
       isNormalUser = true;
-      extraGroups = [ "git" "wheel" "docker" "libvirtd" ];
+      extraGroups = [ "git" "wheel" "docker" "podman" "libvirtd" ];
       shell = pkgs.bash;
       openssh.authorizedKeys.keys = depot.users.ghuntley.keys.all;
     };

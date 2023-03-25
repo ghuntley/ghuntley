@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: Proprietary
 
 { pkgs, config, lib, ... }: {
-  virtualisation.docker.rootless.enable = true;
-  virtualisation.docker.rootless.setSocketVariable = true;
-  virtualisation.docker.extraOptions = "--iptables=false";
-  virtualisation.docker.autoPrune.enable = true;
+  virtualisation.podman.dockerCompat = true;
+  virtualisation.podman.dockerSocket.enable = true;
 }

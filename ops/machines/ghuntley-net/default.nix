@@ -20,6 +20,7 @@ in
     (mod "docker.nix")
     (mod "libvirt.nix")
     (mod "tailscale-exit-node.nix")
+    (service "com-ghuntley/ghost.nix")
     (service "net-ghuntley/libvirt/guests.nix")
   ];
 
@@ -190,8 +191,13 @@ in
 
   #networking.firewall.interfaces."eno1".allowedTCPPorts = lib.optionals (config.services.openssh.enable) [ 22 ];
 
+  networking.firewall.enable = true;
+
   networking.interfaces."eno1".useDHCP = true;
   networking.interfaces."br0".useDHCP = true;
+
+  networking.firewall.interfaces."br0".allowedTCPPorts = [ 80 443 ];
+  networking.firewall.interfaces."br0".allowedUDPPorts = [ 80 443 60000 60001 60002 60003 60004 60005 60006 60007 60008 60009 60010 ];
 
   networking.nameservers = [ "8.8.8.8" ];
 

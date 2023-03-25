@@ -63,7 +63,7 @@ in
           value = {
             isSystemUser = true;
             group = lib.mkForce "buildkite-agents";
-            extraGroups = [ name "docker" ];
+            extraGroups = [ name "docker" "podman" ];
           };
         })
         agents);
