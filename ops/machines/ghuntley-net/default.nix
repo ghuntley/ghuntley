@@ -20,6 +20,8 @@ in
     (mod "docker.nix")
     (mod "libvirt.nix")
     (mod "tailscale-exit-node.nix")
+    (mod "nginx.nix")
+    (service "net-ghuntley/webserver.nix")
     (service "com-ghuntley/ghost.nix")
     (service "net-ghuntley/libvirt/guests.nix")
   ];
@@ -192,17 +194,22 @@ in
   #networking.firewall.interfaces."eno1".allowedTCPPorts = lib.optionals (config.services.openssh.enable) [ 22 ];
 
   networking.firewall.enable = true;
-
-  networking.interfaces."eno1".useDHCP = true;
-  networking.interfaces."br0".useDHCP = true;
-
   networking.firewall.interfaces."br0".allowedTCPPorts = [ 80 443 ];
   networking.firewall.interfaces."br0".allowedUDPPorts = [ 80 443 60000 60001 60002 60003 60004 60005 60006 60007 60008 60009 60010 ];
 
+  networking.defaultGateway.address = "51.161.196.254";
   networking.nameservers = [ "8.8.8.8" ];
 
   networking.bridges."br0".interfaces = [ "eno1" ];
   networking.interfaces."br0".ipv4.addresses = [
+    {
+      address = "51.161.196.125";
+      prefixLength = 24;
+    }
+    {
+      address = "51.161.213.234";
+      prefixLength = 24;
+    }
     {
       address = "172.16.65.1";
       prefixLength = 24;

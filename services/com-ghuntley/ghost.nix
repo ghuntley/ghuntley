@@ -1,7 +1,7 @@
 { pkgs, config, lib, ... }: {
 
   services.nginx.virtualHosts."ghuntley.com" = {
-
+    listenAddresses = [ "51.161.196.125" ];
     forceSSL = true;
     enableACME = true;
 

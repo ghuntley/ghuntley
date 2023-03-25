@@ -19,8 +19,6 @@ in
   imports = [
     (mod "defaults.nix")
 
-    (mod "nginx/self-redirect.nix")
-
     (mod "automatic-nix-gc.nix")
 
     (mod "boot.nix")
