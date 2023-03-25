@@ -11,10 +11,15 @@
       VerifyHostKeyDNS yes
     '';
 
+    # $ ssh-keyscan example.com
     knownHosts = {
       github = {
         hostNames = [ "github.com" ];
         publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl";
+      };
+      rsync-net = {
+        hostNames = [ "zh2297.rsync.net" ];
+        publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJtclizeBy1Uo3D86HpgD3LONGVH0CJ0NT+YfZlldAJd";
       };
     };
   };

@@ -99,51 +99,11 @@ in
       fsType = "zfs";
     };
 
-  services.sanoid = {
-    enable = true;
-    templates.extra = {
-      hourly = 7;
-      daily = 31;
-      monthly = 1;
-      yearly = 0;
-
-      autosnap = true;
-    };
-    templates.libvirt = {
-      hourly = 7;
-      daily = 14;
-      monthly = 1;
-      yearly = 0;
-
-      autosnap = true;
-    };
-    templates.standard = {
-      hourly = 7;
-      daily = 7;
-      monthly = 0;
-      yearly = 0;
-
-      autosnap = true;
-    };
-    templates.none = {
-      hourly = 0;
-      daily = 0;
-      monthly = 0;
-      yearly = 0;
-
-      autosnap = false;
-    };
-  };
-
-  services.sanoid.datasets."rpool/nixos/root".useTemplate = [ "standard" ];
-
   fileSystems."/etc" =
     {
       device = "rpool/nixos/etc";
       fsType = "zfs";
     };
-
-  services.sanoid.datasets."rpool/nixos/etc".useTemplate = [ "standard" ];
 
   fileSystems."/nix" =
     {
@@ -151,15 +111,11 @@ in
       fsType = "zfs";
     };
 
-  services.sanoid.datasets."rpool/nixos/nix".useTemplate = [ "none" ];
-
   fileSystems."/home" =
     {
       device = "rpool/nixos/home";
       fsType = "zfs";
     };
-
-  services.sanoid.datasets."rpool/nixos/home".useTemplate = [ "standard" ];
 
   fileSystems."/var" =
     {
@@ -167,15 +123,11 @@ in
       fsType = "zfs";
     };
 
-  services.sanoid.datasets."rpool/nixos/var".useTemplate = [ "standard" ];
-
   fileSystems."/var/lib" =
     {
       device = "rpool/nixos/var/lib";
       fsType = "zfs";
     };
-
-  services.sanoid.datasets."rpool/nixos/var/lib".useTemplate = [ "standard" ];
 
   fileSystems."/var/lib/libvirt" =
     {
@@ -183,15 +135,11 @@ in
       fsType = "zfs";
     };
 
-  services.sanoid.datasets."rpool/nixos/var/lib/libvirt".useTemplate = [ "libvirt" ];
-
   fileSystems."/var/lib/libvirt/images" =
     {
       device = "rpool/nixos/var/lib/libvirt/images";
       fsType = "zfs";
     };
-
-  services.sanoid.datasets."rpool/nixos/var/lib/libvirt/images".useTemplate = [ "libvirt" ];
 
   fileSystems."/var/log" =
     {
@@ -199,15 +147,11 @@ in
       fsType = "zfs";
     };
 
-  services.sanoid.datasets."rpool/nixos/var/log".useTemplate = [ "standard" ];
-
   fileSystems."/boot" =
     {
       device = "bpool/nixos/root";
       fsType = "zfs";
     };
-
-  services.sanoid.datasets."bpool/nixos/root".useTemplate = [ "standard" ];
 
   fileSystems."/depot" =
     {
@@ -215,15 +159,11 @@ in
       fsType = "zfs";
     };
 
-  services.sanoid.datasets."rpool/data/depot".useTemplate = [ "extra" ];
-
   fileSystems."/srv" =
     {
       device = "rpool/data/srv";
       fsType = "zfs";
     };
-
-  services.sanoid.datasets."rpool/data/srv".useTemplate = [ "extra" ];
 
   fileSystems."/boot/efis/nvme-WDC_CL_SN720_SDAQNTW-1T00-2000_21116M800595-part1" =
     {
@@ -272,6 +212,82 @@ in
     preserveGenerations = "31d";
   };
 
+  services.sanoid = {
+    enable = true;
+
+    templates.extra = {
+      hourly = 48;
+      daily = 31;
+      monthly = 1;
+      yearly = 0;
+
+      autosnap = true;
+    };
+
+    templates.libvirt = {
+      hourly = 24;
+      daily = 14;
+      monthly = 0;
+      yearly = 0;
+
+      autosnap = true;
+    };
+
+    templates.standard = {
+      hourly = 24;
+      daily = 7;
+      monthly = 0;
+      yearly = 0;
+
+      autosnap = true;
+    };
+
+    templates.none = {
+      hourly = 0;
+      daily = 0;
+      monthly = 0;
+      yearly = 0;
+
+      autosnap = false;
+    };
+  };
+
+  services.sanoid.datasets."rpool/nixos/root".useTemplate = [ "standard" ];
+  services.sanoid.datasets."rpool/nixos/etc".useTemplate = [ "standard" ];
+  services.sanoid.datasets."rpool/nixos/nix".useTemplate = [ "none" ];
+  services.sanoid.datasets."rpool/nixos/home".useTemplate = [ "standard" ];
+  services.sanoid.datasets."rpool/nixos/var".useTemplate = [ "standard" ];
+  services.sanoid.datasets."rpool/nixos/var/lib".useTemplate = [ "standard" ];
+  services.sanoid.datasets."rpool/nixos/var/lib/libvirt".useTemplate = [ "libvirt" ];
+  services.sanoid.datasets."rpool/nixos/var/lib/libvirt/images".useTemplate = [ "libvirt" ];
+  services.sanoid.datasets."rpool/nixos/var/log".useTemplate = [ "standard" ];
+  services.sanoid.datasets."bpool/nixos/root".useTemplate = [ "standard" ];
+  services.sanoid.datasets."rpool/data/depot".useTemplate = [ "extra" ];
+  services.sanoid.datasets."rpool/data/srv".useTemplate = [ "extra" ];
+
+  services.syncoid = {
+    enable = true;
+    interval = "hourly";
+    commands =
+      let
+        common = {
+          sshKey = config.age.secrets.offsite-backup-ssh-key.file;
+          sendOptions = "w"; # send raw for encrypted volume
+          extraArgs = [ "--no-sync-snap --create-bookmark" ]; # Don't create any snapshots, just send them
+        };
+      in
+      {
+        "rpool/nixos/etc" = { target = ""; } // common;
+        "rpool/nixos/home" = { target = ""; } // common;
+        "rpool/nixos/var/lib/libvirt" = { target = ""; } // common;
+        "rpool/nixos/var/lib/libvirt/images" = { target = ""; } // common;
+        "rpool/data/var/log" = { target = ""; } // common;
+        "rpool/data/depot" = { target = ""; } // common;
+        "rpool/data/srv" = { target = ""; } // common;
+      };
+    service.serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
+  };
+
   # Configure secrets for services that need them.
   age.secrets =
     let
@@ -286,6 +302,7 @@ in
 
       gcp-service-account-ghuntley-dev-token.file = secretFile "gcp-service-account-ghuntley-dev-token";
 
+      offsite-backup-ssh-key.file = secretFile "offsite-backup-ssh-key";
     };
 
 

@@ -44,4 +44,6 @@ in
   "acme-cloudflare-api-token.age" = prdDefault;
 
   "ghuntley-net-cachix-agent-token.age" = prdDefault;
+
+  "offsite-backup-ssh-key.age" = prdDefault;
 }
