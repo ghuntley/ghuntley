@@ -5,6 +5,7 @@
   security.sudo = {
     enable = true;
     extraConfig = "wheel ALL=(ALL:ALL) SETENV: ALL";
-    wheelNeedsPassword = true;
+    # TODO(security): set sudo.wheelNeedsPassword to true;
+    wheelNeedsPassword = false;
   };
 }
