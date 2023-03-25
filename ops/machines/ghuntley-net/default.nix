@@ -9,6 +9,7 @@ let
   inherit (lib) range;
 
   mod = name: depot.path.origSrc + ("/ops/nixos-modules/" + name);
+  service = name: depot.path.origSrc + ("/services/" + name);
 
 in
 {
@@ -19,6 +20,7 @@ in
     (mod "docker.nix")
     (mod "libvirt.nix")
     (mod "tailscale-exit-node.nix")
+    (service "net-ghuntley/libvirt/guests.nix")
   ];
 
   boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
