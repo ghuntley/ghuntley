@@ -1,44 +1,45 @@
 { pkgs, config, lib, ... }: {
 
+  services.caddy.virtualHosts = {
+    "ghuntley.dev" = {
+      listenAddresses = [ "51.161.213.234" ];
+      serverAliases = [ "www.ghuntley.dev" "*.ghuntley.dev" ];
+      extraConfig = ''
+        encode gzip
+        reverse_proxy 127.0.0.1:3000
+      '';
+    };
+  };
+
   virtualisation.oci-containers.containers = {
     coder = {
-      # extraOptions = [ "--network=host" ];
+      extraOptions = [ "--network=host" ];
       image = "ghcr.io/coder/coder:latest";
       user = "coder";
+      environmentFiles = [ "/run/agenix/1/ghuntley-dev-coder-secrets" ];
       volumes = [
         "/srv/ghuntley.dev:/home/coder:cached"
         "/var/run/docker.sock:/var/run/docker.sock"
+        "/dev/kvm:/dev/kvm"
+
       ];
       ports = [
         "3000:3000"
       ];
       environment = {
-        #CODER_REDIRECT_TO_ACCESS_URL="true";
-        # CODER_ACCESS_URL = "https://ghuntley.dev";
-        # CODER_DISABLE_PASSWORD_AUTH = "false";
-        # CODER_EXPERIMENTS = "*";
-        # CODER_GITAUTH_0_CLIENT_ID = "cat /home/coder/coder-gitauth-0-client-id";
-        # CODER_GITAUTH_0_CLIENT_SECRET = "cat /home/coder/coder-gitauth-0-client-secret";
-        # CODER_GITAUTH_0_ID = "github";
-        # CODER_GITAUTH_0_TYPE = "github";
-        # CODER_HTTP_ADDRESS = "0.0.0.0:80";
-        # CODER_OAUTH2_GITHUB_ALLOW_EVERYONE = "true";
-        # CODER_OAUTH2_GITHUB_ALLOW_SIGNUPS = "true";
-        # CODER_OAUTH2_GITHUB_CLIENT_ID = "cat /home/coder/coder-oauth2-github-client-id";
-        # CODER_OAUTH2_GITHUB_CLIENT_SECRET = "cat /home/coder/coder-oauth2-github-client-secret";
-        # CODER_OIDC_ALLOW_SIGNUPS = "true";
-        # # CODER_PG_CONNECTION_URL = "cat /home/coder/coder-postgresql-conection-string";
-        # CODER_SECURE_AUTH_COOKIE = "true";
-        # CODER_SSH_HOSTNAME_PREFIX = "ghuntley-dev";
-        # CODER_TELEMETRY = "true";
-        # CODER_TLS_ADDRESS = "0.0.0.0:443";
-        # CODER_TLS_CERT_FILE = "";
-        # CODER_TLS_ENABLE = "false";
-        # CODER_TLS_KEY_FILE = "";
-        # CODER_UPDATE_CHECK = "true";
-        # CODER_WILDCARD_ACCESS_URL = "*.ghuntley.dev";
-
-        GOOGLE_APPLICATION_CREDENTIALS = "/home/coder/coder-gcp-service-account-ghuntley-dev-token";
+        #CODER_HTTP_ADDRESS = "0.0.0.0:80";
+        CODER_ACCESS_URL = "https://ghuntley.dev";
+        CODER_DISABLE_PASSWORD_AUTH = "true";
+        CODER_EXPERIMENTS = "*";
+        CODER_OAUTH2_GITHUB_ALLOW_EVERYONE = "true";
+        CODER_OAUTH2_GITHUB_ALLOW_SIGNUPS = "false";
+        CODER_OIDC_ALLOW_SIGNUPS = "false";
+        CODER_REDIRECT_TO_ACCESS_URL = "false";
+        CODER_SECURE_AUTH_COOKIE = "true";
+        CODER_SSH_HOSTNAME_PREFIX = "ghuntley-dev";
+        CODER_TELEMETRY = "true";
+        CODER_UPDATE_CHECK = "true";
+        CODER_WILDCARD_ACCESS_URL = "*.ghuntley.dev";
       };
     };
   };

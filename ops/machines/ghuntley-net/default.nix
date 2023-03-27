@@ -20,7 +20,7 @@ in
     (mod "podman.nix")
     (mod "libvirt.nix")
     (mod "tailscale-exit-node.nix")
-    (mod "nginx.nix")
+    # (mod "nginx.nix")
     (service "net-ghuntley/webserver.nix")
     (service "net-ghuntley/libvirt/guests.nix")
     (service "com-ghuntley/ghost.nix")
@@ -324,6 +324,9 @@ in
       cachix-agent-token.file = secretFile "ghuntley-net-cachix-agent-token";
       cachix-agent-token.path = "/etc/cachix-agent.token";
       cachix-agent-token.symlink = false;
+
+      ghuntley-dev-coder-secrets.file = secretFile "ghuntley-dev-coder-secrets";
+      ghuntley-dev-coder-secrets.owner = "mgmt";
 
       rsync-net-backups-ssh-key.file = secretFile "rsync-net-backups-ssh-key";
       rsync-net-backups-ssh-key.owner = "syncoid";

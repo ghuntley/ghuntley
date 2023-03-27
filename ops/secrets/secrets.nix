@@ -43,6 +43,10 @@ in
 
   "ghuntley-net-cachix-agent-token.age" = prdDefault;
 
+  "coder-gcp-service-account-ghuntley-dev-token.age" = prdDefault;
+
+  "ghuntley-dev-coder-secrets.age" = prdDefault;
+
   "offsite-backup-ssh-key.age" = prdDefault;
 
   "ssh-initrd-ed25519-key.age" = prdDefault;
