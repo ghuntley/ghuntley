@@ -2,7 +2,6 @@
 
   services.caddy.virtualHosts = {
     "ghuntley.dev" = {
-      listenAddresses = [ "51.161.213.234" ];
       serverAliases = [ "www.ghuntley.dev" "*.ghuntley.dev" ];
       extraConfig = ''
         encode gzip

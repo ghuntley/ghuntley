@@ -1,17 +1,7 @@
-{ pkgs, config, lib, ... }: {
-
-  services.caddy.enable = true;
-  services.caddy.dataDir = "/srv/ghuntley.net";
-  services.caddy.email = "ghuntley@ghuntley.com";
-  services.caddy.globalConfig = ''
-    servers {
-        protocols h1 h2 h3
-    }
-  '';
+{ depot, pkgs, config, lib, ... }: {
 
   services.caddy.virtualHosts = {
     "ghuntley.com" = {
-      listenAddresses = [ "51.161.196.125" ];
       serverAliases = [ "www.ghuntley.com" ];
       extraConfig = ''
         encode gzip
