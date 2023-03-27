@@ -111,6 +111,10 @@ zfs create -o mountpoint=legacy rpool/nixos/var/lib
 mkdir /mnt/var/lib
 mount -t zfs  rpool/nixos/var/lib /mnt/var/lib
 
+zfs create -o mountpoint=legacy rpool/nixos/var/lib/postgresql
+mkdir /mnt/var/lib/postgresql
+mount -t zfs  rpool/nixos/var/lib/postgresql /mnt/var/lib/postgresql
+
 zfs create -o mountpoint=legacy rpool/nixos/var/lib/libvirt
 mkdir /mnt/var/lib/libvirt
 mount -t zfs  rpool/nixos/var/lib/libvirt /mnt/var/lib/libvirt

@@ -17,13 +17,14 @@ in
     (mod "defaults-baremetal.nix")
     (mod "gnome.nix")
     (mod "cachix-agent.nix")
-    (mod "docker.nix")
+    (mod "podman.nix")
     (mod "libvirt.nix")
     (mod "tailscale-exit-node.nix")
     (mod "nginx.nix")
     (service "net-ghuntley/webserver.nix")
-    (service "com-ghuntley/ghost.nix")
     (service "net-ghuntley/libvirt/guests.nix")
+    (service "com-ghuntley/ghost.nix")
+    (service "dev-ghuntley/coder.nix")
   ];
 
   boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
@@ -193,7 +194,7 @@ in
 
   #networking.firewall.interfaces."eno1".allowedTCPPorts = lib.optionals (config.services.openssh.enable) [ 22 ];
 
-  networking.firewall.enable = true;
+  networking.firewall.enable = false;
   networking.firewall.interfaces."br0".allowedTCPPorts = [ 80 443 ];
   networking.firewall.interfaces."br0".allowedUDPPorts = [ 80 443 60000 60001 60002 60003 60004 60005 60006 60007 60008 60009 60010 ];
 
@@ -246,6 +247,15 @@ in
       autosnap = true;
     };
 
+    templates.postgresql = {
+      hourly = 168;
+      daily = 14;
+      monthly = 0;
+      yearly = 0;
+
+      autosnap = true;
+    };
+
     templates.standard = {
       hourly = 24;
       daily = 7;
@@ -271,6 +281,7 @@ in
   services.sanoid.datasets."rpool/nixos/home".useTemplate = [ "standard" ];
   services.sanoid.datasets."rpool/nixos/var".useTemplate = [ "standard" ];
   services.sanoid.datasets."rpool/nixos/var/lib".useTemplate = [ "standard" ];
+  services.sanoid.datasets."rpool/nixos/var/lib/postgresql".useTemplate = [ "postgresql" ];
   services.sanoid.datasets."rpool/nixos/var/lib/libvirt".useTemplate = [ "libvirt" ];
   services.sanoid.datasets."rpool/nixos/var/lib/libvirt/images".useTemplate = [ "libvirt" ];
   services.sanoid.datasets."rpool/nixos/var/log".useTemplate = [ "standard" ];
@@ -284,19 +295,20 @@ in
     commands =
       let
         common = {
-          sshKey = config.age.secrets.offsite-backup-ssh-key.file;
+          sshKey = "/run/agenix/1/rsync-net-backups-ssh-key";
           sendOptions = "w"; # send raw for encrypted volume
-          extraArgs = [ "--no-sync-snap --create-bookmark" ]; # Don't create any snapshots, just send them
+          extraArgs = [ "--no-sync-snap" "--create-bookmark" ]; # Don't create any snapshots, just send them
         };
       in
       {
-        "rpool/nixos/etc" = { target = ""; } // common;
-        "rpool/nixos/home" = { target = ""; } // common;
-        "rpool/nixos/var/lib/libvirt" = { target = ""; } // common;
-        "rpool/nixos/var/lib/libvirt/images" = { target = ""; } // common;
-        "rpool/data/var/log" = { target = ""; } // common;
-        "rpool/data/depot" = { target = ""; } // common;
-        "rpool/data/srv" = { target = ""; } // common;
+        "rpool/nixos/etc" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-nixos-etc"; } // common;
+        "rpool/nixos/home" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-nixos-home"; } // common;
+        "rpool/nixos/var/lib/postgresql" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-nixos--var-lib-postgresql"; } // common;
+        "rpool/nixos/var/lib/libvirt" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-nixos-var-lib-libvirt"; } // common;
+        "rpool/nixos/var/lib/libvirt/images" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-nixos-var-lib-libvirt-images"; } // common;
+        "rpool/nixos/var/log" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-nixos-var-log"; } // common;
+        "rpool/data/depot" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-data-spot"; } // common;
+        "rpool/data/srv" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-data-spot"; } // common;
       };
     service.serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
   };
@@ -307,15 +319,14 @@ in
       secretFile = name: depot.ops.secrets."${name}.age";
     in
     {
+      acme-cloudflare-api-token.file = secretFile "acme-cloudflare-api-token";
+
       cachix-agent-token.file = secretFile "ghuntley-net-cachix-agent-token";
       cachix-agent-token.path = "/etc/cachix-agent.token";
       cachix-agent-token.symlink = false;
 
-      acme-cloudflare-api-token.file = secretFile "acme-cloudflare-api-token";
-
-      gcp-service-account-ghuntley-dev-token.file = secretFile "gcp-service-account-ghuntley-dev-token";
-
-      offsite-backup-ssh-key.file = secretFile "offsite-backup-ssh-key";
+      rsync-net-backups-ssh-key.file = secretFile "rsync-net-backups-ssh-key";
+      rsync-net-backups-ssh-key.owner = "syncoid";
     };
 
 

@@ -65,24 +65,24 @@
     };
   };
 
-  systemd.services.docker-pull-ghost = {
+  systemd.services.podman-pull-ghost = {
     serviceConfig.User = "root";
     serviceConfig.Type = "oneshot";
 
     path = [
-      pkgs.docker
+      pkgs.podman
       pkgs.systemd
     ];
 
     script = ''
-      ${pkgs.docker}/bin/docker pull ghost
-      ${pkgs.systemd}/bin/systemctl restart docker-ghost
+      ${pkgs.podman}/bin/podman pull ghost
+      ${pkgs.systemd}/bin/systemctl restart podman-ghost
     '';
   };
 
-  systemd.timers.docker-pull-ghost = {
+  systemd.timers.podman-pull-ghost = {
     wantedBy = [ "timers.target" ];
-    partOf = [ "updateghost.service" ];
+    partOf = [ "podman-pull-ghost.service" ];
     timerConfig.OnCalendar = "daily";
   };
 

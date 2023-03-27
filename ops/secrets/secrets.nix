@@ -36,14 +36,15 @@ let
 
 in
 {
-  "ssh-initrd-ed25519-key.age" = prdDefault;
-  "ssh-initrd-ed25519-pub.age" = prdDefault;
-
-  "gcp-service-account-ghuntley-dev-token.age" = prdDefault;
-
   "acme-cloudflare-api-token.age" = prdDefault;
+
+  "rsync-net-backups-ssh-key.age" = prdDefault;
+  "rsync-net-backups-ssh-pub.age" = prdDefault;
 
   "ghuntley-net-cachix-agent-token.age" = prdDefault;
 
   "offsite-backup-ssh-key.age" = prdDefault;
+
+  "ssh-initrd-ed25519-key.age" = prdDefault;
+  "ssh-initrd-ed25519-pub.age" = prdDefault;
 }
