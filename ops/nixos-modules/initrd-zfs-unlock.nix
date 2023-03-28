@@ -8,7 +8,7 @@
     ssh = {
       enable = true;
       port = 2222;
-      hostKeys = [ "/run/agenix/1/ssh-initrd-ed25519-key" ];
+      hostKeys = [ config.age.secrets.ssh-initrd-ed25519-key.path ];
       authorizedKeys = depot.users.mgmt.keys.all;
     };
 

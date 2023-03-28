@@ -289,28 +289,29 @@ in
   services.sanoid.datasets."rpool/data/depot".useTemplate = [ "extra" ];
   services.sanoid.datasets."rpool/data/srv".useTemplate = [ "extra" ];
 
-  services.syncoid = {
-    enable = true;
-    interval = "hourly";
-    commands =
-      let
-        common = {
-          sshKey = "/run/agenix/1/rsync-net-backups-ssh-key";
-          sendOptions = "w"; # send raw for encrypted volume
-          extraArgs = [ "--no-sync-snap" "--create-bookmark" ]; # Don't create any snapshots, just send them
-        };
-      in
-      {
-        "rpool/nixos/etc" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-nixos-etc"; } // common;
-        "rpool/nixos/home" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-nixos-home"; } // common;
-        "rpool/nixos/var/lib/postgresql" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-nixos--var-lib-postgresql"; } // common;
-        "rpool/nixos/var/lib/libvirt" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-nixos-var-lib-libvirt"; } // common;
-        "rpool/nixos/var/lib/libvirt/images" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-nixos-var-lib-libvirt-images"; } // common;
-        "rpool/nixos/var/log" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-nixos-var-log"; } // common;
-        "rpool/data/depot" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-data-spot"; } // common;
-        "rpool/data/srv" = { target = "zh2297@zh2297.rsync.net:/mnt/data1/home/zh2297/machines/ghuntley-net/rpool-data-spot"; } // common;
-      };
-    service.serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
+  systemd.services.backups = {
+    serviceConfig.User = "root";
+    serviceConfig.Type = "oneshot";
+
+    path = [
+      pkgs.rsync
+      pkgs.openssh
+    ];
+
+    script = ''
+      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress /depot zh2297@zh2297.rsync.net:machines/ghuntley.net/depot
+      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress /srv zh2297@zh2297.rsync.net:machines/ghuntley.net/srv
+      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress /home zh2297@zh2297.rsync.net:machines/ghuntley.net/home
+      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress /var/lib/libvirt zh2297@zh2297.rsync.net:machines/ghuntley.net/var/lib/libvirt
+      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress /var/lib/postgresql zh2297@zh2297.rsync.net:machines/ghuntley.net/var/lib/postgresql
+      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress /var/log zh2297@zh2297.rsync.net:machines/ghuntley.net/var/lib/log
+    '';
+  };
+
+  systemd.timers.backup = {
+    wantedBy = [ "timers.target" ];
+    partOf = [ "backups.service" ];
+    timerConfig.OnCalendar = "hourly";
   };
 
   # Configure secrets for services that need them.
@@ -319,7 +320,11 @@ in
       secretFile = name: depot.ops.secrets."${name}.age";
     in
     {
+      ssh-initrd-ed25519-key.file = secretFile "ssh-initrd-ed25519-key";
+      ssh-initrd-ed25519-key.symlink = false;
+
       acme-cloudflare-api-token.file = secretFile "acme-cloudflare-api-token";
+      acme-cloudflare-api-token.symlink = false;
 
       cachix-agent-token.file = secretFile "ghuntley-net-cachix-agent-token";
       cachix-agent-token.path = "/etc/cachix-agent.token";
@@ -327,12 +332,14 @@ in
 
       ghuntley-net-caddy-environment-file.file = secretFile "ghuntley-net-caddy-environment-file";
       ghuntley-net-caddy-environment-file.owner = "caddy";
+      ghuntley-net-caddy-environment-file.symlink = false;
 
       ghuntley-dev-coder-secrets.file = secretFile "ghuntley-dev-coder-secrets";
       ghuntley-dev-coder-secrets.owner = "mgmt";
+      ghuntley-dev-coder-secrets.symlink = false;
 
       rsync-net-backups-ssh-key.file = secretFile "rsync-net-backups-ssh-key";
-      rsync-net-backups-ssh-key.owner = "syncoid";
+      rsync-net-backups-ssh-key.symlink = false;
     };
 
 

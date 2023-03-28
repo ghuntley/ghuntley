@@ -21,7 +21,7 @@
       # Required to use ports < 1024
       AmbientCapabilities = "cap_net_bind_service";
       CapabilityBoundingSet = "cap_net_bind_service";
-      EnvironmentFile = "/run/agenix/1/ghuntley-net-caddy-environment-file";
+      EnvironmentFile = config.age.secrets.ghuntley-net-caddy-environment-file.path;
       TimeoutStartSec = "5m";
     };
   };
