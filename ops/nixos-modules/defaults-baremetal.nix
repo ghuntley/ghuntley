@@ -33,8 +33,8 @@ in
     (mod "microcode.nix")
   ];
 
+  powerManagement.enable = false;
   powerManagement.cpuFreqGovernor = "performance";
-
 
   # Configure secrets for services that need them.
   age.secrets =

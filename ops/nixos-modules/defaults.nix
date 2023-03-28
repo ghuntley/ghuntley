@@ -36,6 +36,5 @@ in
     (mod "nixos-vscode-server.nix")
 
     (depot.third_party.agenix.src + "/modules/age.nix")
-
   ];
 }

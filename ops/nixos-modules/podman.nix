@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: Proprietary
 
 { pkgs, config, lib, ... }: {
-  # virtualisation.docker.extraOptions = "--iptables=false";
+  virtualisation.docker.extraOptions = "--iptables=false";
+  networking.firewall.extraCommands = ''iptables -P FORWARD ACCEPT'';
 
   virtualisation.podman.enable = false;
   virtualisation.docker.enable = true;
