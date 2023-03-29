@@ -27,6 +27,7 @@ RUN nix-env -iA \
     nixpkgs.rpl \
     nixpkgs.shadow \
     nixpkgs.sudo \
+    nixpkgs.stow \
     nixpkgs.tmux \
     nixpkgs.tree \
     nixpkgs.unzip \
