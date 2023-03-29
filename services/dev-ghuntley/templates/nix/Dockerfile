@@ -15,6 +15,7 @@ RUN nix-env -iA \
     nixpkgs.git \
     nixpkgs.gnupg \
     nixpkgs.gnused \
+    nixpkgs.gnumake \
     nixpkgs.htop \
     nixpkgs.iftop \
     nixpkgs.inetutils \
