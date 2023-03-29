@@ -8,6 +8,11 @@
         reverse_proxy :3001
       '';
     };
+    "dev.ghuntley.com" = {
+      extraConfig = ''
+        redir https://ghuntley.dev{uri} permanent
+      '';
+    };
   };
 
   virtualisation.oci-containers.containers."ghost" = {

@@ -17,9 +17,15 @@ RUN useradd ubuntu \
 # Install packages from apt repositories
 ARG DEBIAN_FRONTEND="noninteractive"
 
+# Update ubuntu
+RUN apt-get update
+RUN rm -rf /etc/ca-certificates.conf \
+    && apt-get install --yes ca-certificates software-properties-common
+RUN apt-get upgrade --yes
+
 # Install Docker
-RUN apt-get update && apt-get install --yes \
-	ca-certificates curl gnupg lsb-release software-properties-common && \
+RUN apt-get install --yes \
+	  ca-certificates curl gnupg lsb-release software-properties-common && \
     mkdir -m 0755 -p /etc/apt/keyrings && \
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
 	echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \

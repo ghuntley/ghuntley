@@ -17,9 +17,12 @@ RUN useradd ghuntley \
 # Install packages from apt repositories
 ARG DEBIAN_FRONTEND="noninteractive"
 
+# Update ubuntu
+RUN apt-get update && apt-get upgrade --yes
+
 # Install Docker
-RUN apt-get update && apt-get install --yes \
-	ca-certificates curl gnupg lsb-release software-properties-common && \
+RUN apt-get install --yes \
+	  debconf ca-certificates curl gnupg lsb-release software-properties-common && \
     mkdir -m 0755 -p /etc/apt/keyrings && \
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
 	echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
@@ -27,7 +30,7 @@ RUN apt-get update && apt-get install --yes \
 	# Delete package cache to avoid consuming space in layer
 	apt-get clean
 
-RUN apt-get update && apt-get install --yes \
+RUN apt-get install --yes \
 	apt-transport-https \
 	apt-utils \
 	bash \
@@ -82,11 +85,7 @@ RUN apt-get update && apt-get install --yes \
 	neovim \
 	fish \
 	unzip \
-	zstd && \
-	# Delete package cache to avoid consuming space in layer
-	apt-get clean && \
-	# Configure FIPS-compliant policies
-	update-crypto-policies --set FIPS
+	zstd
 
 # Install starship
 RUN curl -sS https://starship.rs/install.sh | sh -s -- --yes

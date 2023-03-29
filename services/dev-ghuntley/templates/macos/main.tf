@@ -47,6 +47,7 @@ resource "docker_container" "workspace" {
   network_mode = "host"
   env   = ["OSX_COMMANDS=/bin/bash -c 'export CODER_AGENT_TOKEN=${coder_agent.main.token} && ${coder_agent.main.init_script}'", "TERMS_OF_USE=i_agree", "EXTRA=-display none -vnc 0.0.0.0:5900,password=off"]
   image = "sickcodes/docker-osx:auto"
+  hostname = data.coder_workspace.me.name
   name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
 
   # host {
