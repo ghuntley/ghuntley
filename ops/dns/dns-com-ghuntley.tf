@@ -193,6 +193,14 @@ resource "cloudflare_record" "com_ghuntley_www" {
   proxied = true
 }
 
+resource "cloudflare_record" "com_ghuntley_dev" {
+  zone_id = var.com_ghuntley_cloudflare_zone_id
+  name    = "dev"
+  type    = "A"
+  value   = var.com_ghuntley_ipv4
+  proxied = true
+}
+
 # resource "cloudflare_record" "com_ghuntley_www_ipv6" {
 #   zone_id = var.com_ghuntley_cloudflare_zone_id
 #   name    = "www"
