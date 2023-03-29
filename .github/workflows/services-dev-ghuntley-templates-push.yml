@@ -54,6 +54,7 @@ jobs:
           coder templates push --directory ./nix \
             --name ${{ steps.vars.outputs.sha_short }} \
 
+          cd services/dev-ghuntley/templates
           coder templates push --directory ./gcp-windows-server-2022 \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
