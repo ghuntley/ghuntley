@@ -337,6 +337,12 @@ in
       ghuntley-dev-coder-secrets.owner = "mgmt";
       ghuntley-dev-coder-secrets.symlink = false;
 
+      coder-gcp-service-account-ghuntley-dev-token.file = secretFile "coder-gcp-service-account-ghuntley-dev-token";
+      coder-gcp-service-account-ghuntley-dev-token.path = "/srv/ghuntley.dev/coder-gcp-service-account-ghuntley-dev-token";
+
+      coder-gcp-service-account-ghuntley-dev-token.owner = "mgmt";
+      coder-gcp-service-account-ghuntley-dev-token.symlink = false;
+
       rsync-net-backups-ssh-key.file = secretFile "rsync-net-backups-ssh-key";
       rsync-net-backups-ssh-key.symlink = false;
     };
