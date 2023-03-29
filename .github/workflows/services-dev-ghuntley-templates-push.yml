@@ -9,6 +9,7 @@ on:
       - trunk
     paths:
       - 'services/dev-ghuntley/templates/**'
+      - '.github/workflows/services-dev-ghuntley-templates-push.yml'
 
   workflow_dispatch:
   schedule:
