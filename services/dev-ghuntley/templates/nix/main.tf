@@ -69,25 +69,6 @@ resource "coder_app" "code-server" {
   }
 }
 
-data "coder_parameter" "docker_image" {
-  name        = "What Docker image would you like to use for your workspace?"
-  description = "The Docker image will be used to build your workspace."
-  default     = "ubuntu"
-  icon        = "/icon/docker.png"
-  type        = "string"
-  mutable     = false
-  option {
-    name  = "Ubuntu"
-    value = "ubuntu"
-    icon  = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/UbuntuCoF.svg/1024px-UbuntuCoF.svg.png"
-  }
-  option {
-    name  = "Nix"
-    value = "nix"
-    icon  = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Nix_snowflake.svg/1004px-Nix_snowflake.svg.png"
-  }
-}
-
 data "coder_parameter" "container_enable_dind" {
   name        = "Enable Docker in Docker in Docker?"
   description = "This is insecure"
@@ -158,15 +139,15 @@ resource "docker_volume" "nix_volume" {
   }
 }
 
-
 resource "docker_image" "coder_image" {
   name = "coder-base-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
   build {
-    context    = "./images/"
-    dockerfile = "${data.coder_parameter.docker_image.value}.Dockerfile"
+    context    = "."
+    dockerfile = "Dockerfile"
+    network_mode = "host"
   }
   triggers = {
-    dir_sha1 = sha1(join("", [for f in fileset(path.module, "images/*") : filesha1(f)]))
+    dir_sha1 = sha1(join("", [for f in fileset(path.module, "Dockerfile") : filesha1(f)]))
   }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true
@@ -187,12 +168,14 @@ resource "docker_container" "workspace" {
 
   count = data.coder_workspace.me.start_count
   image = docker_image.coder_image.image_id
+
   # Uses lower() to avoid Docker restriction on container names.
   name = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
+
   # Hostname makes the shell more user friendly: coder@my-workspace:~$
   hostname = data.coder_workspace.me.name
-  # Use the docker gateway if the access URL is 127.0.0.1
-  entrypoint = ["sh", "-c", replace(coder_agent.main.init_script, "/localhost|127\\.0\\.0\\.1/", "host.docker.internal")]
+
+  entrypoint = ["sh", "-c", coder_agent.main.init_script]
   env        = ["CODER_AGENT_TOKEN=${coder_agent.main.token}"]
   host {
     host = "host.docker.internal"
@@ -230,9 +213,4 @@ resource "docker_container" "workspace" {
 resource "coder_metadata" "container_info" {
   count       = data.coder_workspace.me.start_count
   resource_id = docker_container.workspace[0].id
-
-  item {
-    key   = "image"
-    value = data.coder_parameter.docker_image.value
-  }
 }

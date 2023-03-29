@@ -139,6 +139,7 @@ resource "docker_volume" "nix_volume" {
   }
 }
 
+
 resource "docker_image" "coder_image" {
   name = "coder-base-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
   build {
