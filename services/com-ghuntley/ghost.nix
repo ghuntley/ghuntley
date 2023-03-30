@@ -1,19 +1,19 @@
 { depot, pkgs, config, lib, ... }: {
 
-  services.caddy.virtualHosts = {
-    "ghuntley.com" = {
-      serverAliases = [ "www.ghuntley.com" ];
-      extraConfig = ''
-        encode gzip
-        reverse_proxy :3001
-      '';
-    };
-    "dev.ghuntley.com" = {
-      extraConfig = ''
-        redir https://ghuntley.dev{uri} permanent
-      '';
-    };
-  };
+  # services.caddy.virtualHosts = {
+  #   "ghuntley.com" = {
+  #     serverAliases = [ "www.ghuntley.com" ];
+  #     extraConfig = ''
+  #       encode gzip
+  #       reverse_proxy :3001
+  #     '';
+  #   };
+  #   "dev.ghuntley.com" = {
+  #     extraConfig = ''
+  #       redir https://ghuntley.dev{uri} permanent
+  #     '';
+  #   };
+  # };
 
   virtualisation.oci-containers.containers."ghost" = {
     image = "ghost:latest";

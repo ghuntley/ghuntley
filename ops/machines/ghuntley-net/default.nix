@@ -198,7 +198,7 @@ in
   networking.firewall.interfaces."br0".allowedUDPPorts = [ 80 443 60000 60001 60002 60003 60004 60005 60006 60007 60008 60009 60010 ];
 
   networking.defaultGateway.address = "51.161.196.254";
-  networking.nameservers = [ "8.8.8.8" ];
+  networking.nameservers = [ "1.1.1.1" ];
 
   networking.bridges."br0".interfaces = [ "eno1" ];
   networking.interfaces."br0".ipv4.addresses = [

@@ -145,7 +145,6 @@ resource "google_compute_instance" "dev" {
     #wsl --install -d Ubuntu
 
     # start Coder agent init script (see startup_script above)
-    ${coder_agent.main.init_script}
 
     EOF
   }
