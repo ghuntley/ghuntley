@@ -6,6 +6,7 @@ resource "cloudflare_record" "dev_ghuntley_apex" {
   name    = "@"
   type    = "A"
   value   = var.dev_ghuntley_ipv4
+  proxied = true
 }
 
 # resource "cloudflare_record" "dev_ghuntley_apex_ipv6" {
@@ -92,6 +93,7 @@ resource "cloudflare_record" "dev_ghuntley_www" {
   name    = "www"
   type    = "A"
   value   = var.dev_ghuntley_ipv4
+  proxied = true
 }
 
 # resource "cloudflare_record" "dev_ghuntley_www_ipv6" {
@@ -106,6 +108,7 @@ resource "cloudflare_record" "dev_ghuntley_wildcard" {
   name    = "*"
   type    = "A"
   value   = var.dev_ghuntley_ipv4
+  proxied = true
 }
 
 # resource "cloudflare_record" "dev_ghuntley_wildcard_ipv6" {
