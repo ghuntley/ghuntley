@@ -193,7 +193,7 @@
         CODER_OIDC_ALLOW_SIGNUPS = "false";
         CODER_REDIRECT_TO_ACCESS_URL = "false";
         CODER_SECURE_AUTH_COOKIE = "true";
-        CODER_SSH_HOSTNAME_PREFIX = "ghuntley-dev";
+        # CODER_SSH_HOSTNAME_PREFIX = "ghuntley-dev";
         CODER_TELEMETRY = "true";
         CODER_UPDATE_CHECK = "true";
         CODER_WILDCARD_ACCESS_URL = "*.ghuntley.dev";

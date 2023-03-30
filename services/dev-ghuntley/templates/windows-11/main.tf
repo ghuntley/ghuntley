@@ -16,8 +16,12 @@ terraform {
 
 resource "libvirt_cloudinit_disk" "init" {
   name           = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}.init.iso"
-  meta_data      = coder_agent.main.token
-  network_config  = coder_agent.main.init_script
+  meta_data      = <<EOF
+
+  $env:CODER_AGENT_TOKEN="${coder_agent.main.token}"
+
+  ${coder_agent.main.init_script}
+  EOF
 
   pool           = libvirt_pool.coder_pool.name
 }
@@ -100,48 +104,6 @@ resource "coder_agent" "main" {
     # Enable RDP through Windows Firewall
     Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
     choco feature enable -n=allowGlobalConfirmation
-
-    #--- Apps ---
-    choco install -y 7zip
-    choco install -y 7zip.commandline
-    #choco install -y ack
-    #choco install -y curl
-    #choco install -y fiddler
-    #choco install -y filezilla
-    #choco install -y paint.net
-    choco install -y sudo
-
-    #--- Browsers ---
-    choco install -y firefox
-    #choco install -y firefox-dev
-    choco install -y googlechrome
-    #choco install -y googlechrome.canary
-
-    #--- Sysadmin ---
-    #choco install -y putty
-    #choco install -y sysinternals
-    #choco install -y windirstat
-    #choco install -y winscp
-
-    #--- Development ---
-    #choco install -y dotpeek
-    #choco install -y linqpad5
-
-    #choco install -y java.jdk
-    #choco install -y javaruntime
-
-    #choco install -y visualstudiocode-insiders
-    choco install -y vscode
-
-    choco install -y microsoft-windows-terminal
-
-    #Install-Module posh-git -Scope CurrentUser -Force -SkipPublisherCheck
-    #Install-Module oh-my-posh -Scope CurrentUser -Force -SkipPublisherCheck
-    #Install-Module -Name PSReadLine -Scope CurrentUser -Force -SkipPublisherCheck
-
-    #echo "Import-Module posh-git" > $PROFILE
-    #echo "Import-Module oh-my-posh" >> $PROFILE
-    #echo "Set-Theme Paradox" >> $PROFILE
 
 EOF
 
