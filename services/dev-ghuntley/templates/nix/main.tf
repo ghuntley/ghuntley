@@ -127,8 +127,7 @@ resource "docker_image" "coder_image" {
     network_mode = "host"
   }
   triggers = {
-    dir_sha1 = sha1(join("", [for f in fileset(path.module, ".") : filesha1(f)]))
-  }
+    dir_sha1 = sha1(join("", [for f in fileset(path.module, "Dockerfile") : filesha1(f)]))  }
   # Keep alive for other workspaces to use upon deletion
   keep_locally = true
 }

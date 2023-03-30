@@ -120,7 +120,7 @@ resource "coder_agent" "main" {
     choco feature enable -n=allowGlobalConfirmation
 
     try {
-      Rename-Computer -NewName "${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}" -Force -ErrorAction SilentlyContinue
+      Rename-Computer -NewName "${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}" -Force -Restart -ErrorAction SilentlyContinue
     }
     catch {
     }
