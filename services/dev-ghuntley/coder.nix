@@ -194,13 +194,14 @@
         CODER_REDIRECT_TO_ACCESS_URL = "false";
         CODER_SECURE_AUTH_COOKIE = "true";
         # CODER_SSH_HOSTNAME_PREFIX = "ghuntley-dev";
+        CODER_VERBOSE = "true";
         CODER_TELEMETRY = "true";
         CODER_UPDATE_CHECK = "true";
         CODER_WILDCARD_ACCESS_URL = "*.ghuntley.dev";
 
         GOOGLE_APPLICATION_CREDENTIALS = "/home/coder/coder-gcp-service-account-ghuntley-dev-token";
         CODER_PG_CONNECTION_URL = "postgres://coder:coder@localhost/coder?sslmode=disable";
-
+        TF_LOG = "DEBUG";
       };
     };
   };

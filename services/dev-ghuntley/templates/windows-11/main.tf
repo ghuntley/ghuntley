@@ -9,7 +9,7 @@ terraform {
     }
     libvirt = {
       source  = "dmacvicar/libvirt"
-      version = "~> 0.6.2"
+      version = "~> 0.7.1"
     }
   }
 }
@@ -23,7 +23,13 @@ resource "libvirt_cloudinit_disk" "init" {
   ${coder_agent.main.init_script}
   EOF
 
-  pool           = libvirt_pool.coder_pool.name
+  pool           = "default"
+
+  provisioner "local-exec" {
+    # mkfs.iso is used to generate the ISO image but isn't installed by
+    # default in the Coder image so we need to install it
+    command = "apk add cdrkit"
+  }
 }
 
 # instance the provider
@@ -34,17 +40,11 @@ provider "libvirt" {
 data "coder_workspace" "me" {
 }
 
-resource "libvirt_pool" "coder_pool" {
-  name = "coder"
-  type = "dir"
-  path = "/var/lib/libvirt/images/coder"
-}
-
 # We fetch the latest ubuntu release image from their mirrors
 resource "libvirt_volume" "qcow2" {
   name   = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}.qcow2"
-  pool   = libvirt_pool.coder_pool.name
-  source = "/var/lib/libvirt/images/win11-2023-03-25.qcow2"
+  pool   = "default"
+  source = "/var/lib/libvirt/images/win11-template.qcow2"
   format = "qcow2"
 }
 
@@ -57,9 +57,12 @@ data "coder_parameter" "admin_password" {
 
 
 # Create the machine
-resource "libvirt_domain" "domain-coder" {
+resource "libvirt_domain" "coder" {
   name   = "coder-${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}"
   memory = "8096"
+
+  # count = data.coder_workspace.me.transition == "start" ? 1 : 0
+  running = data.coder_workspace.me.transition == "start" ? true : false
 
   cpu {
     mode = "host-passthrough"
@@ -68,6 +71,11 @@ resource "libvirt_domain" "domain-coder" {
   firmware = "/run/libvirt/nix-ovmf/OVMF_CODE.fd"
   nvram {
     file = "/var/lib/libvirt/qemu/nvram/win11_VARS.fd"
+  }
+
+  tpm {
+    backend_type    = "emulator"
+    backend_version = "2.0"
   }
 
   network_interface {
@@ -98,13 +106,24 @@ resource "coder_agent" "main" {
     Get-LocalUser -Name "Administrator" | Set-LocalUser -Password (ConvertTo-SecureString -AsPlainText "${data.coder_parameter.admin_password.value}" -Force)
     Get-LocalUser -Name "Administrator" | Enable-LocalUser
 
+    # Enable auto login
+    Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name "DefaultUserName" -Value "Administrator"
+    Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name "DefaultPassword" -Value "${data.coder_parameter.admin_password.value}"
+    Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name "AutoAdminLogon" -Value 1
+
     # Enable RDP
     Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 0
 
     # Enable RDP through Windows Firewall
     Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+
     choco feature enable -n=allowGlobalConfirmation
 
+    try {
+      Rename-Computer -NewName "${data.coder_workspace.me.owner}-${lower(data.coder_workspace.me.name)}" -Force -ErrorAction SilentlyContinue
+    }
+    catch {
+    }
 EOF
 
 }
