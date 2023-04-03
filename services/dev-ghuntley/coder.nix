@@ -108,7 +108,7 @@
 
   services.nginx.virtualHosts."ghuntley.com" = {
 
-    forceSSL = false;
+    forceSSL = true;
     enableACME = true;
 
     locations."/" = {
