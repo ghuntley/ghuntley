@@ -30,6 +30,7 @@ depot.nix.lazy-deps {
 
   direnv.attr = "third_party.nixpkgs.direnv";
   gitleaks.attr = "third_party.nixpkgs.gitleaks";
+  gptcommit.attr = "third_party.nixpkgs.gptcommit";
   niv.attr = "third_party.nixpkgs.niv";
   pre-commit.attr = "third_party.nixpkgs.pre-commit";
 
@@ -40,10 +41,10 @@ depot.nix.lazy-deps {
   bat.attr = "third_party.nixpkgs.bat";
   curl.attr = "third_party.nixpkgs.curl";
   elinks.attr = "third_party.nixpkgs.elinks";
+  file.attr = "third_party.nixpkgs.file";
   hash-password.attr = "tools.hash-password";
   lazygit.attr = "third_party.nixpkgs.lazygit";
   moreutils.attr = "third_party.nixpkgs.moreutils";
-  otel-cli.attr = "third_party.otel-cli";
   tmate.attr = "third_party.nixpkgs.tmate";
   tmux.attr = "third_party.nixpkgs.tmux";
   wget.attr = "third_party.nixpkgs.wget";
@@ -51,10 +52,11 @@ depot.nix.lazy-deps {
 
   # programming
   ghc.attr = "third_party.nixpkgs.haskell.compiler.ghc923";
-  go.attr = "third_party.nixpkgs.go_1_17";
+  go.attr = "third_party.nixpkgs.go_1_20";
   node.attr = "third_party.nixpkgs.nodejs-18_x";
   python.attr = "third_party.nixpkgs.python38";
   rustc.attr = "third_party.nixpkgs.rustc";
+  cargo.attr = "third_party.nixpkgs.cargo";
 
   # ops
   gcloud.attr = "third_party.nixpkgs.google-cloud-sdk";
