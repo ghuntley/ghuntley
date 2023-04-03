@@ -5,10 +5,10 @@
         "homepage": "https://matrix.to/#/#agenix:nixos.org",
         "owner": "ryantm",
         "repo": "agenix",
-        "rev": "03b51fe8e459a946c4b88dcfb6446e45efb2c24e",
-        "sha256": "05hx6zz9ah8a4mympc8pazi6wsk84lh8myzi8zcv0d2chrjpz2h0",
+        "rev": "e64961977f60388dd0b49572bb0fc453b871f896",
+        "sha256": "168hbwhrma3flpvgmbn0zg6m4ykcnkpzp5bd03hx09731j0d7ljx",
         "type": "tarball",
-        "url": "https://github.com/ryantm/agenix/archive/03b51fe8e459a946c4b88dcfb6446e45efb2c24e.tar.gz",
+        "url": "https://github.com/ryantm/agenix/archive/e64961977f60388dd0b49572bb0fc453b871f896.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "flake-compat": {
@@ -29,10 +29,10 @@
         "homepage": "https://astro.github.io/microvm.nix/",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "31d3c1a05fba175e5d96f16256296ad4088ca9f5",
-        "sha256": "14mkjfyhj6f58kzx46clsmw1b6kzwbc2cb2h2c631zi7f57cf1id",
+        "rev": "f968ea83bdc542fd5e81e4bb1d726986098095b1",
+        "sha256": "15z884sfajmdd6f6183v6a8cw7q723jrgvlkgxl16f37g25i44d7",
         "type": "tarball",
-        "url": "https://github.com/astro/microvm.nix/archive/31d3c1a05fba175e5d96f16256296ad4088ca9f5.tar.gz",
+        "url": "https://github.com/astro/microvm.nix/archive/f968ea83bdc542fd5e81e4bb1d726986098095b1.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "naersk": {
@@ -65,10 +65,10 @@
         "homepage": "",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "19cf008bb18e47b6e3b4e16e32a9a4bdd4b45f7e",
-        "sha256": "0myq7fnykna5qazbk6hdgahy148yd7f5l8nrxhzllj67y86a5sxw",
+        "rev": "e3652e0735fbec227f342712f180f4f21f0594f2",
+        "sha256": "1h38yml73lxirxx6ynzmk3h4fw6wlgz8z8105cj733s8cvjyp03h",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/19cf008bb18e47b6e3b4e16e32a9a4bdd4b45f7e.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/e3652e0735fbec227f342712f180f4f21f0594f2.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-stable": {
@@ -81,18 +81,6 @@
         "sha256": "04ffwp2gzq0hhz7siskw6qh9ys8ragp7285vi1zh8xjksxn1msc5",
         "type": "tarball",
         "url": "https://github.com/NixOS/nixpkgs/archive/eabc38219184cc3e04a974fe31857d8e0eac098d.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "otel-cli": {
-        "branch": "main",
-        "description": "OpenTelemetry command-line tool for sending events from shell scripts & similar environments",
-        "homepage": null,
-        "owner": "equinix-labs",
-        "repo": "otel-cli",
-        "rev": "6018f76ee976e4d80d24c7aa1a0fb0f6df71a4be",
-        "sha256": "083d2s2y7j747adb3256v2h62l8k4fyjvq78kh2nxvddfy6gzv45",
-        "type": "tarball",
-        "url": "https://github.com/equinix-labs/otel-cli/archive/6018f76ee976e4d80d24c7aa1a0fb0f6df71a4be.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "smtprelay": {
