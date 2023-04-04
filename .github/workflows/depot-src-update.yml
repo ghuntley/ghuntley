@@ -37,7 +37,9 @@ jobs:
           install-nix: "false"
           cache-store: "true"
 
-      - run: direnv exec . depot-src-update
+      - run: 
+          direnv exec . depot-src-update
+          direnv exec . pre-commit uninstall -t pre-commit -t pre-merge-commit -t pre-push -t prepare-commit-msg -t commit-msg -t post-commit -t post-checkout -t post-merge -t post-rewrite
 
       - uses: gr2m/create-or-update-pull-request-action@v1
         env:
