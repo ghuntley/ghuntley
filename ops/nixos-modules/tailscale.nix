@@ -17,6 +17,11 @@
     checkReversePath = "loose";
   };
 
+  boot.kernel.sysctl = {
+    "net.ipv6.conf.all.forwarding" = "1"; # for tailscale exit node
+  };
+
+
   # TODO: automatically join tailscale network and handle 90 day key expiration
 
   # # create a oneshot job to authenticate to Tailscale
