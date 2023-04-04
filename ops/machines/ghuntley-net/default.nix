@@ -329,10 +329,6 @@ in
       cachix-agent-token.path = "/etc/cachix-agent.token";
       cachix-agent-token.symlink = false;
 
-      ghuntley-net-caddy-environment-file.file = secretFile "ghuntley-net-caddy-environment-file";
-      ghuntley-net-caddy-environment-file.owner = "caddy";
-      ghuntley-net-caddy-environment-file.symlink = false;
-
       ghuntley-dev-coder-secrets.file = secretFile "ghuntley-dev-coder-secrets";
       ghuntley-dev-coder-secrets.owner = "mgmt";
       ghuntley-dev-coder-secrets.symlink = false;
