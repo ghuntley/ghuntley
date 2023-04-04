@@ -1,6 +1,20 @@
-# blank
+# ghuntley's personal monorepo ![Views](https://komarev.com/ghpvc/?username=ghuntley) [![LinkedIn](https://img.shields.io/badge/-LinkedIn-5c5c5c?&logo=Linkedin&?logoColor=white&link=https://www.linkedin.com/in/geoffreyhuntley/)](https://www.linkedin.com/in/geoffreyhuntley/) 
 
 
-a
+This repository is the [monorepo][] for my personal software.
 
-  s
+Everything in here is built using [Nix][] with an automatic attribute-set layout
+that mirrors the filesystem layout of the repository (this might feel familiar
+to users of Bazel).
+
+If you've ended up here and have no idea who I am, feel free to follow me [on
+Twitter][].
+
+# Contributing
+
+If you'd like to contribute to any of the tools in here, please check out the [contribution guidelines](/tree/docs/CONTRIBUTING.md)
+
+[CLA]: CLA/README.md
+[monorepo]: https://en.wikipedia.org/wiki/Monorepo
+[Nix]: https://nixos.org/nix
+[on Twitter]: https://twitter.com/geoffreyhuntley
