@@ -298,12 +298,13 @@ in
     ];
 
     script = ''
-      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress /depot zh2297@zh2297.rsync.net:machines/ghuntley.net/depot
-      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress /srv zh2297@zh2297.rsync.net:machines/ghuntley.net/srv
-      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress /home zh2297@zh2297.rsync.net:machines/ghuntley.net/home
-      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress /var/lib/libvirt zh2297@zh2297.rsync.net:machines/ghuntley.net/var/lib/libvirt
-      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress /var/lib/postgresql zh2297@zh2297.rsync.net:machines/ghuntley.net/var/lib/postgresql
-      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress /var/log zh2297@zh2297.rsync.net:machines/ghuntley.net/var/lib/log
+      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress  -e "ssh -i ${config.age.secrets.rsync-net-backups-ssh-key.path}"  /depot zh2297@zh2297.rsync.net:machines/ghuntley.net/
+      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress -e "ssh -i ${config.age.secrets.rsync-net-backups-ssh-key.path}" /srv zh2297@zh2297.rsync.net:machines/ghuntley.net/
+      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress -e "ssh -i ${config.age.secrets.rsync-net-backups-ssh-key.path}" /etc zh2297@zh2297.rsync.net:machines/ghuntley.net/
+      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress -e "ssh -i ${config.age.secrets.rsync-net-backups-ssh-key.path}" /home zh2297@zh2297.rsync.net:machines/ghuntley.net/
+      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress -e "ssh -i ${config.age.secrets.rsync-net-backups-ssh-key.path}" /var/lib/libvirt zh2297@zh2297.rsync.net:machines/ghuntley.net/var/lib
+      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress -e "ssh -i ${config.age.secrets.rsync-net-backups-ssh-key.path}" /var/lib/postgresql zh2297@zh2297.rsync.net:machines/ghuntley.net/var/lib
+      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress -e "ssh -i ${config.age.secrets.rsync-net-backups-ssh-key.path}" /var/log zh2297@zh2297.rsync.net:machines/ghuntley.net/var
     '';
   };
 
