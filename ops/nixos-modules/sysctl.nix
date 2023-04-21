@@ -10,6 +10,8 @@
     "kern.maxproc" = 65536;
     "kernel.pid_max" = 4194303; # 64-bit max
     "net.ipv4.tcp_congestion_control" = "bbr";
+    "net.core.rmem_max" = 4194304;
+    "net.core.wmem_max" = 1048576;
   };
 
 }
