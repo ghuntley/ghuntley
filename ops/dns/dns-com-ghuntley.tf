@@ -21,6 +21,13 @@ resource "cloudflare_record" "com_ghuntley_apex" {
  * domain ownership verification
  */
 
+ resource "cloudflare_record" "net_ghuntley_txt_bskye_verification" {
+  zone_id = var.com_ghuntley_cloudflare_zone_id
+  name    = "_atproto"
+  type    = "TXT"
+  value   = "did=did:plc:r63key5ilrlzklg2sqcocgug"
+}
+
  resource "cloudflare_record" "net_ghuntley_txt_google_site_verification" {
   zone_id = var.com_ghuntley_cloudflare_zone_id
   name    = "@"
