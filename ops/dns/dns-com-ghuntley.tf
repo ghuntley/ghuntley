@@ -21,28 +21,28 @@ resource "cloudflare_record" "com_ghuntley_apex" {
  * domain ownership verification
  */
 
- resource "cloudflare_record" "net_ghuntley_txt_bskye_verification" {
+ resource "cloudflare_record" "com_ghuntley_txt_bskye_verification" {
   zone_id = var.com_ghuntley_cloudflare_zone_id
   name    = "_atproto"
   type    = "TXT"
   value   = "did=did:plc:r63key5ilrlzklg2sqcocgug"
 }
 
- resource "cloudflare_record" "net_ghuntley_txt_google_site_verification" {
+ resource "cloudflare_record" "com_ghuntley_txt_google_site_verification" {
   zone_id = var.com_ghuntley_cloudflare_zone_id
   name    = "@"
   type    = "TXT"
   value   = "google-site-verification=Ygi199GbO9ipejg0519FZUH5JVbWB_qIS9JOke_ulp8"
 }
 
- resource "cloudflare_record" "net_ghuntley_txt_keybase_site_verification" {
+ resource "cloudflare_record" "com_ghuntley_txt_keybase_site_verification" {
   zone_id = var.com_ghuntley_cloudflare_zone_id
   name    = "@"
   type    = "TXT"
   value   = "keybase-site-verification=qINp7lIpBcjEroqO0EFwILvIXlf1pWb0gpAEB3OhQn8"
 }
 
-resource "cloudflare_record" "net_ghuntley_txt_yandex_site_verification" {
+resource "cloudflare_record" "com_ghuntley_txt_yandex_site_verification" {
   zone_id = var.com_ghuntley_cloudflare_zone_id
   name    = "@"
   type    = "TXT"
