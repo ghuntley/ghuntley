@@ -28,7 +28,7 @@ in
 
   boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
 
-  boot.tmpOnTmpfs = true;
+  boot.tmp.useTmpfs = true;
 
   boot.zfs.devNodes = "/dev/disk/by-id/";
   boot.zfs.forceImportRoot = true;
