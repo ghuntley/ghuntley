@@ -206,24 +206,28 @@
     };
   };
 
-  systemd.services.podman-pull-coder = {
+  systemd.services.docker-pull-coder = {
     serviceConfig.User = "root";
     serviceConfig.Type = "oneshot";
 
     path = [
-      pkgs.podman
+      pkgs.docker
       pkgs.systemd
     ];
 
     script = ''
-      ${pkgs.podman}/bin/podman pull "ghcr.io/coder/coder:latest"
-      ${pkgs.systemd}/bin/systemctl restart podman-coder
+      ${pkgs.docker}/bin/docker pull "ghcr.io/coder/coder:latest"
+      ${pkgs.systemd}/bin/systemctl restart docker-coder
+
+      # wait for coder container to start before adding cdrkit
+      sleep 5
+      ${pkgs.docker}/bin/docker exec `docker ps -aqf "name=^coder$"` apk add cdrkit
     '';
   };
 
-  systemd.timers.podman-pull-coder = {
+  systemd.timers.docker-pull-coder = {
     wantedBy = [ "timers.target" ];
-    partOf = [ "podman-pull-coder.service" ];
+    partOf = [ "docker-pull-coder.service" ];
     timerConfig.OnCalendar = "daily";
   };
 }

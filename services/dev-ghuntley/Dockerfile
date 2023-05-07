@@ -2,4 +2,6 @@
 # SPDX-License-Identifier: Proprietary
 
 FROM ghcr.io/coder/coder:latest
-RUN apk add --nocache cdrkit
+USER root
+RUN apk add cdrkit
+USER coder
