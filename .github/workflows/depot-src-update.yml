@@ -37,7 +37,7 @@ jobs:
           install-nix: "false"
           cache-store: "true"
 
-      - run: 
+      - run:
           direnv exec . depot-src-update
           rm -rf .git/hooks
 
