@@ -82,6 +82,11 @@ depot.nix.lazy-deps {
   rustc.attr = "third_party.nixpkgs.rustc";
   cargo.attr = "third_party.nixpkgs.cargo";
 
+  ## ocaml
+  dune.attr = "third_party.nixpkgs.dune_3";
+  ocaml.attr = "third_party.nixpkgs.ocaml";
+  opam.attr = "third_party.nixpkgs.opam";
+
   # ops
   gcloud.attr = "third_party.nixpkgs.google-cloud-sdk";
   terraform.attr = "third_party.nixpkgs.terraform";

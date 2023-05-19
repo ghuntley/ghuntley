@@ -2,19 +2,17 @@
     "recommendations": [
         "haskell.haskell",
         "robbowen.synthwave-vscode",
-        "golang.go",
-        "ms-dotnettools.csharp",
         "editorconfig.editorconfig",
-        "ms-python.python",
         "hashicorp.terraform",
-        "ms-vscode.cpptools-extension-pack",
         "jnoortheen.nix-ide",
         "coder.coder-remote",
-        "github.copilot",
         "equinusocio.vsc-material-theme",
         "fabiospampinato.vscode-todo-plus",
         "formulahendry.auto-close-tag",
         "formulahendry.auto-rename-tag",
-        "streetsidesoftware.code-spell-checker"
+        "streetsidesoftware.code-spell-checker",
+        "rust-lang.rust-analyzer",
+        "ionide.ionide-fsharp",
+        "ocamllabs.ocaml-platform"
     ]
 }

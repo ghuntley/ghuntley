@@ -55,5 +55,8 @@
     "<C-a>": false,
     "<C-f>": false
   },
-  "workbench.colorTheme": "SynthWave '84"
+  "workbench.colorTheme": "SynthWave '84",
+  "ocaml.sandbox": {
+    "kind": "global"
+  }
 }
