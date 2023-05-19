@@ -41,6 +41,7 @@ depot.nix.lazy-deps {
   bat.attr = "third_party.nixpkgs.bat";
   btop.attr = "third_party.nixpkgs.btop";
   curl.attr = "third_party.nixpkgs.curl";
+  diff-so-fancy.attr = "third_party.nixpkgs.diff-so-fancy";
   elinks.attr = "third_party.nixpkgs.elinks";
   file.attr = "third_party.nixpkgs.file";
   hash-password.attr = "tools.hash-password";
