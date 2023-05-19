@@ -31,11 +31,23 @@ let
     ];
   };
 
+  compSciFilter = readTree.restrictFolder {
+    folder = "compsci";
+    reason = ''
+      Code under //compsci is not considered stable or dependable in the
+      wider depot context. If a project under //compsci is required by
+      something else, please move it to a different depot path.
+    '';
+
+    exceptions = [
+    ];
+  };
+
   readDepot = depotArgs:
     readTree {
       args = depotArgs;
       path = ./.;
-      filter = parts: args: patternsFilter parts args;
+      filter = parts: args: patternsFilter parts (compSciFilter parts args);
       scopedArgs = {
         __findFile = _: _: throw "DEPOT: Do not import from NIX_PATH in the depot!";
         builtins = builtins // {
