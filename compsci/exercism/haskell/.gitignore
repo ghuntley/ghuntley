@@ -1,0 +1,27 @@
+# exercism specific patterns
+bin/configlet
+bin/configlet.exe
+
+# exercism/haskell specific patterns
+*.cabal
+
+# sorted default .gitignore from github/gitignore/Haskell.gitignore
+*.aux
+*.chi
+*.chs.h
+*.dyn_hi
+*.dyn_o
+*.eventlog
+*.hi
+*.hp
+*.o
+*.prof
+.cabal-sandbox/
+.hpc
+.hsenv
+.stack-work/
+cabal-dev
+cabal.project.local
+cabal.sandbox.config
+dist
+dist-*

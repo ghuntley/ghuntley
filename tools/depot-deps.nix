@@ -39,6 +39,7 @@ depot.nix.lazy-deps {
   ack.attr = "third_party.nixpkgs.ack";
   agenix.attr = "third_party.agenix.cli";
   bat.attr = "third_party.nixpkgs.bat";
+  btop.attr = "third_party.nixpkgs.btop";
   curl.attr = "third_party.nixpkgs.curl";
   elinks.attr = "third_party.nixpkgs.elinks";
   file.attr = "third_party.nixpkgs.file";
@@ -51,10 +52,33 @@ depot.nix.lazy-deps {
   unzip.attr = "third_party.nixpkgs.unzip";
 
   # programming
+  exercism.attr = "third_party.nixpkgs.exercism";
+
+  ## haskell
   ghc.attr = "third_party.nixpkgs.haskell.compiler.ghc923";
+  stack.attr = "third_party.nixpkgs.stack";
+
+  ## dotnet
+  dotnet.attr = "third_party.nixpkgs.dotnet-sdk_7";
+
+  ## java
+  java.attr = "third_party.nixpkgs.jdk19";
+  gradle.attr = "third_party.nixpkgs.gradle";
+
+  ## go
   go.attr = "third_party.nixpkgs.go_1_20";
+  gopls.attr = "third_party.nixpkgs.gopls";
+  go-outline.attr = "third_party.nixpkgs.go-outline";
+
+  ## typescript
   node.attr = "third_party.nixpkgs.nodejs-18_x";
+  tsc.attr = "third_party.nixpkgs.nodePackages.typescript";
+  yarn.attr = "third_party.nixpkgs.nodePackages.yarn";
+
+  ## python
   python.attr = "third_party.nixpkgs.python38";
+
+  ## rust
   rustc.attr = "third_party.nixpkgs.rustc";
   cargo.attr = "third_party.nixpkgs.cargo";
 

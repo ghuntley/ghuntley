@@ -1,0 +1,25 @@
+# IDE files
+.vs/
+.vscode/
+.idea/
+.ionide/
+
+# Build files
+bin/
+obj/
+build/
+
+# User-specific files
+*.suo
+*.user
+*.userprefs
+
+# Un-ignore fetch configlet scripts
+!bin/fetch-configlet
+!bin/fetch-configlet.ps1
+
+# Prob-specs repo
+.problem-specifications
+
+# Other files
+.DS_Store

@@ -1,0 +1,32 @@
+{
+  "authors": [
+    "ErikSchierboom"
+  ],
+  "contributors": [
+    "iHiD",
+    "kytrinyx",
+    "petertseng",
+    "ppartarr",
+    "rbasso",
+    "sshine",
+    "tejasbubane"
+  ],
+  "files": {
+    "solution": [
+      "src/HelloWorld.hs",
+      "package.yaml"
+    ],
+    "test": [
+      "test/Tests.hs"
+    ],
+    "example": [
+      ".meta/examples/success-standard/src/HelloWorld.hs"
+    ],
+    "invalidator": [
+      "stack.yaml"
+    ]
+  },
+  "blurb": "The classical introductory exercise. Just say \"Hello, World!\".",
+  "source": "This is an exercise to introduce users to using Exercism",
+  "source_url": "https://en.wikipedia.org/wiki/%22Hello,_world!%22_program"
+}
