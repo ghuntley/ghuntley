@@ -16,7 +16,7 @@
 #    other folders below //third_party, other than the ones mentioned
 #    above.
 
-{ pkgs, depot, ... }:
+{ pkgs, depot, localSystem, ... }:
 
 {
   # Expose a partially applied NixOS, expecting an attribute set with
@@ -29,13 +29,17 @@
   # needs to be partially evaluated in NixOS configuration before
   # module imports are resolved.
   nixos =
-    { configuration, specialArgs ? { }, system ? builtins.currentSystem, ... }:
+    { configuration
+    , specialArgs ? { }
+    , system ? localSystem
+    , ...
+    }:
     let
       eval = import (pkgs.path + "/nixos/lib/eval-config.nix") {
         inherit specialArgs system;
         modules = [
           configuration
-          (import (depot.path.origSrc + "/ops/nixos-modules/defaults.nix"))
+          (import (depot.path.origSrc + "/ops/nixos-modules/default-imports.nix"))
         ];
       };
 

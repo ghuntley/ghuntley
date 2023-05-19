@@ -17,7 +17,7 @@ let
 in
 {
   imports = [
-    (mod "defaults.nix")
+    (mod "default-imports.nix")
 
     (mod "automatic-nix-gc.nix")
 
