@@ -1,16 +1,9 @@
 
 # Packages
 
-## Adblock
+## AdguardHome
 
-```
-opkg update
-opkg install adblock
-opkg install luci-app-adblock
-uci set adblock.global.adb_backupdir="/etc/adblock"
-uci commit adblock
-/etc/init.d/adblock restart
-```
+Follow instructions at https://openwrt.org/docs/guide-user/services/dns/adguard-home
 
 ## Tailscale (as exit node)
 
