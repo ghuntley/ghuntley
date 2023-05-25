@@ -1,6 +1,17 @@
 
 # Packages
 
+## Adblock
+
+```
+opkg update
+opkg install adblock
+opkg install luci-app-adblock
+uci set adblock.global.adb_backupdir="/etc/adblock"
+uci commit adblock
+/etc/init.d/adblock restart
+```
+
 ## Tailscale (as exit node)
 
 Install the appropriate packages
@@ -8,10 +19,16 @@ Install the appropriate packages
 ```bash
 opkg update
 opkg install tailscale
+uci commit tailscale
+```
+
+Start the service and authenticate
+
+```bash
 tailscale up --advertise-exit-node
 ```
 
-Enable SSH as follows
+Configure firewall rules as follows
 
 ```
 Enable_TAILSCALE_ADMIN
