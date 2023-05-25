@@ -56,7 +56,8 @@ depot.nix.lazy-deps {
   exercism.attr = "third_party.nixpkgs.exercism";
 
   ## haskell
-  ghc.attr = "third_party.nixpkgs.haskell.compiler.ghc923";
+  ghc.attr = "third_party.nixpkgs.haskell.compiler.ghc927";
+  ghci.attr = "third_party.nixpkgs.haskell.compiler.ghc927";
   stack.attr = "third_party.nixpkgs.stack";
 
   ## dotnet
