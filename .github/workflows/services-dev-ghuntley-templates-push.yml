@@ -64,6 +64,10 @@ jobs:
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
+          coder templates push --directory ./alpine \
+            --name ${{ steps.vars.outputs.sha_short }} \
+            --yes
+
         env:
           # Consumed by Coder CLI
           CODER_URL: https://ghuntley.dev
