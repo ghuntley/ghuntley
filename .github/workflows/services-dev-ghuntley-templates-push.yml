@@ -60,9 +60,9 @@ jobs:
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
-          coder templates push --directory ./gcp-windows-server-2022 \
-            --name ${{ steps.vars.outputs.sha_short }} \
-            --yes
+          #coder templates push --directory ./gcp-windows-server-2022 \
+          #  --name ${{ steps.vars.outputs.sha_short }} \
+          #  --yes
 
           coder templates push --directory ./alpine \
             --name ${{ steps.vars.outputs.sha_short }} \
