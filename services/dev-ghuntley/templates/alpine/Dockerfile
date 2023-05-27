@@ -18,6 +18,7 @@ RUN apk add asciinema \
 			docker \
 			git \
 			lazygit \
+      make \
 			neovim \
 			openssh \
 			stow \
