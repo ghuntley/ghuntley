@@ -39,7 +39,7 @@ jobs:
 
       - run:
           direnv exec . depot-src-update
-          rm -rf .git/hooks
+          direnv exec . rm -rf .git/hooks
 
       - uses: gr2m/create-or-update-pull-request-action@v1
         env:
