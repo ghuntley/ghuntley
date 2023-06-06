@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   ops-dns-apply:
-    runs-on: ubuntu-latest
+    runs-on: nscloud-amd64
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v21
