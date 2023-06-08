@@ -278,7 +278,7 @@ in
   services.sanoid.datasets."rpool/data/depot".useTemplate = [ "extra" ];
   services.sanoid.datasets."rpool/data/srv".useTemplate = [ "extra" ];
 
-  systemd.services.backups = {
+  systemd.services.backup = {
     serviceConfig.User = "root";
     serviceConfig.Type = "oneshot";
 
@@ -300,7 +300,7 @@ in
 
   systemd.timers.backup = {
     wantedBy = [ "timers.target" ];
-    partOf = [ "backups.service" ];
+    partOf = [ "backup.service" ];
     timerConfig.OnCalendar = "hourly";
   };
 
