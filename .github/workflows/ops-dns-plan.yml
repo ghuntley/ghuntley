@@ -52,7 +52,7 @@ jobs:
           TF_VAR_net_ghuntley_ipv6: ${{ secrets.TF_VAR_net_ghuntley_ipv6 }}
 
 
-      - uses: GrantBirki/comment@v2.0.5
+      - uses: peter-evans/create-or-update-comment@v3
         with:
-          file: ${{ vars.GITHUB_STEP_SUMMARY }}
+          body-path: ${{ vars.GITHUB_STEP_SUMMARY }}
           issue-number: ${{ github.event.number }}
