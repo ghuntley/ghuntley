@@ -124,7 +124,26 @@ CMD /bin/bash -l
 ENV USER root
 RUN touch .bash_profile \
  && curl https://nixos.org/releases/nix/nix-${NIX_VERSION}/install | sh \
- && chown ghuntley -R /nix
+ && chown ghuntley -R /nix # reset perms from root install to ghuntley as nix is configured as single user mode
+
+RUN echo '. /root/.nix-profile/etc/profile.d/nix.sh' >> /root/.bashrc
+RUN mkdir -p /root/.config/nixpkgs && echo '{ allowUnfree = true; }' >> /root/.config/nixpkgs/config.nix
+
+# Install cachix as root
+RUN . /root/.nix-profile/etc/profile.d/nix.sh \
+  && nix-env -iA cachix -f https://cachix.org/api/v1/install \
+  && cachix use cachix
+
+# Install direnv as root
+RUN . /root/.nix-profile/etc/profile.d/nix.sh \
+  && nix-env -i direnv \
+  && direnv hook bash >> /root/.bashrc
+
+# Install devenv as root
+RUN . /root/.nix-profile/etc/profile.d/nix.sh \
+	nix-env -iA cachix -f https://cachix.org/api/v1/install && \
+    cachix use devenv && \
+    nix-env -if https://github.com/cachix/devenv/tarball/latest
 
 # all ops from here onwards are to be done as ghuntley
 USER ghuntley
