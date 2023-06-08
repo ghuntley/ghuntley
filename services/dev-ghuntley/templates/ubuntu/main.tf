@@ -52,7 +52,7 @@ resource "coder_agent" "main" {
     fi
 
     # ensure nix-channels is up to date
-    nix-channel --update
+    /home/ghuntley/.nix-profile/bin/nix-channel --update
 
   EOT
 }
