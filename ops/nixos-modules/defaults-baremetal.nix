@@ -25,6 +25,8 @@ in
     (mod "initrd-zfs-unlock.nix")
     (mod "sshd.nix")
 
+    (mod "netdata.nix")
+
     (mod "mdadm.nix")
     (mod "nvme.nix")
     (mod "smartd.nix")

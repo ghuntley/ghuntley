@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   depot-src-update:
-    runs-on: ubuntu-latest
+    runs-on: nscloud-amd64
     steps:
       - uses: actions/checkout@v3
         with:
@@ -38,9 +38,7 @@ jobs:
           cache-store: "true"
 
       - run:
-          direnv exec . depot-src-update
-          direnv deny
-          rm -rf .git/hooks
+          direnv exec . depot-src-update && pre-commit uninstall
 
       - uses: gr2m/create-or-update-pull-request-action@v1
         env:

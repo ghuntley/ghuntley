@@ -42,6 +42,7 @@ depot.nix.lazy-deps {
   btop.attr = "third_party.nixpkgs.btop";
   curl.attr = "third_party.nixpkgs.curl";
   diff-so-fancy.attr = "third_party.nixpkgs.diff-so-fancy";
+  doppler.attr = "third_party.nixpkgs.doppler";
   elinks.attr = "third_party.nixpkgs.elinks";
   file.attr = "third_party.nixpkgs.file";
   hash-password.attr = "tools.hash-password";
@@ -51,6 +52,9 @@ depot.nix.lazy-deps {
   tmux.attr = "third_party.nixpkgs.tmux";
   wget.attr = "third_party.nixpkgs.wget";
   unzip.attr = "third_party.nixpkgs.unzip";
+
+  # github actions
+  act.attr = "third_party.nixpkgs.act";
 
   # programming
   exercism.attr = "third_party.nixpkgs.exercism";

@@ -3,6 +3,8 @@
 
 FROM ubuntu:jammy
 
+ARG NIX_VERSION=2.9.2
+
 # Add a user `ghuntley` so that you're not developing as the `root` user
 RUN useradd ghuntley \
     --create-home \
@@ -43,6 +45,7 @@ RUN apt-get install --yes \
 	cmake \
 	crypto-policies \
 	curl \
+	direnv \
 	fd-find \
 	file \
 	git \
@@ -106,6 +109,9 @@ RUN echo "PermitUserEnvironment yes" >>/etc/ssh/sshd_config && \
 	echo "X11Forwarding yes" >>/etc/ssh/sshd_config && \
 	echo "X11UseLocalhost no" >>/etc/ssh/sshd_config
 
+# Enable docker-in-docker
+RUN adduser ghuntley docker
+
 # Install Nix
 RUN addgroup --system nixbld \
   && adduser ghuntley nixbld \
@@ -114,12 +120,28 @@ RUN addgroup --system nixbld \
   && mkdir -p /etc/nix && echo 'sandbox = false' > /etc/nix/nix.conf
 
 CMD /bin/bash -l
+
+# install nix for root user
+ENV USER root
+RUN touch .bash_profile \
+ && curl https://nixos.org/releases/nix/nix-${NIX_VERSION}/install | sh \
+ && chown ghuntley -R /nix # reset perms from root install to ghuntley as nix is configured as single user mode
+
+RUN echo '. /root/.nix-profile/etc/profile.d/nix.sh' >> /root/.bashrc
+RUN mkdir -p /root/.config/nixpkgs && echo '{ allowUnfree = true; }' >> /root/.config/nixpkgs/config.nix
+
+
+# Install direnv as root
+RUN direnv hook bash >> /root/.bashrc
+
+# all ops from here onwards are to be done as ghuntley
 USER ghuntley
 ENV USER ghuntley
 WORKDIR /home/ghuntley
 
+# install nix for ghuntley
 RUN touch .bash_profile \
- && curl https://nixos.org/releases/nix/nix-2.9.2/install | sh
+ && curl https://nixos.org/releases/nix/nix-${NIX_VERSION}/install | sh
 
 RUN echo '. /home/ghuntley/.nix-profile/etc/profile.d/nix.sh' >> /home/ghuntley/.bashrc
 RUN mkdir -p /home/ghuntley/.config/nixpkgs && echo '{ allowUnfree = true; }' >> /home/ghuntley/.config/nixpkgs/config.nix
@@ -130,9 +152,7 @@ RUN . /home/ghuntley/.nix-profile/etc/profile.d/nix.sh \
   && cachix use cachix
 
 # Install direnv
-RUN . /home/ghuntley/.nix-profile/etc/profile.d/nix.sh \
-  && nix-env -i direnv \
-  && direnv hook bash >> /home/ghuntley/.bashrc
+RUN direnv hook bash >> /home/ghuntley/.bashrc
 
 # Install devenv
 RUN . /home/ghuntley/.nix-profile/etc/profile.d/nix.sh \

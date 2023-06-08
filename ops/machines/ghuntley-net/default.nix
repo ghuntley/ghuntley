@@ -37,7 +37,6 @@ in
   boot.loader.generationsDir.copyKernels = true;
 
   boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
   boot.loader.grub.efiInstallAsRemovable = true;
   boot.loader.grub.copyKernels = true;
   boot.loader.grub.efiSupport = true;
@@ -237,15 +236,6 @@ in
       autosnap = true;
     };
 
-    templates.libvirt = {
-      hourly = 24;
-      daily = 14;
-      monthly = 0;
-      yearly = 0;
-
-      autosnap = true;
-    };
-
     templates.postgresql = {
       hourly = 168;
       daily = 14;
@@ -256,7 +246,7 @@ in
     };
 
     templates.standard = {
-      hourly = 24;
+      hourly = 7;
       daily = 7;
       monthly = 0;
       yearly = 0;
@@ -281,14 +271,14 @@ in
   services.sanoid.datasets."rpool/nixos/var".useTemplate = [ "standard" ];
   services.sanoid.datasets."rpool/nixos/var/lib".useTemplate = [ "standard" ];
   services.sanoid.datasets."rpool/nixos/var/lib/postgresql".useTemplate = [ "postgresql" ];
-  services.sanoid.datasets."rpool/nixos/var/lib/libvirt".useTemplate = [ "libvirt" ];
-  services.sanoid.datasets."rpool/nixos/var/lib/libvirt/images".useTemplate = [ "libvirt" ];
+  services.sanoid.datasets."rpool/nixos/var/lib/libvirt".useTemplate = [ "standard" ];
+  services.sanoid.datasets."rpool/nixos/var/lib/libvirt/images".useTemplate = [ "standard" ];
   services.sanoid.datasets."rpool/nixos/var/log".useTemplate = [ "standard" ];
   services.sanoid.datasets."bpool/nixos/root".useTemplate = [ "standard" ];
   services.sanoid.datasets."rpool/data/depot".useTemplate = [ "extra" ];
   services.sanoid.datasets."rpool/data/srv".useTemplate = [ "extra" ];
 
-  systemd.services.backups = {
+  systemd.services.backup = {
     serviceConfig.User = "root";
     serviceConfig.Type = "oneshot";
 
@@ -310,7 +300,7 @@ in
 
   systemd.timers.backup = {
     wantedBy = [ "timers.target" ];
-    partOf = [ "backups.service" ];
+    partOf = [ "backup.service" ];
     timerConfig.OnCalendar = "hourly";
   };
 
