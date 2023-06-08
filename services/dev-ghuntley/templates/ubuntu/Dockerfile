@@ -3,6 +3,8 @@
 
 FROM ubuntu:jammy
 
+ARG NIX_VERSION=2.9.2
+
 # Add a user `ghuntley` so that you're not developing as the `root` user
 RUN useradd ghuntley \
     --create-home \
@@ -117,12 +119,21 @@ RUN addgroup --system nixbld \
   && mkdir -p /etc/nix && echo 'sandbox = false' > /etc/nix/nix.conf
 
 CMD /bin/bash -l
+
+# install nix for root user
+ENV USER root
+RUN touch .bash_profile \
+ && curl https://nixos.org/releases/nix/nix-${NIX_VERSION}/install | sh \
+ && chown ghuntley -R /nix
+
+# all ops from here onwards are to be done as ghuntley
 USER ghuntley
 ENV USER ghuntley
 WORKDIR /home/ghuntley
 
+# install nix for ghuntley
 RUN touch .bash_profile \
- && curl https://nixos.org/releases/nix/nix-2.9.2/install | sh
+ && curl https://nixos.org/releases/nix/nix-${NIX_VERSION}/install | sh
 
 RUN echo '. /home/ghuntley/.nix-profile/etc/profile.d/nix.sh' >> /home/ghuntley/.bashrc
 RUN mkdir -p /home/ghuntley/.config/nixpkgs && echo '{ allowUnfree = true; }' >> /home/ghuntley/.config/nixpkgs/config.nix
@@ -142,10 +153,6 @@ RUN . /home/ghuntley/.nix-profile/etc/profile.d/nix.sh \
 	nix-env -iA cachix -f https://cachix.org/api/v1/install && \
     cachix use devenv && \
     nix-env -if https://github.com/cachix/devenv/tarball/latest
-
-# Install doppler for secret management
-RUN . /home/ghuntley/.nix-profile/etc/profile.d/nix.sh \
-  nix-env -iA nixpkgs.doppler
 
 # Start SSH service
 EXPOSE 22
