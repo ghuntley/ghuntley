@@ -201,7 +201,7 @@
 
         GOOGLE_APPLICATION_CREDENTIALS = "/home/coder/coder-gcp-service-account-ghuntley-dev-token";
         CODER_PG_CONNECTION_URL = "postgres://coder:coder@localhost/coder?sslmode=disable";
-        TF_LOG = "DEBUG";
+        #TF_LOG = "DEBUG";
       };
     };
   };
