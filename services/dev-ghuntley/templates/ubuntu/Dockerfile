@@ -144,6 +144,10 @@ RUN . /home/ghuntley/.nix-profile/etc/profile.d/nix.sh \
     cachix use devenv && \
     nix-env -if https://github.com/cachix/devenv/tarball/latest
 
+# Install doppler for secret management
+RUN . /home/ghuntley/.nix-profile/etc/profile.d/nix.sh \
+  nix-env -iA nixpkgs.doppler
+
 # Start SSH service
 EXPOSE 22
 CMD ["/usr/sbin/sshd","-D"]
