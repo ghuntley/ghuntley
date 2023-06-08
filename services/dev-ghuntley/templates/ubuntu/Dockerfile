@@ -45,6 +45,7 @@ RUN apt-get install --yes \
 	cmake \
 	crypto-policies \
 	curl \
+	direnv \
 	fd-find \
 	file \
 	git \
@@ -129,21 +130,9 @@ RUN touch .bash_profile \
 RUN echo '. /root/.nix-profile/etc/profile.d/nix.sh' >> /root/.bashrc
 RUN mkdir -p /root/.config/nixpkgs && echo '{ allowUnfree = true; }' >> /root/.config/nixpkgs/config.nix
 
-# Install cachix as root
-RUN . /root/.nix-profile/etc/profile.d/nix.sh \
-  && nix-env -iA cachix -f https://cachix.org/api/v1/install \
-  && cachix use cachix
 
 # Install direnv as root
-RUN . /root/.nix-profile/etc/profile.d/nix.sh \
-  && nix-env -i direnv \
-  && direnv hook bash >> /root/.bashrc
-
-# Install devenv as root
-RUN . /root/.nix-profile/etc/profile.d/nix.sh \
-	nix-env -iA cachix -f https://cachix.org/api/v1/install && \
-    cachix use devenv && \
-    nix-env -if https://github.com/cachix/devenv/tarball/latest
+RUN direnv hook bash >> /root/.bashrc
 
 # all ops from here onwards are to be done as ghuntley
 USER ghuntley
@@ -163,9 +152,7 @@ RUN . /home/ghuntley/.nix-profile/etc/profile.d/nix.sh \
   && cachix use cachix
 
 # Install direnv
-RUN . /home/ghuntley/.nix-profile/etc/profile.d/nix.sh \
-  && nix-env -i direnv \
-  && direnv hook bash >> /home/ghuntley/.bashrc
+RUN direnv hook bash >> /home/ghuntley/.bashrc
 
 # Install devenv
 RUN . /home/ghuntley/.nix-profile/etc/profile.d/nix.sh \
