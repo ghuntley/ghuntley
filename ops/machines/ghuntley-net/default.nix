@@ -37,7 +37,6 @@ in
   boot.loader.generationsDir.copyKernels = true;
 
   boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
   boot.loader.grub.efiInstallAsRemovable = true;
   boot.loader.grub.copyKernels = true;
   boot.loader.grub.efiSupport = true;
