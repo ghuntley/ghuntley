@@ -106,6 +106,10 @@ RUN echo "PermitUserEnvironment yes" >>/etc/ssh/sshd_config && \
 	echo "X11Forwarding yes" >>/etc/ssh/sshd_config && \
 	echo "X11UseLocalhost no" >>/etc/ssh/sshd_config
 
+# Enable docker-in-docker
+RUN addgroup --system docker \
+  && adduser ghuntley docker
+
 # Install Nix
 RUN addgroup --system nixbld \
   && adduser ghuntley nixbld \

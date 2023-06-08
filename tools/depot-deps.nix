@@ -52,6 +52,9 @@ depot.nix.lazy-deps {
   wget.attr = "third_party.nixpkgs.wget";
   unzip.attr = "third_party.nixpkgs.unzip";
 
+  # github actions
+  act.attr = "third_party.nixpkgs.act";
+
   # programming
   exercism.attr = "third_party.nixpkgs.exercism";
 
