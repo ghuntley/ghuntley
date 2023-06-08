@@ -43,7 +43,7 @@ jobs:
           git add -A
           git config --global user.name "Geoffrey Huntley"
           git config --global user.email "ghuntley@ghuntley.com"
-          git commit -m "feat(depot-src-update): automated dependency update)"
+          git commit -m "feat(depot-src-update):automated dependency update"
 
       - uses: gr2m/create-or-update-pull-request-action@v1
         env:
