@@ -60,27 +60,14 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
-          body-includes: This comment was written by a bot!
+          body-includes: Build output
 
-      - name: Create comment
-        if: steps.fc.outputs.comment-id == ''
-        uses: peter-evans/create-or-update-comment@v3
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            This comment was written by a bot!
-          reactions: rocket
-
-      - name: Update comment
-        if: steps.fc.outputs.comment-id != ''
+      - name: Create or update comment
         uses: peter-evans/create-or-update-comment@v3
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
           body: |
-            This comment has been updated!
-          reactions: hooray
-
-        
-      - uses: peter-evans/create-or-update-comment@v3
-        with:
-          body-path: ${{ vars.GITHUB_STEP_SUMMARY }}
+            Build output
+            ${{ steps.build.outputs.build-log }}
+          edit-mode: replace
