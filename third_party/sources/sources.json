@@ -29,10 +29,10 @@
         "homepage": "https://astro.github.io/microvm.nix/",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "53155678bf68be0dadbe31e114971846dccba9e7",
-        "sha256": "1h0rjq0prkyp4d5nf463ck1jpjh1xb6bfwjnlasjb515j8w5mqxj",
+        "rev": "551239936a1c86479f6026658c4d1f1a3635d286",
+        "sha256": "1q6hk66ia4zfd067i6lx974m51l14z6hzwpvm5x7hsmf8s8sk7z8",
         "type": "tarball",
-        "url": "https://github.com/astro/microvm.nix/archive/53155678bf68be0dadbe31e114971846dccba9e7.tar.gz",
+        "url": "https://github.com/astro/microvm.nix/archive/551239936a1c86479f6026658c4d1f1a3635d286.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "naersk": {
@@ -65,10 +65,10 @@
         "homepage": "",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "4729ffac6fd12e26e5a8de002781ffc49b0e94b7",
-        "sha256": "0gha78rczp5gbl6v39i2bm11kmi974akgqkj3hck5s2ri6abprsr",
+        "rev": "21951114383770f96ae528d0ae68824557768e81",
+        "sha256": "003vyfhn84snj5x1h9zm61njh80cmgdfz0kjwmxri8rsb54psyca",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/4729ffac6fd12e26e5a8de002781ffc49b0e94b7.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/21951114383770f96ae528d0ae68824557768e81.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-stable": {
