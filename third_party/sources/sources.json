@@ -29,10 +29,10 @@
         "homepage": "https://nix-community.github.io/home-manager/",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "44d1a8542ac92f0ce75d970090216245043a2709",
-        "sha256": "0hc7aj96k9ziysdv4v1mh105cxxpfhjbr05354c9wlw9rlqmvw01",
+        "rev": "89d10f8adce369a80e046c2fd56d1e7b7507bb5b",
+        "sha256": "1kbsrb291l0dv0idl6faav5g5rhs8xxvg33dnxx1ffw4yqn8mlkh",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/44d1a8542ac92f0ce75d970090216245043a2709.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/89d10f8adce369a80e046c2fd56d1e7b7507bb5b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "microvm": {
@@ -41,10 +41,10 @@
         "homepage": "https://astro.github.io/microvm.nix/",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "c14833d8506a784f0b3cf91a2b864acb05662711",
-        "sha256": "0r4n8lx921gzsg4yxqnin7l12bdymsd8psq9pwvyijixk7biqad5",
+        "rev": "46cb6ab8247c1f62c6008cb11ceaf810d165397f",
+        "sha256": "0jx7xr01lak9bfkralg40qmfl4fmm87ylqamc86q1v60pmml0vmg",
         "type": "tarball",
-        "url": "https://github.com/astro/microvm.nix/archive/c14833d8506a784f0b3cf91a2b864acb05662711.tar.gz",
+        "url": "https://github.com/astro/microvm.nix/archive/46cb6ab8247c1f62c6008cb11ceaf810d165397f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "naersk": {
@@ -53,10 +53,10 @@
         "homepage": "",
         "owner": "nmattia",
         "repo": "naersk",
-        "rev": "df10963b956962913b693a638746a95d6c506404",
-        "sha256": "0433hy2plfyg5r7bg8lvskyv5f10x4rj34rgd3aichqmln2f9dfs",
+        "rev": "714e701eb4ca2491d34d794b98be4b994a796ae7",
+        "sha256": "1hs23g8fdv05j6d8f80wm9dgkpc1bp5qvn0w9v9jh0dmqa1q6lgn",
         "type": "tarball",
-        "url": "https://github.com/nmattia/naersk/archive/df10963b956962913b693a638746a95d6c506404.tar.gz",
+        "url": "https://github.com/nmattia/naersk/archive/714e701eb4ca2491d34d794b98be4b994a796ae7.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-vscode-server": {
