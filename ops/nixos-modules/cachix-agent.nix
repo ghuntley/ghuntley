@@ -3,7 +3,7 @@
 
 { pkgs, config, lib, depot, ... }: {
 
-  services.cachix-agent.enable = true;
+  services.cachix-agent.enable = false;
 
   # Configure secrets for services that need them.
   age.secrets =
