@@ -5,4 +5,5 @@
 
 (with depot.ops.machines; [
   ghuntley-net
+  ghuntley-com
 ])
