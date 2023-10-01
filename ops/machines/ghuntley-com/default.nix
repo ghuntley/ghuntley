@@ -19,6 +19,7 @@ in
     (mod "tailscale-exit-node.nix")
     (mod "caddy.nix")
     (service "com-ghuntley/ghost.nix")
+    (service "com-ghuntley/webserver.nix")
   ];
 
   boot.tmp.useTmpfs = true;
