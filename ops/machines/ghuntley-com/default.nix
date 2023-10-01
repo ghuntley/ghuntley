@@ -77,10 +77,6 @@ in
       ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress  -e "ssh -i ${config.age.secrets.rsync-net-backups-ssh-key.path}"  /depot zh2297@zh2297.rsync.net:machines/ghuntley.com/
       ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress -e "ssh -i ${config.age.secrets.rsync-net-backups-ssh-key.path}" /srv zh2297@zh2297.rsync.net:machines/ghuntley.com/
       ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress -e "ssh -i ${config.age.secrets.rsync-net-backups-ssh-key.path}" /etc zh2297@zh2297.rsync.net:machines/ghuntley.com/
-      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress -e "ssh -i ${config.age.secrets.rsync-net-backups-ssh-key.path}" /home zh2297@zh2297.rsync.net:machines/ghuntley.com/
-      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress -e "ssh -i ${config.age.secrets.rsync-net-backups-ssh-key.path}" /var/lib/libvirt zh2297@zh2297.rsync.net:machines/ghuntley.com/var/lib
-      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress -e "ssh -i ${config.age.secrets.rsync-net-backups-ssh-key.path}" /var/lib/postgresql zh2297@zh2297.rsync.net:machines/ghuntley.com/var/lib
-      ${pkgs.rsync}/bin/rsync --archive --verbose --human-readable --delete-after --stats --compress -e "ssh -i ${config.age.secrets.rsync-net-backups-ssh-key.path}" /var/log zh2297@zh2297.rsync.net:machines/ghuntley.com/var
     '';
   };
 
