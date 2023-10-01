@@ -38,7 +38,7 @@ jobs:
 
       - name: "Install latest version of Coder and push templates"
         run: |
-          cd services/dev-ghuntley/templates
+          cd "${{ github.workspace }}/services/dev-ghuntley/templates"
           curl -fsSL $CODER_URL/bin/coder-linux-amd64 -o ./coder && chmod +x ./coder
 
           ./coder templates push --directory ./ubuntu \
