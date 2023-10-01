@@ -26,49 +26,23 @@ concurrency:
 jobs:
   services-dev-ghuntley-templates-push:
     runs-on: nscloud-amd64
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          submodules: true
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Get latest commit hash
+          id: latest_commit
+          run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        - name: Get commit title
+           id: commit_title
+           run: echo "title=$(git log -1 --pretty=%s)" >> $GITHUB_OUTPUT
 
-      - name: Get short commit SHA # to use as template version name
-        id: vars
-        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
-      - name: "Install latest version of Coder"
-        run: |
-          curl -L https://coder.com/install.sh | sh
-
-      - name: "Push template"
-        run: |
-          cd services/dev-ghuntley/templates
-
-          coder templates push --directory ./ubuntu \
-            --name ${{ steps.vars.outputs.sha_short }} \
-            --yes
-
-          coder templates push --directory ./ubuntu-vnc \
-            --name ${{ steps.vars.outputs.sha_short }} \
-            --yes
-
-          coder templates push --directory ./nix \
-            --name ${{ steps.vars.outputs.sha_short }} \
-            --yes
-
-          coder templates push --directory ./macos \
-            --name ${{ steps.vars.outputs.sha_short }} \
-            --yes
-
-          #coder templates push --directory ./gcp-windows-server-2022 \
-          #  --name ${{ steps.vars.outputs.sha_short }} \
-          #  --yes
-
-          coder templates push --directory ./alpine \
-            --name ${{ steps.vars.outputs.sha_short }} \
-            --yes
-
-        env:
-          # Consumed by Coder CLI
-          CODER_URL: https://ghuntley.dev
-          CODER_SESSION_TOKEN: ${{ secrets.DEV_GHUNTLEY_CODER_SESSION_TOKEN }}
+        - name: Update Coder Template
+            uses: matifali/update-coder-template@v3
+            with:
+                id: ubuntu
+                dir: services/dev-ghuntley/templates/ubuntu
+                url: https://ghuntley.dev
+                name: ${{ steps.latest_commit.outputs.hash }}
+                message: ${{ steps.commit_title.outputs.title }}
+                coder_session_token: ${{ secrets.DEV_GHUNTLEY_CODER_SESSION_TOKEN }}
