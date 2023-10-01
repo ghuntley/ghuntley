@@ -35,15 +35,15 @@ jobs:
         run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         
       - name: Get commit title
-         id: commit_title
-         run: echo "title=$(git log -1 --pretty=%s)" >> $GITHUB_OUTPUT
+        id: commit_title
+        run: echo "title=$(git log -1 --pretty=%s)" >> $GITHUB_OUTPUT
          
       - name: Update Coder Template
-          uses: matifali/update-coder-template@v3
-          with:
-              id: ubuntu
-              dir: services/dev-ghuntley/templates/ubuntu
-              url: https://ghuntley.dev
-              name: ${{ steps.latest_commit.outputs.hash }}
-              message: ${{ steps.commit_title.outputs.title }}
-              coder_session_token: ${{ secrets.DEV_GHUNTLEY_CODER_SESSION_TOKEN }}
+        uses: matifali/update-coder-template@v3
+        with:
+          id: ubuntu
+          dir: services/dev-ghuntley/templates/ubuntu
+          url: https://ghuntley.dev
+          name: ${{ steps.latest_commit.outputs.hash }}
+          message: ${{ steps.commit_title.outputs.title }}
+          coder_session_token: ${{ secrets.DEV_GHUNTLEY_CODER_SESSION_TOKEN }}
