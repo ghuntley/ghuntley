@@ -43,7 +43,9 @@ in
 
   #networking.firewall.interfaces."eno1".allowedTCPPorts = lib.optionals (config.services.openssh.enable) [ 22 ];
 
-  networking.firewall.enable = false;
+  networking.firewall.enable = true;
+  networking.firewall.interfaces."ens18".allowedTCPPorts = [ 80 443 ];
+  networking.firewall.interfaces."ens18".allowedUDPPorts = [ 80 443 60000 60001 60002 60003 60004 60005 60006 60007 60008 60009 60010 ];
 
   networking.defaultGateway.address = "51.161.203.254";
   networking.nameservers = [ "1.1.1.1" ];
