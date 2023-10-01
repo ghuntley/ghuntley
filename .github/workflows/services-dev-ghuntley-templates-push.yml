@@ -36,25 +36,25 @@ jobs:
         id: vars
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
-      - name: "Install latest version of Coder and push templates"
+      - name: "Install Coder and push templates"
         run: |
           set -xv
           cd "${{ github.workspace }}/services/dev-ghuntley/templates"
           curl -fsSL $CODER_URL/bin/coder-linux-amd64 -o /tmp/coder && chmod +x /tmp/coder
 
-          /tmp/coder templates push --directory ./ubuntu \
+          /tmp/coder templates create --directory ./ubuntu \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
-          /tmp/coder templates push --directory ./ubuntu-vnc \
+          /tmp/coder templates create --directory ./ubuntu-vnc \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
-          /tmp/coder templates push --directory ./nix \
+          /tmp/coder templates create --directory ./nix \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
-          /tmp/coder templates push --directory ./macos \
+          /tmp/coder templates create --directory ./macos \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
@@ -62,7 +62,7 @@ jobs:
           #  --name ${{ steps.vars.outputs.sha_short }} \
           #  --yes
 
-          /tmp/coder templates push --directory ./alpine \
+          /tmp/coder templates create --directory ./alpine \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
