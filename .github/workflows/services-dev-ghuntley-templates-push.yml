@@ -40,21 +40,21 @@ jobs:
         run: |
           set -xv
           cd "${{ github.workspace }}/services/dev-ghuntley/templates"
-          curl -fsSL $CODER_URL/bin/coder-linux-amd64 -o /tmp/coder && chmod +x /tmp/coder
+          curl -fsSL $CODER_URL/bin/coder-linux-amd64 -o ./coder && chmod +x ./coder
 
-          /tmp/coder templates create --directory ./ubuntu \
+          ./coder templates push --directory ./ubuntu \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
-          /tmp/coder templates create --directory ./ubuntu-vnc \
+          ./coder templates push --directory ./ubuntu-vnc \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
-          /tmp/coder templates create --directory ./nix \
+          ./coder templates push --directory ./nix \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
-          /tmp/coder templates create --directory ./macos \
+          ./coder templates push --directory ./macos \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
@@ -62,7 +62,7 @@ jobs:
           #  --name ${{ steps.vars.outputs.sha_short }} \
           #  --yes
 
-          /tmp/coder templates create --directory ./alpine \
+          ./coder templates push --directory ./alpine \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
