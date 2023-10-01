@@ -47,8 +47,6 @@ jobs:
 
       - name: "Push template"
         run: |
-          cd services/dev-ghuntley/templates
-
           ./coder templates push --directory ./ubuntu \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
