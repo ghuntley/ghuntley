@@ -36,17 +36,11 @@ jobs:
         id: vars
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
-      - name: "Install latest version of Coder"
+      - name: "Install latest version of Coder and push templates"
         run: |
           cd services/dev-ghuntley/templates
           curl -fsSL $CODER_URL/bin/coder-linux-amd64 -o ./coder && chmod +x ./coder
 
-        env:
-          # Consumed by Coder CLI
-          CODER_URL: https://ghuntley.dev
-
-      - name: "Push template"
-        run: |
           ./coder templates push --directory ./ubuntu \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
