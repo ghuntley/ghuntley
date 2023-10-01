@@ -41,23 +41,27 @@ jobs:
           cd services/dev-ghuntley/templates
           curl -fsSL $CODER_URL/bin/coder-linux-amd64 -o ./coder && chmod +x ./coder
 
+        env:
+          # Consumed by Coder CLI
+          CODER_URL: https://ghuntley.dev
+
       - name: "Push template"
         run: |
           cd services/dev-ghuntley/templates
 
-          coder templates push --directory ./ubuntu \
+          ./coder templates push --directory ./ubuntu \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
-          coder templates push --directory ./ubuntu-vnc \
+          ./coder templates push --directory ./ubuntu-vnc \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
-          coder templates push --directory ./nix \
+          ./coder templates push --directory ./nix \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
-          coder templates push --directory ./macos \
+          ./coder templates push --directory ./macos \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
@@ -65,7 +69,7 @@ jobs:
           #  --name ${{ steps.vars.outputs.sha_short }} \
           #  --yes
 
-          coder templates push --directory ./alpine \
+          ./coder templates push --directory ./alpine \
             --name ${{ steps.vars.outputs.sha_short }} \
             --yes
 
