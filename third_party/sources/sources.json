@@ -17,10 +17,10 @@
         "homepage": null,
         "owner": "edolstra",
         "repo": "flake-compat",
-        "rev": "35bb57c0c8d8b62bbfd284272c928ceb64ddbde9",
-        "sha256": "1prd9b1xx8c0sfwnyzkspplh30m613j42l1k789s521f4kv4c2z2",
+        "rev": "4f910c9827911b1ec2bf26b5a062cd09f8d89f85",
+        "sha256": "0x79lylianpvhyafv6267mhd94an0khjl8dzdmy3vl7yq3d3y100",
         "type": "tarball",
-        "url": "https://github.com/edolstra/flake-compat/archive/35bb57c0c8d8b62bbfd284272c928ceb64ddbde9.tar.gz",
+        "url": "https://github.com/edolstra/flake-compat/archive/4f910c9827911b1ec2bf26b5a062cd09f8d89f85.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager": {
@@ -41,10 +41,10 @@
         "homepage": "https://astro.github.io/microvm.nix/",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "68fd851a37cf79b6470f6193b3265da639a7fff0",
-        "sha256": "18z85pbkdr2rgi4n8nnwaxx1vfwc1bf7cxqr6p675f053wqrcgyl",
+        "rev": "c28a0e0dae496d7d0e29c8beec5c7e98e05e1c2c",
+        "sha256": "0mbv0anlz8vv7nm7sjyx765vh282ss5ay08m0ixqvbp6w7zzk4q7",
         "type": "tarball",
-        "url": "https://github.com/astro/microvm.nix/archive/68fd851a37cf79b6470f6193b3265da639a7fff0.tar.gz",
+        "url": "https://github.com/astro/microvm.nix/archive/c28a0e0dae496d7d0e29c8beec5c7e98e05e1c2c.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "naersk": {
