@@ -29,10 +29,10 @@
         "homepage": "https://nix-community.github.io/home-manager/",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "1369d2cefb6f128c30e42fabcdebbacc07e18b3f",
-        "sha256": "13yagjx8lr5pzxjsiyp1v0jia6nj5sjk500790gn0iyy35nyq7yb",
+        "rev": "f92a54fef4eacdbe86b0a2054054dd58b0e2a2a4",
+        "sha256": "06vas2d7jmvpr7jxmq3qs7cwnrr8wdhq0r7q241v0bdq0l7w34dc",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/1369d2cefb6f128c30e42fabcdebbacc07e18b3f.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/f92a54fef4eacdbe86b0a2054054dd58b0e2a2a4.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "microvm": {
@@ -41,10 +41,10 @@
         "homepage": "https://astro.github.io/microvm.nix/",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "cd3a9cd0fcd30b55b9950ddcaec2d5271c0b78df",
-        "sha256": "0bkpvj1s8zxarysmc19cq2hppja7cqvhr45yndywq5v288bg42h4",
+        "rev": "dfe2d3db94e4829e317f97e3a095d6fd8b91f30c",
+        "sha256": "0824srhnxlx27qma61mfwg6mil5qxi8k85r85q5srl99zz7b8vzp",
         "type": "tarball",
-        "url": "https://github.com/astro/microvm.nix/archive/cd3a9cd0fcd30b55b9950ddcaec2d5271c0b78df.tar.gz",
+        "url": "https://github.com/astro/microvm.nix/archive/dfe2d3db94e4829e317f97e3a095d6fd8b91f30c.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "naersk": {
@@ -101,10 +101,10 @@
         "homepage": "",
         "owner": "decke",
         "repo": "smtprelay",
-        "rev": "ef4553589767ed60d7cc50968ea9e47a22104541",
-        "sha256": "02jlyqnyaccll6crd2j8wdg3xpixi2d0h5fcgagac5hpjqxbxawc",
+        "rev": "052f6ccc1fa046dd958d2dde16d764e600629a43",
+        "sha256": "1jvrkgvgvirm8a8mbkjgvbq57in6jirqp29ra84ils82wy37d34v",
         "type": "tarball",
-        "url": "https://github.com/decke/smtprelay/archive/ef4553589767ed60d7cc50968ea9e47a22104541.tar.gz",
+        "url": "https://github.com/decke/smtprelay/archive/052f6ccc1fa046dd958d2dde16d764e600629a43.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
