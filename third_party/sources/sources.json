@@ -41,10 +41,10 @@
         "homepage": "https://astro.github.io/microvm.nix/",
         "owner": "astro",
         "repo": "microvm.nix",
-        "rev": "4caeec0f24d416ce19c76754cae572f1e1882ffe",
-        "sha256": "0vhza5k6j8qq4xag2z6cb5f6wc0nfcz2ajd3dgi38x7pzy4kmynj",
+        "rev": "fb78ecd4e5b42bb5c4f57f36a80f99bbf3e0d010",
+        "sha256": "1qh6j97gjqzq7svhlrsnjsfv3a6s5ajyi74q9i2rhr9hq4pvh0s3",
         "type": "tarball",
-        "url": "https://github.com/astro/microvm.nix/archive/4caeec0f24d416ce19c76754cae572f1e1882ffe.tar.gz",
+        "url": "https://github.com/astro/microvm.nix/archive/fb78ecd4e5b42bb5c4f57f36a80f99bbf3e0d010.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "naersk": {
