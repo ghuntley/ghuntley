@@ -20,10 +20,12 @@ jobs:
     runs-on: namespace-profile-cached-amd64
     steps:
       - uses: namespacelabs/nscloud-checkout-action@v2
-      - uses: namespacelabs/nscloud-cache-action@v1
-        with:
-          path: |
-            /nix
+
+      - name: Set up Nix cache
+        run: |
+          sudo mkdir -p /cache/nix /nix
+          sudo mount --bind /cache/nix /nix
+          sudo chown runner /nix
 
       - uses: cachix/install-nix-action@v24
         with:
@@ -41,4 +43,4 @@ jobs:
 
       - run: direnv exec . pre-commit run --all-files
 
-      - run: direnv exec . sudo depot build ci:gcroot -- --out-link /nix/var/nix/gcroots/depot/trunk
+      - run: direnv exec . depot build ci:gcroot -- --out-link /nix/var/nix/gcroots/depot/trunk
