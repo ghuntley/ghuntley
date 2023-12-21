@@ -28,7 +28,7 @@
 #     runs-on: namespace-profile-cached-amd64
 #     steps:
 #       - name: Checkout
-#         uses: actions/checkout@v4
+#         uses: namespacelabs/nscloud-checkout-action@v2
 #         with:
 #           submodules: true
 

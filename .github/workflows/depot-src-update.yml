@@ -19,9 +19,11 @@ jobs:
   depot-src-update:
     runs-on: namespace-profile-cached-amd64
     steps:
-      - uses: actions/checkout@v4
+      - uses: namespacelabs/nscloud-checkout-action@v2
+      - uses: namespacelabs/nscloud-cache-action@v1
         with:
-          persist-credentials: false
+          path: |
+            /nix
 
       - uses: cachix/install-nix-action@v24
         with:
