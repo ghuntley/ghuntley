@@ -17,7 +17,6 @@ in
     (mod "defaults-qemu.nix")
     (mod "podman.nix")
     (mod "tailscale-exit-node.nix")
-    (mod "caddy.nix")
     (service "com-ghuntley/ghost.nix")
     (service "com-ghuntley/webserver.nix")
   ];

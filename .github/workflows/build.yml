@@ -41,5 +41,4 @@ jobs:
 
       - run: direnv exec . pre-commit run --all-files
 
-      - run: direnv exec . depot build
-      - run: direnv exec . depot build //ops/nixos
+      - run: direnv exec . sudo depot build ci:gcroot -- --out-link /nix/var/nix/gcroots/depot/trunk

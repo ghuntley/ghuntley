@@ -45,8 +45,6 @@ in
 
   "ghuntley-net-cachix-agent-token.age" = prdDefault;
 
-  "ghuntley-net-caddy-environment-file.age" = prdDefault;
-
   "coder-gcp-service-account-ghuntley-dev-token.age" = prdDefault;
 
   "ghuntley-dev-coder-secrets.age" = prdDefault;

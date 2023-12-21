@@ -8,7 +8,7 @@
 pkgs.buildGoModule rec {
   pname = "smtprelay";
   version = "1.8.0";
-  vendorSha256 = "sha256-QC1URBrGsh14f5almSNbAbP/m/tDZ2VsDSUFh5o6WzI=";
+  vendorSha256 = "sha256-Ti8+txs+eIYTSOoOufgYYIwqbVlRa0Kr7iK0CkI+pxY=";
 
   src = depot.third_party.sources.smtprelay;
 
