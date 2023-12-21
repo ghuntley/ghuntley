@@ -35,18 +35,6 @@
         "url": "https://github.com/nix-community/home-manager/archive/8b797c8eea1eba7dfb47f6964103e6e0d134255f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "microvm": {
-        "branch": "main",
-        "description": "NixOS MicroVMs",
-        "homepage": "https://astro.github.io/microvm.nix/",
-        "owner": "astro",
-        "repo": "microvm.nix",
-        "rev": "7bd9255e535c8cbada7f574ddd3bcf3bfa5e1eae",
-        "sha256": "0pd4h2a05rp6rw30f8n6nzc6p08s8xvahxsxwk16m6h9hw6ixylz",
-        "type": "tarball",
-        "url": "https://github.com/astro/microvm.nix/archive/7bd9255e535c8cbada7f574ddd3bcf3bfa5e1eae.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "naersk": {
         "branch": "master",
         "description": "Build rust crates in Nix. No configuration, no code generation, no IFD. Sandbox friendly. [maintainer: @Patryk27]",
@@ -93,18 +81,6 @@
         "sha256": "04ffwp2gzq0hhz7siskw6qh9ys8ragp7285vi1zh8xjksxn1msc5",
         "type": "tarball",
         "url": "https://github.com/NixOS/nixpkgs/archive/eabc38219184cc3e04a974fe31857d8e0eac098d.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "smtprelay": {
-        "branch": "master",
-        "description": "Simple Golang SMTP relay/proxy server",
-        "homepage": "",
-        "owner": "decke",
-        "repo": "smtprelay",
-        "rev": "d28934043caba0693417cee1e52f30ba7d797266",
-        "sha256": "0flmqlzafsnk83sspfd1i8l35k4w5f8vyxgm6d1fgfs5xna8fqa8",
-        "type": "tarball",
-        "url": "https://github.com/decke/smtprelay/archive/d28934043caba0693417cee1e52f30ba7d797266.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
