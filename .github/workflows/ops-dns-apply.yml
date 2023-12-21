@@ -36,6 +36,8 @@ jobs:
       - uses: cachix/install-nix-action@v24
         with:
           nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            system-features = kvm nixos-test
 
       - uses: JRMurr/direnv-nix-action@v3
         with:
