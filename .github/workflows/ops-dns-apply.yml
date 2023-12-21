@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   ops-dns-apply:
-    runs-on: nscloud-amd64
+    runs-on: namespace-profile-cached-amd64
     steps:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@v22

@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   depot-src-update:
-    runs-on: nscloud-amd64
+    runs-on: namespace-profile-cached-amd64
     steps:
       - uses: actions/checkout@v4
         with:

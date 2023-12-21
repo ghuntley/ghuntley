@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: nscloud-amd64
+    runs-on: namespace-profile-cached-amd64
     steps:
       - uses: actions/checkout@v4
 

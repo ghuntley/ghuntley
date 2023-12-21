@@ -25,7 +25,7 @@ concurrency:
 
 jobs:
   services-dev-ghuntley-templates-push:
-    runs-on: nscloud-amd64
+    runs-on: namespace-profile-cached-amd64
     steps:
       - name: Checkout
         uses: actions/checkout@v4
