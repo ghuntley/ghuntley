@@ -1,7 +1,7 @@
 # ghuntley's personal monorepo ![Views](https://komarev.com/ghpvc/?username=ghuntley) [![LinkedIn](https://img.shields.io/badge/-LinkedIn-5c5c5c?&logo=Linkedin&?logoColor=white&link=https://www.linkedin.com/in/geoffreyhuntley/)](https://www.linkedin.com/in/geoffreyhuntley/)
 
 
-[![//services/dev-ghuntley: coder push](https://github.com/ghuntley/ghuntley/actions/workflows/services-dev-ghuntley-templates-push.yml/badge.svg)](https://github.com/ghuntley/ghuntley/actions/workflows/services-dev-ghuntley-templates-push.yml) [![//ops/dns: terraform apply](https://github.com/ghuntley/ghuntley/actions/workflows/ops-dns-apply.yml/badge.svg)](https://github.com/ghuntley/ghuntley/actions/workflows/ops-dns-apply.yml) [![Automated dependency updates](https://github.com/ghuntley/ghuntley/actions/workflows/depot-src-update.yml/badge.svg)](https://github.com/ghuntley/ghuntley/actions/workflows/depot-src-update.yml) [![//ops/ci: build](https://github.com/ghuntley/ghuntley/actions/workflows/build.yml/badge.svg)](https://github.com/ghuntley/ghuntley/actions/workflows/build.yml)
+[![//ops/dns: terraform apply](https://github.com/ghuntley/ghuntley/actions/workflows/ops-dns-apply.yml/badge.svg)](https://github.com/ghuntley/ghuntley/actions/workflows/ops-dns-apply.yml) [![Automated dependency updates](https://github.com/ghuntley/ghuntley/actions/workflows/depot-src-update.yml/badge.svg)](https://github.com/ghuntley/ghuntley/actions/workflows/depot-src-update.yml) [![//ops/ci: build](https://github.com/ghuntley/ghuntley/actions/workflows/build.yml/badge.svg)](https://github.com/ghuntley/ghuntley/actions/workflows/build.yml)
 
 
 This repository is the [monorepo][] for my personal software.
