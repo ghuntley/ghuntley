@@ -88,6 +88,7 @@ depot.nix.lazy-deps {
   callgraph.attr = "third_party.nixpkgs.gotools";
   compilebench.attr = "third_party.nixpkgs.gotools";
   cookieauth.attr = "third_party.nixpkgs.gotools";
+  dlv.attr = "third_party.nixpkgs.gotools";
   digraph.attr = "third_party.nixpkgs.gotools";
   eg.attr = "third_party.nixpkgs.gotools";
   fieldalignment.attr = "third_party.nixpkgs.gotools";
