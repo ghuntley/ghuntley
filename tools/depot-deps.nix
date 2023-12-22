@@ -58,6 +58,7 @@ depot.nix.lazy-deps {
 
   # programming
   exercism.attr = "third_party.nixpkgs.exercism";
+  make.attr = "third_party.nixpkgs.gnumake42";
 
   ## haskell
   ghc.attr = "third_party.nixpkgs.haskell.compiler.ghc927";
