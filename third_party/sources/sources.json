@@ -5,10 +5,10 @@
         "homepage": "https://matrix.to/#/#agenix:nixos.org",
         "owner": "ryantm",
         "repo": "agenix",
-        "rev": "d0d4ad5be611da43da04321f49684ad72d705c7e",
-        "sha256": "01dhrghwa7zw93cybvx4gnrskqk97b004nfxgsys0736823956la",
+        "rev": "457669db4259ff69d1ac1183aaa6000420940c1f",
+        "sha256": "0zqjrn1v82hs2zpmr06y6vsxj8y5g67bim8p47v0323rn9lmrdkz",
         "type": "tarball",
-        "url": "https://github.com/ryantm/agenix/archive/d0d4ad5be611da43da04321f49684ad72d705c7e.tar.gz",
+        "url": "https://github.com/ryantm/agenix/archive/457669db4259ff69d1ac1183aaa6000420940c1f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "flake-compat": {
@@ -29,10 +29,10 @@
         "homepage": "https://nix-community.github.io/home-manager/",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "07c322a7cff03267fd881adae1afe63367c5d608",
-        "sha256": "0rg9a6cqb68csyp48ld3bkwl25ycav0swiswf9rm27wc1hxnsdg6",
+        "rev": "a2523ea0343b056ba240abbac90ab5f116a7aa7b",
+        "sha256": "16p4f3rdp9nf0c25wpq5d8v41c6mg8pnzc0vksg0wc65prhcqqv4",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/07c322a7cff03267fd881adae1afe63367c5d608.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/a2523ea0343b056ba240abbac90ab5f116a7aa7b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "naersk": {
