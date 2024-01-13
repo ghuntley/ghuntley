@@ -16,18 +16,20 @@ let
   # production
   initrd-rescue = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFOBXo4HvfT4cVCf3gmsiITUI+U3AeKZlH36qVUBHtvs";
   ghuntley-net = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIImDI8vTJOtaRs/ZTh0J/eBVnV4hRoDQptWJXFPObk/8";
+  ghuntley-com = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBawMvsd34U5tZawyD7LoYUn8PJw4gaXVwUeEoZP8kT9";
+  ghuntley-dev = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBawMvsd34U5tZawyD7LoYUn8PJw4gaXVwUeEoZP8kT9";
 
   prdDefault.publicKeys = allDefault.publicKeys ++ [
     initrd-rescue
     ghuntley-net
-  ];
-
-  service-nixcache.publicKeys = allDefault.publicKeys ++ [
-    ghuntley-net
+    ghuntley-com
+    ghuntley-dev
   ];
 
   service-smtp.publicKeys = allDefault.publicKeys ++ [
     ghuntley-net
+    ghuntley-com
+    ghuntley-dev
   ];
 
 
@@ -43,13 +45,9 @@ in
 
   "ghuntley-net-cachix-agent-token.age" = prdDefault;
 
-  "ghuntley-net-caddy-environment-file.age" = prdDefault;
-
   "coder-gcp-service-account-ghuntley-dev-token.age" = prdDefault;
 
   "ghuntley-dev-coder-secrets.age" = prdDefault;
-
-  "offsite-backup-ssh-key.age" = prdDefault;
 
   "ssh-initrd-ed25519-key.age" = prdDefault;
   "ssh-initrd-ed25519-pub.age" = prdDefault;

@@ -58,6 +58,7 @@ depot.nix.lazy-deps {
 
   # programming
   exercism.attr = "third_party.nixpkgs.exercism";
+  make.attr = "third_party.nixpkgs.gnumake42";
 
   ## haskell
   ghc.attr = "third_party.nixpkgs.haskell.compiler.ghc927";
@@ -73,8 +74,57 @@ depot.nix.lazy-deps {
 
   ## go
   go.attr = "third_party.nixpkgs.go_1_20";
-  gopls.attr = "third_party.nixpkgs.gopls";
-  go-outline.attr = "third_party.nixpkgs.go-outline";
+  # go-outline.attr = "third_party.nixpkgs.go-outline";
+  # gocode-gomod.attr = "third_party.nixpkgs.gocode-gomod";
+  # gocode.attr = "third_party.nixpkgs.gocode";
+
+  # godef.attr = "third_party.nixpkgs.godef";
+  # golint.attr = "third_party.nixpkgs.golint";
+  # gopkgs.attr = "third_party.nixpkgs.gopkgs";
+  # gopls.attr = "third_party.nixpkgs.gopls";
+
+  # authtest.attr = "third_party.nixpkgs.gotools";
+  # benchcmp.attr = "third_party.nixpkgs.gotools";
+  # bundle.attr = "third_party.nixpkgs.gotools";
+  # callgraph.attr = "third_party.nixpkgs.gotools";
+  # compilebench.attr = "third_party.nixpkgs.gotools";
+  # cookieauth.attr = "third_party.nixpkgs.gotools";
+  # dlv.attr = "third_party.nixpkgs.gotools";
+  # digraph.attr = "third_party.nixpkgs.gotools";
+  # eg.attr = "third_party.nixpkgs.gotools";
+  # fieldalignment.attr = "third_party.nixpkgs.gotools";
+  # file2fuzz.attr = "third_party.nixpkgs.gotools";
+  # findcall.attr = "third_party.nixpkgs.gotools";
+  # fiximports.attr = "third_party.nixpkgs.gotools";
+  # fuzz-driver.attr = "third_party.nixpkgs.gotools";
+  # fuzz-runner.attr = "third_party.nixpkgs.gotools";
+  # gitauth.attr = "third_party.nixpkgs.gotools";
+  # go-contrib-init.attr = "third_party.nixpkgs.gotools";
+  # godex.attr = "third_party.nixpkgs.gotools";
+  # godoc.attr = "third_party.nixpkgs.gotools";
+  # goimports.attr = "third_party.nixpkgs.gotools";
+  # gomvpkg.attr = "third_party.nixpkgs.gotools";
+  # gopackages.attr = "third_party.nixpkgs.gotools";
+  # gorename.attr = "third_party.nixpkgs.gotools";
+  # gostacks.attr = "third_party.nixpkgs.gotools";
+  # gotype.attr = "third_party.nixpkgs.gotools";
+  # goyacc.attr = "third_party.nixpkgs.gotools";
+  # guru.attr = "third_party.nixpkgs.gotools";
+  # html2article.attr = "third_party.nixpkgs.gotools";
+  # ifaceassert.attr = "third_party.nixpkgs.gotools";
+  # lostcancel.attr = "third_party.nixpkgs.gotools";
+  # netrcauth.attr = "third_party.nixpkgs.gotools";
+  # nilness.attr = "third_party.nixpkgs.gotools";
+  # present.attr = "third_party.nixpkgs.gotools";
+  # present2md.attr = "third_party.nixpkgs.gotools";
+  # shadow.attr = "third_party.nixpkgs.gotools";
+  # splitdwarf.attr = "third_party.nixpkgs.gotools";
+  # ssadump.attr = "third_party.nixpkgs.gotools";
+  # stress.attr = "third_party.nixpkgs.gotools";
+  # stringer.attr = "third_party.nixpkgs.gotools";
+  # stringintconv.attr = "third_party.nixpkgs.gotools";
+  # toolstash.attr = "third_party.nixpkgs.gotools";
+  # unmarshal.attr = "third_party.nixpkgs.gotools";
 
   ## typescript
   node.attr = "third_party.nixpkgs.nodejs-18_x";

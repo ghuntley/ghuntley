@@ -6,7 +6,7 @@ resource "cloudflare_record" "dev_ghuntley_apex" {
   name    = "@"
   type    = "A"
   value   = var.dev_ghuntley_ipv4
-  proxied = true
+  proxied = false
 }
 
 # resource "cloudflare_record" "dev_ghuntley_apex_ipv6" {

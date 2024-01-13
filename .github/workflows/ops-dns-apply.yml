@@ -23,12 +23,21 @@ concurrency:
 
 jobs:
   ops-dns-apply:
-    runs-on: nscloud-amd64
+    runs-on: namespace-profile-cached-amd64
     steps:
-      - uses: actions/checkout@v3
-      - uses: cachix/install-nix-action@v22
+      - uses: namespacelabs/nscloud-checkout-action@v2
+
+      - name: Set up Nix cache
+        run: |
+          sudo mkdir -p /cache/nix /nix
+          sudo mount --bind /cache/nix /nix
+          sudo chown runner /nix
+
+      - uses: cachix/install-nix-action@v24
         with:
           nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            system-features = kvm nixos-test
 
       - uses: JRMurr/direnv-nix-action@v3
         with:

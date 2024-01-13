@@ -5,14 +5,14 @@
         "editorconfig.editorconfig",
         "hashicorp.terraform",
         "jnoortheen.nix-ide",
-        "coder.coder-remote",
         "equinusocio.vsc-material-theme",
         "fabiospampinato.vscode-todo-plus",
         "formulahendry.auto-close-tag",
         "formulahendry.auto-rename-tag",
         "streetsidesoftware.code-spell-checker",
-        "rust-lang.rust-analyzer",
         "ionide.ionide-fsharp",
-        "ocamllabs.ocaml-platform"
+        "ocamllabs.ocaml-platform",
+        "golang.go",
+        "rubymaniac.vscode-direnv"
     ]
 }

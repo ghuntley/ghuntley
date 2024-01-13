@@ -155,17 +155,6 @@
 
   };
 
-
-  # services.caddy.virtualHosts = {
-  #   "ghuntley.dev" = {
-  #     serverAliases = [ "www.ghuntley.dev" "*.ghuntley.dev" ];
-  #     extraConfig = ''
-  #       encode gzip
-  #       reverse_proxy :3000
-  #     '';
-  #   };
-  # };
-
   virtualisation.oci-containers.containers = {
     coder = {
       extraOptions = [ "--network=host" ];

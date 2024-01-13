@@ -63,7 +63,11 @@ rec {
 
   # Systems that should be built in CI
   ghuntley-net = (nixosFor depot.ops.machines.ghuntley-net).system;
+  ghuntley-com = (nixosFor depot.ops.machines.ghuntley-net).system;
+  ghuntley-dev = (nixosFor depot.ops.machines.ghuntley-net).system;
   meta.ci.targets = [
     "ghuntley-net"
+    "ghuntley-com"
+    "ghuntley-dev"
   ];
 }

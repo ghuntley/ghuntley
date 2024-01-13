@@ -7,7 +7,7 @@ on: pull_request_target
 
 jobs:
   auto-approve:
-    runs-on: nscloud-amd64
+    runs-on: namespace-profile-cached-amd64
     permissions:
       pull-requests: write
     steps:

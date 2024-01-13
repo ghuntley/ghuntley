@@ -17,13 +17,21 @@ concurrency:
 
 jobs:
   build:
-    runs-on: nscloud-amd64
+    runs-on: namespace-profile-cached-amd64
     steps:
-      - uses: actions/checkout@v3
+      - uses: namespacelabs/nscloud-checkout-action@v2
 
-      - uses: cachix/install-nix-action@v22
+      - name: Set up Nix cache
+        run: |
+          sudo mkdir -p /cache/nix /nix
+          sudo mount --bind /cache/nix /nix
+          sudo chown runner /nix
+
+      - uses: cachix/install-nix-action@v24
         with:
           nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            system-features = kvm nixos-test
 
       - uses: cachix/cachix-action@v12
         with:
@@ -37,5 +45,4 @@ jobs:
 
       - run: direnv exec . pre-commit run --all-files
 
-      - run: direnv exec . depot build
-      - run: direnv exec . depot build //ops/nixos
+      - run: direnv exec . depot build ci:gcroot -- --out-link /nix/var/nix/gcroots/depot/trunk

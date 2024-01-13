@@ -19,7 +19,6 @@ in
     (mod "podman.nix")
     (mod "libvirt.nix")
     (mod "tailscale-exit-node.nix")
-    (mod "caddy.nix")
     (service "net-ghuntley/webserver.nix")
     (service "net-ghuntley/libvirt/guests.nix")
     (service "com-ghuntley/ghost.nix")

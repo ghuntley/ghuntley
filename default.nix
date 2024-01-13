@@ -111,7 +111,7 @@ readTree.fix (self:
     makeSetupHook
       {
         name = "depot-gcroot";
-        deps = self.ci.targets;
+        propagatedBuildInputs = self.ci.targets;
       }
       emptyFile;
 })

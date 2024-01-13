@@ -36,6 +36,7 @@ in
       cp -r ${src}/* . && chmod -R u+w .
       cd ${subDir}
       ${terraform}/bin/terraform init -upgrade -backend=false -input=false
-      ${terraform}/bin/terraform validate | tee $out
+      ${terraform}/bin/terraform validate
+      mkdir $out
     '';
 }
