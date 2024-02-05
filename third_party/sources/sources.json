@@ -29,10 +29,10 @@
         "homepage": "https://nix-community.github.io/home-manager/",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "1ca210648a6ca9b957efde5da957f3de6b1f0c45",
-        "sha256": "02nmwjk5148n0dnwxakhycc0digkfc0a97v0s2ajx24piazj3nx6",
+        "rev": "4740f2ccda184e9cc509d7a82b26d7271e0c79d9",
+        "sha256": "14662gihjzkykh9wg09vv3dyld7pc172rw680nj041zzkw0w24wz",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/1ca210648a6ca9b957efde5da957f3de6b1f0c45.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/4740f2ccda184e9cc509d7a82b26d7271e0c79d9.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "naersk": {
