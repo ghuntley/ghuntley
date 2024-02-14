@@ -5,10 +5,10 @@
         "homepage": "https://matrix.to/#/#agenix:nixos.org",
         "owner": "ryantm",
         "repo": "agenix",
-        "rev": "17090d105af1b9f941109c1e12d6e3a596657f97",
-        "sha256": "1n540zng4yhylaqfnn0yq8k1395hgyf4s5j1kas9syxjia94l7sz",
+        "rev": "8cb01a0e717311680e0cbca06a76cbceba6f3ed6",
+        "sha256": "1ypp731d2h7i8fj5g2pdapwcrrk6ycxwzpvam045qxiajjdp01rw",
         "type": "tarball",
-        "url": "https://github.com/ryantm/agenix/archive/17090d105af1b9f941109c1e12d6e3a596657f97.tar.gz",
+        "url": "https://github.com/ryantm/agenix/archive/8cb01a0e717311680e0cbca06a76cbceba6f3ed6.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "flake-compat": {
@@ -29,10 +29,10 @@
         "homepage": "https://nix-community.github.io/home-manager/",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "8b797c8eea1eba7dfb47f6964103e6e0d134255f",
-        "sha256": "135bzdn818160ljx683mh06bn60k03xy0kb349zfm13110940vj3",
+        "rev": "21b078306a2ab68748abf72650db313d646cf2ca",
+        "sha256": "0dv0xq65nbpdkgnpawdx9jsasz1w52n0f55z6iz9qpmm8gfqkkv5",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/8b797c8eea1eba7dfb47f6964103e6e0d134255f.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/21b078306a2ab68748abf72650db313d646cf2ca.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "naersk": {
@@ -65,10 +65,10 @@
         "homepage": "",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "312ab59e8ade69e6083017bd9b98a2919f1fb86a",
-        "sha256": "1fs0f104wnipgbs5l8pm7f18j0dcwl2l65sbkhsricyvzwb0zcz1",
+        "rev": "70bdadeb94ffc8806c0570eb5c2695ad29f0e421",
+        "sha256": "05cbl1k193c9la9xhlz4y6y8ijpb2mkaqrab30zij6z4kqgclsrd",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/312ab59e8ade69e6083017bd9b98a2919f1fb86a.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/70bdadeb94ffc8806c0570eb5c2695ad29f0e421.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs-stable": {
@@ -81,6 +81,18 @@
         "sha256": "04ffwp2gzq0hhz7siskw6qh9ys8ragp7285vi1zh8xjksxn1msc5",
         "type": "tarball",
         "url": "https://github.com/NixOS/nixpkgs/archive/eabc38219184cc3e04a974fe31857d8e0eac098d.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "smtprelay": {
+        "branch": "master",
+        "description": "Simple Golang SMTP relay/proxy server",
+        "homepage": "",
+        "owner": "decke",
+        "repo": "smtprelay",
+        "rev": "d28934043caba0693417cee1e52f30ba7d797266",
+        "sha256": "0flmqlzafsnk83sspfd1i8l35k4w5f8vyxgm6d1fgfs5xna8fqa8",
+        "type": "tarball",
+        "url": "https://github.com/decke/smtprelay/archive/d28934043caba0693417cee1e52f30ba7d797266.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
