@@ -89,10 +89,10 @@
         "homepage": "",
         "owner": "decke",
         "repo": "smtprelay",
-        "rev": "a994578ca13f5b1c8c1308e3ba17da574ce1bbc1",
-        "sha256": "0q1id1sql39il9x8pxwcm602xcamr78zdqz88s9llz8ji42xa8yx",
+        "rev": "76cef7b0e3e040b1fe537378106f56c57b418c07",
+        "sha256": "1cw9x8bb0n2b5av0l45gvqv8qq7695g2v4x0z7fs9j8ncjmhdcbq",
         "type": "tarball",
-        "url": "https://github.com/decke/smtprelay/archive/a994578ca13f5b1c8c1308e3ba17da574ce1bbc1.tar.gz",
+        "url": "https://github.com/decke/smtprelay/archive/76cef7b0e3e040b1fe537378106f56c57b418c07.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
