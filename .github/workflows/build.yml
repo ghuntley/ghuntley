@@ -27,7 +27,7 @@ jobs:
           sudo mount --bind /cache/nix /nix
           sudo chown runner /nix
 
-      - uses: cachix/install-nix-action@v24
+      - uses: cachix/install-nix-action@v26
         with:
           nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: |
