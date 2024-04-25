@@ -29,10 +29,10 @@
         "homepage": "https://nix-community.github.io/home-manager/",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "bfa7c06436771e3a0c666ccc6ee01e815d4c33aa",
-        "sha256": "0xa71ay3b7s42bfwlbvrxznyx2vy5gflw003xg2xh1m44c63izvy",
+        "rev": "2f072c127c041eec36621b8e38a531fe0fe07961",
+        "sha256": "11s6lymn9snmd5y9hpbljp23m23y15m506cf69c3isp8cghwlvkd",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/bfa7c06436771e3a0c666ccc6ee01e815d4c33aa.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/2f072c127c041eec36621b8e38a531fe0fe07961.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "naersk": {
@@ -53,10 +53,10 @@
         "homepage": null,
         "owner": "msteen",
         "repo": "nixos-vscode-server",
-        "rev": "d0ed9b8cf1f0a71f110df9119489ab047e0726bd",
-        "sha256": "1mrc6a1qjixaqkv1zqphgnjjcz9jpsdfs1vq45l1pszs9lbiqfvd",
+        "rev": "fc900c16efc6a5ed972fb6be87df018bcf3035bc",
+        "sha256": "1rq8mrlmbzpcbv9ys0x88alw30ks70jlmvnfr2j8v830yy5wvw7h",
         "type": "tarball",
-        "url": "https://github.com/msteen/nixos-vscode-server/archive/d0ed9b8cf1f0a71f110df9119489ab047e0726bd.tar.gz",
+        "url": "https://github.com/msteen/nixos-vscode-server/archive/fc900c16efc6a5ed972fb6be87df018bcf3035bc.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
