@@ -17,10 +17,10 @@
         "homepage": null,
         "owner": "edolstra",
         "repo": "flake-compat",
-        "rev": "9ed2ac151eada2306ca8c418ebd97807bb08f6ac",
-        "sha256": "063slk1np1g1dkh21a82x655kpja7p4pc74rb3lqankyrbbpy4hx",
+        "rev": "ff81ac966bb2cae68946d5ed5fc4994f96d0ffec",
+        "sha256": "19d2z6xsvpxm184m41qrpi1bplilwipgnzv9jy17fgw421785q1m",
         "type": "tarball",
-        "url": "https://github.com/edolstra/flake-compat/archive/9ed2ac151eada2306ca8c418ebd97807bb08f6ac.tar.gz",
+        "url": "https://github.com/edolstra/flake-compat/archive/ff81ac966bb2cae68946d5ed5fc4994f96d0ffec.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager": {
@@ -29,10 +29,10 @@
         "homepage": "https://nix-community.github.io/home-manager/",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "bf23fe41082aa0289c209169302afd3397092f22",
-        "sha256": "1f5lih3cmmipwhm21km35zgszk7jpl5rpdf96b7rgkd3m8wsslyc",
+        "rev": "0daaded612b0e6eaed0a63fc9d0778d8f05940fe",
+        "sha256": "1cw85y9l4pwi7agy4lfsam16wf0wlfvanmsacrc6rfphybc4d1ky",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/bf23fe41082aa0289c209169302afd3397092f22.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/0daaded612b0e6eaed0a63fc9d0778d8f05940fe.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "naersk": {
@@ -41,10 +41,10 @@
         "homepage": "",
         "owner": "nmattia",
         "repo": "naersk",
-        "rev": "3fb418eaf352498f6b6c30592e3beb63df42ef11",
-        "sha256": "0v6ncaqm8q2mdv1jhkjjwi1sx4firlhjxpw4wachkwkriyjnkz5g",
+        "rev": "378614f37a6bee5a3f2ef4f825a73d948d3ae921",
+        "sha256": "088pbn3jcckbhzg7kr9bhii9vgrnr6y2mrqnw30bk4jhbjkrk1bb",
         "type": "tarball",
-        "url": "https://github.com/nmattia/naersk/archive/3fb418eaf352498f6b6c30592e3beb63df42ef11.tar.gz",
+        "url": "https://github.com/nmattia/naersk/archive/378614f37a6bee5a3f2ef4f825a73d948d3ae921.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixos-vscode-server": {
