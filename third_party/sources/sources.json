@@ -29,10 +29,10 @@
         "homepage": "https://nix-community.github.io/home-manager/",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "6e5b2d9e8014b5572e3367937a329e7053458d34",
-        "sha256": "012z1wzmlws44sd7zvibbn5hm8y1vl9f796wj1h8vi5k43mamph8",
+        "rev": "3066cc58f552421a2c5414e78407fa5603405b1e",
+        "sha256": "10029k1wm59xsfbpfjb877qkz2bbm4ni8jy67p1mfmw52wqh1mkv",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/6e5b2d9e8014b5572e3367937a329e7053458d34.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/3066cc58f552421a2c5414e78407fa5603405b1e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "naersk": {
@@ -89,10 +89,10 @@
         "homepage": "",
         "owner": "decke",
         "repo": "smtprelay",
-        "rev": "fae99cff0ceb8dc24c9fe4c890f65ad293cf5190",
-        "sha256": "028vyvs2bxm4v94ph8ns3iqxh19rrzl2hrpkqy430isc7fyrixwc",
+        "rev": "233833b85b3f7176e113c93f4e746c83835ad647",
+        "sha256": "0n0mg3j111qqzy612rss1pwrgxg3my9nfkvvhl30r7xdy3abvbgn",
         "type": "tarball",
-        "url": "https://github.com/decke/smtprelay/archive/fae99cff0ceb8dc24c9fe4c890f65ad293cf5190.tar.gz",
+        "url": "https://github.com/decke/smtprelay/archive/233833b85b3f7176e113c93f4e746c83835ad647.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
