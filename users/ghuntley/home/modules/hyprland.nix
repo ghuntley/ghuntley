@@ -193,7 +193,7 @@ in
       bind = $mainMod, RETURN, exec, ${terminal}
       bind = $mainMod, Q, killactive,
       bind = , swipe:4:d, killactive
-      bind = $mainMod SHIFT, Q, exit,
+      bind = $mainMod, SHIFT, DELETE, exit,
       bind = $mainMod, V, togglefloating,
       bind = $mainMod, P, exec, ${launcher}
       bind = $mainMod, B, exec, ${browser}
