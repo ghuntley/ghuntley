@@ -153,6 +153,7 @@ in
     enable = true;
     enableSSHSupport = true;
   };
+
   programs._1password.enable = true;
   programs._1password-gui = {
     enable = true;
@@ -161,6 +162,13 @@ in
 
   # NixOS Compatibility
   programs.appimage.enable = true;
+
+  # Games
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+  };
 
   # Media
   programs.obs-studio.enable = true;
