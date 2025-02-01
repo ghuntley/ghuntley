@@ -76,6 +76,7 @@ in
 
     # File Management
     pkgs.xarchiver # GTK frontend for handling various archive formats
+    pkgs.qdirstat # Qt-based disk usage analyzer
 
     # Terminals
     pkgs.alacritty # GPU-accelerated terminal emulator written in Rust
