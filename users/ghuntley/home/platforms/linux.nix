@@ -17,5 +17,6 @@ in
     ../modules/firefox.nix
     ../modules/shell-alias-cursor.nix
     ../modules/shell-alias-cider.nix
+    ../modules/shell-alias-bottles.nix
   ];
 }

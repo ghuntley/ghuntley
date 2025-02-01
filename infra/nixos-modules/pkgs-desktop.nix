@@ -96,6 +96,16 @@ in
     pkgs.yt-dlp # Feature-rich video downloader for YouTube and other sites
   ];
 
+  # Flatpak Packages
+  services.flatpak.enable = true;
+  systemd.services.flatpak-repo = {
+    wantedBy = [ "multi-user.target" ];
+    path = [ pkgs.flatpak ];
+    script = ''
+      flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    '';
+  };
+
   # Hardware Configuration
   hardware.bluetooth = {
     enable = true;
