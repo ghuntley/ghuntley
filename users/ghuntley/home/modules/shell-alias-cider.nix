@@ -19,4 +19,23 @@
     '';
     executable = true;
   };
+
+  home.file = {
+    ".icons/cider.png".source = ../icons/cider.png;
+  };
+
+  xdg.desktopEntries = {
+    "cider" = {
+      name = "Cider";
+      genericName = "Music Player";
+      comment = "Music player";
+      exec = "${config.home.homeDirectory}/bin/cider %F";
+      icon = "${config.home.homeDirectory}/.icons/cider.png";
+      terminal = false;
+      type = "Application";
+      categories = [ "Music" ];
+      startupNotify = true;
+    };
+  };
+
 }
