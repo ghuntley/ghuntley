@@ -148,22 +148,6 @@ resource "cloudflare_record" "com_ghuntley_mx_10_2" {
 
 # records
 
-resource "cloudflare_record" "com_ghuntley_fediverse" {
-  zone_id = var.com_ghuntley_cloudflare_zone_id
-  name    = "fediverse"
-  type    = "A"
-  value   = var.com_ghuntley_ipv4
-  proxied = true
-}
-
-# resource "cloudflare_record" "com_ghuntley_fediverse_ipv6" {
-#   zone_id = var.com_ghuntley_cloudflare_zone_id
-#   name    = "fediverse"
-#   type    = "AAAA"
-#   value   = var.com_ghuntley_ipv6
-#  proxied = true
-# }
-
 resource "cloudflare_record" "com_ghuntley_calendar" {
   zone_id = var.com_ghuntley_cloudflare_zone_id
   name    = "calendar"
@@ -195,14 +179,6 @@ resource "cloudflare_record" "com_ghuntley_mail" {
 resource "cloudflare_record" "com_ghuntley_www" {
   zone_id = var.com_ghuntley_cloudflare_zone_id
   name    = "www"
-  type    = "A"
-  value   = var.com_ghuntley_ipv4
-  proxied = true
-}
-
-resource "cloudflare_record" "com_ghuntley_dev" {
-  zone_id = var.com_ghuntley_cloudflare_zone_id
-  name    = "dev"
   type    = "A"
   value   = var.com_ghuntley_ipv4
   proxied = true
