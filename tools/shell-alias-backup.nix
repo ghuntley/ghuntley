@@ -9,9 +9,9 @@ let
     set -euo pipefail
     IFS=$'\n\t'
 
-    cd /depot/infra/secrets
+    cd /depot/infra/secrets/ponderoos
     eval $(agenix --identity /etc/ssh/ssh_host_ed25519_key --decrypt backup-cli-credentials.age)
-    restic "$@"
+    restic --cache-dir /var/backup/restic/cache "$@"
   '';
 
 in
