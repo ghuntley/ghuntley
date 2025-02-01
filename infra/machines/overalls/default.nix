@@ -185,6 +185,9 @@ in
       ovh-backup-credentials.file = secretFile "ovh-backup-credentials";
       ovh-backup-credentials.symlink = false;
 
+      ovh-files-credentials.file = secretFile "ovh-files-credentials";
+      ovh-files-credentials.symlink = false;
+
       ovh-backup-encryption-key.file = secretFile "ovh-backup-encryption-key";
       ovh-backup-encryption-key.symlink = false;
 

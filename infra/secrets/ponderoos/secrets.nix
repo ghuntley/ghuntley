@@ -58,6 +58,7 @@ in
 
   "ovh-tfstate-credentials.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
   "ovh-backup-credentials.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
+  "ovh-files-credentials.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
   "ovh-backup-encryption-key.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
   "backup-cli-credentials.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
 }
