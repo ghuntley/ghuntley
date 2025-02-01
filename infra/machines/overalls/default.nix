@@ -84,20 +84,13 @@ in
 
   # Offsite backups to OVH
   services.depot.restic.enable = true;
-  services.depot.restic.interval = "*:0/1"; # Every minute baby!
+  services.depot.restic.interval = "*:0/10"; # Every 10 minutes
 
   services.depot.restic.paths = [
     "/etc"
     "/depot"
     "/var/lib/acme"
   ];
-
-  systemd.timers.backup = {
-    wantedBy = [ "timers.target" ];
-    partOf = [ "backup.service" ];
-    timerConfig.OnCalendar = "hourly";
-  };
-
 
   # Local databases
   services.postgresql = {
