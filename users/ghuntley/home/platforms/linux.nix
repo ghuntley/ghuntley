@@ -16,5 +16,6 @@ in
     ../modules/hyprland.nix
     ../modules/firefox.nix
     ../modules/shell-alias-cursor.nix
+    ../modules/shell-alias-cider.nix
   ];
 }
