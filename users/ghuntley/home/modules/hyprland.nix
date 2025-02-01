@@ -51,7 +51,7 @@ in
       }
 
       # toolkit-specific scale
-      env = GDK_SCALE,3
+      env = GDK_SCALE,1.5
       env = XCURSOR_SIZE,32
       env = QT_ENABLE_HIGHDPI_SCALING,1
 
