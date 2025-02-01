@@ -3,8 +3,8 @@
 
 { config, lib, pkgs, ... }:
 let
-  swap_escape = true;
-  monitor = "eDP-1";
+  swap_escape = false;
+  monitor = "HDMI-A-1";
   theme = import ../themes/firewatch.nix;
   ui_scale = 1;
   size = n: builtins.toString (builtins.floor n * ui_scale);
