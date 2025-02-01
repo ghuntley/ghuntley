@@ -23,6 +23,7 @@ let
   kitty = pkgs.kitty + "/bin/kitty";
   bpython = pkgs.python3Packages.bpython + "/bin/bpython";
   nm-connection-editor = pkgs.networkmanagerapplet + "/bin/nm-connection-editor";
+  _1password-gui = pkgs._1password-gui + "/bin/1password";
 in
 
 {
@@ -88,7 +89,7 @@ in
       exec-once = ${waybar}
       exec-once = ${hyprpaper}
       exec-once = ${pypr}
-      exec-once = 1password --silent
+      exec-once = ${_1password-gui} --silent
 
       # Cursor size in qt applications
       env = XCURSOR_SIZE, 18
@@ -170,6 +171,7 @@ in
       bind = $mainMod, B, exec, ${browser}
       bind = $mainMod SHIFT, S, exec, ${grim} -g "$(${slurp})" - | ${convert} - -shave 3x3 PNG:- | ${swappy} -f -
       bind = $mainMod SHIFT, E, exec, ${paste} | ${swappy} -f -
+      bind = $mainMod SHIFT, P, exec, ${_1password-gui} --quick-access; ${_1password-gui} --quick-access
       bind=SUPER, F, fullscreen
       # bind = $mainMod, P, pseudo, # dwindle
       bind = $mainMod, S, togglesplit, # dwindle
