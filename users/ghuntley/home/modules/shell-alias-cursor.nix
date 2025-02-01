@@ -9,13 +9,14 @@
       #!/usr/bin/env bash
       cd ~/Applications
 
-      if ! ls cursor*.appimage >/dev/null 2>&1; then
+      if ! ls cursor*.AppImage >/dev/null 2>&1; then
         echo "Downloading Cursor AppImage..."
-        curl -L -o cursor.appimage "https://download.todesktop.com/230313mzl4w4u92/cursor-0.45.7-build-250130nr6eorv84-x86_64.AppImage"
-        chmod +x cursor.appimage
+        curl -L -o cursor.AppImage "https://download.todesktop.com/230313mzl4w4u92/cursor-0.45.7-build-250130nr6eorv84-x86_64.AppImage"
+        chmod +x cursor.AppImage
       fi
 
-      appimage-run cursor*.appimage "$@"
+      nohup appimage-run cursor*.AppImage "$@" >/dev/null 2>&1 &
+      exit 0
     '';
     executable = true;
   };
