@@ -93,10 +93,6 @@ in
 
   networking.nameservers = [ "1.1.1.1" ];
 
-  # Enable the GNOME Desktop Environment.
-  # services.xserver.displayManager.gdm.enable = true;
-  # services.xserver.desktopManager.gnome.enable = true;
-
   # Automatically collect garbage from the Nix store.
   services.depot.automatic-nix-gc = {
     enable = true;
@@ -106,7 +102,62 @@ in
     preserveGenerations = "90d";
   };
 
-  services.depot.nix-cache.enable = true;
+  # Offsite backups to OVH
+  services.depot.restic = {
+    enable = true;
+    interval = "*:0/10"; # Every 10 minutes
+    keep-monthly = 0;
+    keep-yearly = 0;
+    paths = [
+      "/etc"
+      "/depot"
+      "/home/ghuntley"
+    ];
+    exclude = [
+      ".Trash*"
+      "/home/ghuntley/.1password"
+      "/home/ghuntley/.cache"
+      "/home/ghuntley/.cargo"
+      "/home/ghuntley/.cursor"
+      "/home/ghuntley/.cursor-server"
+      "/home/ghuntley/.steam"
+      "/home/ghuntley/.mozilla"
+      "/home/ghuntley/.var"
+      "/home/ghuntley/.local"
+    ];
+  };
+
+  # Configure secrets for services that need them.
+  age.secrets =
+    let
+      secretFile = name: depot.infra.secrets.ponderoos."${name}.age";
+    in
+    {
+
+      backup-cli-credentials.file = secretFile "backup-cli-credentials";
+      backup-cli-credentials.symlink = false;
+
+      ovh-backup-credentials.file = secretFile "ovh-backup-credentials";
+      ovh-backup-credentials.symlink = false;
+
+      ovh-backup-encryption-key.file = secretFile "ovh-backup-encryption-key";
+      ovh-backup-encryption-key.symlink = false;
+
+      nix-cache-pubkey.file = secretFile "nix-cache-pubkey";
+      nix-cache-pubkey.symlink = false;
+
+      nix-cache-signkey.file = secretFile "nix-cache-signkey";
+      nix-cache-signkey.symlink = false;
+
+      postgres-keycloak-credentials.file = secretFile "postgres-keycloak-credentials";
+      postgres-keycloak-credentials.symlink = false;
+
+      inbox-hello-credentials.file = secretFile "inbox-hello-credentials";
+      inbox-hello-credentials.symlink = false;
+
+    };
+
+  services.depot.nix-cache.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
