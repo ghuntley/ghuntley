@@ -12,6 +12,7 @@ let
     merge.conflictstyle = "diff3";
     rerere.enabled = "true";
     advice.skippedCherryPicks = "false";
+    core.excludesFile = "~/.gitignore";
   };
 in
 {
@@ -20,6 +21,11 @@ in
       enable = true;
       userEmail = "ghuntley@ghuntley.com";
       userName = "Geoffrey Huntley";
+
+      ignores = [
+        ".Trash-*"
+        ".DS_Store"
+      ];
 
       extraConfig = gitConfig // lib.mkIf isDarwin {
         credential.helper = "osxkeychain";
