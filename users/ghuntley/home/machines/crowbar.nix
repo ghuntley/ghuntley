@@ -2,11 +2,19 @@
 # SPDX-License-Identifier: Proprietary
 
 { config, lib, pkgs, ... }:
-
+let
+  swap_escape = true;
+  monitor = "eDP-1";
+  theme = import ../themes/firewatch.nix;
+  ui_scale = 1;
+  size = n: builtins.toString (builtins.floor n * ui_scale);
+in
 {
   imports = [
     ../platforms/linux.nix
   ];
+
+  hyprland = { inherit theme; inherit monitor; inherit size; inherit swap_escape; };
 
   programs.home-manager.enable = true;
 
