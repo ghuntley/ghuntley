@@ -15,16 +15,6 @@ variable "cloudflare_api_key" {
   sensitive = true
 }
 
-# variable "aws_access_key_id" {
-#   type      = string
-#   sensitive = true
-# }
-
-# variable "aws_secret_access_key" {
-#   type      = string
-#   sensitive = true
-# }
-
 # zones
 
 variable "com_ponderoos_cloudflare_zone_id" {
@@ -32,8 +22,38 @@ variable "com_ponderoos_cloudflare_zone_id" {
   sensitive = true
 }
 
+variable "com_ghuntley_cloudflare_zone_id" {
+  type      = string
+  sensitive = true
+}
+
+variable "net_ghuntley_cloudflare_zone_id" {
+  type      = string
+  sensitive = true
+}
+
+variable "dev_ghuntley_cloudflare_zone_id" {
+  type      = string
+  sensitive = true
+}
+
 # hosts
 variable "com_ponderoos_ipv4" {
+  type      = string
+  sensitive = true
+}
+
+variable "com_ghuntley_ipv4" {
+  type      = string
+  sensitive = true
+}
+
+variable "dev_ghuntley_ipv4" {
+  type      = string
+  sensitive = true
+}
+
+variable "net_ghuntley_ipv4" {
   type      = string
   sensitive = true
 }

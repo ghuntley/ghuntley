@@ -9,7 +9,7 @@ let
     set -euo pipefail
     IFS=$'\n\t'
 
-    cd $DEPOT_ROOT/infra/secrets
+    cd $DEPOT_ROOT/infra/secrets/ponderoos
     eval $(agenix --decrypt deploy-dns-credentials.age)
 
     cd $DEPOT_ROOT/infra/dns

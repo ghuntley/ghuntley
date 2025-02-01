@@ -149,6 +149,14 @@ resource "cloudflare_record" "com_ponderoos_code" {
   proxied = false
 }
 
+resource "cloudflare_record" "files_ponderoos_code" {
+  zone_id = var.com_ponderoos_cloudflare_zone_id
+  name    = "files"
+  type    = "A"
+  value   = var.com_ponderoos_ipv4
+  proxied = false
+}
+
 resource "cloudflare_record" "com_ponderoos_nix_cache" {
   zone_id = var.com_ponderoos_cloudflare_zone_id
   name    = "nix-cache"
