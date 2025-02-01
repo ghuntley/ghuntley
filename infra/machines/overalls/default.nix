@@ -21,7 +21,7 @@ in
     (mod "keycloak.nix")
     (mod "podman.nix")
     (mod "restic.nix")
-
+    (mod "geesefs.nix")
     # (mod "nixos-mailserver.nix")
 
     (auth "ponderoos/slapd")
@@ -170,6 +170,25 @@ in
     enable = true;
     hostname = "nix-cache.ponderoos.com";
     signKeyPath = config.age.secrets.nix-cache-signkey.path;
+  };
+
+  # Run GeeseFS to serve S3 buckets
+  services.depot.geesefs = {
+    enable = true;
+    mounts = {
+      "files" = {
+        bucket = "ponderoos-files";
+        endpoint = "https://s3.gra.io.cloud.ovh.net/";
+        mountPoint = "/mnt/files.ponderoos.com";
+        credentialsFile = config.age.secrets.ovh-files-credentials.path;
+        region = "GRA";
+        extraArgs = [
+          "--cache /tmp/geesefs-cache"
+          "--dir-mode 0755"
+          "--file-mode 0644"
+        ];
+      };
+    };
   };
 
   # Configure secrets for services that need them.
