@@ -24,7 +24,10 @@ let
   bpython = pkgs.python3Packages.bpython + "/bin/bpython";
   nm-connection-editor = pkgs.networkmanagerapplet + "/bin/nm-connection-editor";
   _1password-gui = pkgs._1password-gui + "/bin/1password";
+
   steam = pkgs.steam + "/bin/steam";
+  cider = "~/bin/cider";
+  cursor = "~/bin/cursor";
 in
 
 {
@@ -86,23 +89,35 @@ in
       # See https://wiki.hyprland.org/Configuring/Keywords/ for more
 
       # Bind applications to windows
+
+      ## Steam
       $steam = class:^(steam)$
-      windowrulev2 = float,$steam
+      windowrulev2 = fullscreen,$steam
       windowrulev2 = workspace 9,$steam
 
-      # Bind applications to windows
+      ## Cider
       $cider = class:^(cider)$
       windowrulev2 = float,$steam
-      windowrulev2 = workspace 2,$cider
+      windowrulev2 = workspace 0,$cider
 
 
-      # Execute your favorite apps at launch
+      # Execute apps at launch
       exec-once = dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY
       exec-once = ${waybar}
       exec-once = ${hyprpaper}
       exec-once = ${pypr}
+
+      ## Systray
       exec-once = ${_1password-gui} --silent
-      exec-once = ${steam}
+      exec-once = ${steam} -silent
+
+
+      # Applications
+      exec-once = ${cider}
+
+      exec-once = ${browser}
+      exec-once = ${cursor} /depot
+      exec-once = ${terminal}
 
       # Cursor size in qt applications
       env = XCURSOR_SIZE, 18
