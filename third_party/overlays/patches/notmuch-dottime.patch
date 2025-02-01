@@ -1,0 +1,80 @@
+From 569438172fa0e38129de4e61a72e06eff3330dca Mon Sep 17 00:00:00 2001
+From: Vincent Ambo <tazjin@google.com>
+Date: Thu, 10 Dec 2020 10:53:47 +0100
+Subject: [PATCH] time: Use dottime for formatting non-relative timestamps
+
+---
+ notmuch-time.c     | 10 +++++-----
+ util/gmime-extra.c |  7 +++++--
+ util/gmime-extra.h |  2 ++
+ 3 files changed, 12 insertions(+), 7 deletions(-)
+
+diff --git a/notmuch-time.c b/notmuch-time.c
+index cc7ffc23..3030a667 100644
+--- a/notmuch-time.c
++++ b/notmuch-time.c
+@@ -50,8 +50,8 @@ notmuch_time_relative_date (const void *ctx, time_t then)
+     time_t delta;
+     char *result;
+
+-    localtime_r (&now, &tm_now);
+-    localtime_r (&then, &tm_then);
++    gmtime_r (&now, &tm_now);
++    gmtime_r (&then, &tm_then);
+
+     result = talloc_zero_size (ctx, RELATIVE_DATE_MAX);
+     if (result == NULL)
+@@ -78,16 +78,16 @@ notmuch_time_relative_date (const void *ctx, time_t then)
+ 	if (tm_then.tm_wday == tm_now.tm_wday &&
+ 	    delta < DAY) {
+ 	    strftime (result, RELATIVE_DATE_MAX,
+-		      "Today %R", &tm_then);    /* Today 12:30 */
++		      "Today %k·%M", &tm_then); /* Today 12·30 */
+ 	    return result;
+ 	} else if ((tm_now.tm_wday + 7 - tm_then.tm_wday) % 7 == 1) {
+ 	    strftime (result, RELATIVE_DATE_MAX,
+-		      "Yest. %R", &tm_then);    /* Yest. 12:30 */
++		      "Yest. %k·%M", &tm_then); /* Yest. 12·30 */
+ 	    return result;
+ 	} else {
+ 	    if (tm_then.tm_wday != tm_now.tm_wday) {
+ 		strftime (result, RELATIVE_DATE_MAX,
+-			  "%a. %R", &tm_then);  /* Mon. 12:30 */
++			  "%a. %k·%M", &tm_then); /* Mon. 12·30 */
+ 		return result;
+ 	    }
+ 	}
+diff --git a/util/gmime-extra.c b/util/gmime-extra.c
+index 04d8ed3d..868a2f69 100644
+--- a/util/gmime-extra.c
++++ b/util/gmime-extra.c
+@@ -131,10 +131,13 @@ g_mime_message_get_date_string (void *ctx, GMimeMessage *message)
+     GDateTime *parsed_date = g_mime_message_get_date (message);
+
+     if (parsed_date) {
+-	char *date = g_mime_utils_header_format_date (parsed_date);
++	char *date = g_date_time_format(
++		parsed_date,
++		"%a, %d %b %Y %H·%M%z"
++	);
+ 	return g_string_talloc_strdup (ctx, date);
+     } else {
+-	return talloc_strdup (ctx, "Thu, 01 Jan 1970 00:00:00 +0000");
++	return talloc_strdup (ctx, "Thu, 01 Jan 1970 00·00:00");
+     }
+ }
+
+diff --git a/util/gmime-extra.h b/util/gmime-extra.h
+index 094309ec..e6c98f8d 100644
+--- a/util/gmime-extra.h
++++ b/util/gmime-extra.h
+@@ -1,5 +1,7 @@
+ #ifndef _GMIME_EXTRA_H
+ #define _GMIME_EXTRA_H
++#include <glib.h>
++#include <glib/gprintf.h>
+ #include <gmime/gmime.h>
+ #include <talloc.h>
+
+--
+2.29.2.576.ga3fc446d84-goog

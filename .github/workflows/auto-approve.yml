@@ -1,0 +1,18 @@
+# Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+# SPDX-License-Identifier: Proprietary
+
+name: Automatic Approve
+
+on: pull_request_target
+
+jobs:
+  auto-approve:
+    runs-on: namespace-profile-cached-amd64
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: hmarr/auto-approve-action@v3
+        if: github.actor == 'github-actions' || github.actor == 'github-actions[bot]' || 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]' || github.actor == 'imgbot'
+        with:
+          github-token: "${{ secrets.GHUNTLEY_PAT }}"
+          review-message: "Auto approved automated PR"

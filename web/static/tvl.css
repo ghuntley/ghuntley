@@ -1,0 +1,141 @@
+/**
+ * Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+ * SPDX-License-Identifier: Proprietary
+ */
+
+/* Jetbrains Mono font from https://www.jetbrains.com/lp/mono/
+   licensed under Apache 2.0. Thanks, Jetbrains! */
+@font-face {
+    font-family: jetbrains-mono;
+    src: url(jetbrains-mono.woff2);
+}
+
+@font-face {
+    font-family: jetbrains-mono;
+    font-weight: bold;
+    src: url(jetbrains-mono-bold.woff2);
+}
+
+@font-face {
+    font-family: jetbrains-mono;
+    font-style: italic;
+    src: url(jetbrains-mono-italic.woff2);
+}
+
+@font-face {
+    font-family: jetbrains-mono;
+    font-weight: bold;
+    font-style: italic;
+    src: url(jetbrains-mono-bold-italic.woff2);
+}
+
+/* Generic-purpose styling */
+
+body {
+    max-width: 800px;
+    margin: 40px auto;
+    line-height: 1.6;
+    font-size: 18px;
+    padding: 0 10px;
+    font-family: jetbrains-mono, monospace;
+}
+
+h1, h2, h3 {
+    line-height: 1.2
+}
+
+/* Blog Posts */
+
+article {
+    line-height: 1.5em;
+}
+
+/* spacing between the paragraphs in blog posts */
+article p {
+    margin: 1.4em auto;
+}
+
+/* Blog styling */
+
+.light {
+    color: #383838;
+}
+
+.blog-title {
+    color: inherit;
+    text-decoration: none;
+}
+
+.footer {
+    text-align: right;
+}
+
+.date {
+    text-align: right;
+    font-style: italic;
+    float: right;
+}
+
+.inline {
+    display: inline;
+}
+
+.lod {
+    text-align: center;
+}
+
+.uncoloured-link {
+    color: inherit;
+}
+
+pre {
+    width: 100%;
+    overflow: auto;
+}
+
+code {
+    background: aliceblue;
+}
+
+img {
+    max-width: 100%;
+}
+
+.cheddar-callout {
+    display: block;
+    padding: 10px;
+}
+
+.cheddar-question {
+    color: #3367d6;
+    background-color: #e8f0fe;
+}
+
+.cheddar-todo {
+    color: #616161;
+    background-color: #eeeeee;
+}
+
+.cheddar-tip {
+    color: #00796b;
+    background-color: #e0f2f1;
+}
+
+.cheddar-warning {
+    color: #a52714;
+    background-color: #fbe9e7;
+}
+
+kbd {
+    background-color: #eee;
+    border-radius: 3px;
+    border: 1px solid #b4b4b4;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .2), 0 2px 0 0 rgba(255, 255, 255, .7) inset;
+    color: #333;
+    display: inline-block;
+    font-size: .85em;
+    font-weight: 700;
+    line-height: 1;
+    padding: 2px 4px;
+    white-space: nowrap;
+}

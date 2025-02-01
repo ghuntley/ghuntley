@@ -1,0 +1,13 @@
+# Not using common --repository_cache because Gerrit's bazelrc overrides this...
+build --repository_cache=repository-cache
+build --disk_cache=disk-cache
+
+build --action_env=SSL_CERT_FILE
+build --action_env=GERRIT_CACHE_HOME
+build --tool_java_runtime_version=local_jdk --java_runtime_version=local_jdk
+build --workspace_status_command="cat .version"
+
+# Disable errorprone
+build --javacopt="-XepDisableAllChecks"
+
+sync --repository_cache=repository-cache

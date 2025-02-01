@@ -1,0 +1,1 @@
+these are just symlinks to prevent Nix from gc-ing paths we'd like to keep

@@ -1,0 +1,6 @@
+# Ignore depot runtime data
+.data
+
+# Ignore Nix result symlinks
+result
+result-*

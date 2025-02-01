@@ -1,0 +1,3 @@
+alias(name = "jdk", actual = "@local_jdk//:jdk")
+alias(name = "toolchain", actual = "@local_jdk//:toolchain")
+alias(name = "bootstrap_runtime_toolchain", actual = "@local_jdk//:bootstrap_runtime_toolchain")

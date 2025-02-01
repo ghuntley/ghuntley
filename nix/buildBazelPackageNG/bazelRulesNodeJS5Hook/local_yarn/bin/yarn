@@ -1,0 +1,6 @@
+# Copyright (c) 2019 Vincent Ambo
+# Copyright (c) 2020-2021 The TVL Authors
+# SPDX-License-Identifier: MIT
+
+#!/bin/sh
+exec "__YARN__/bin/yarn" "$@"

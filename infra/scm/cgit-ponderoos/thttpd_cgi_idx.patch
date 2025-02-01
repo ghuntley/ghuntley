@@ -1,0 +1,13 @@
+diff --git a/config.h b/config.h
+index 65ab1e3..cde470f 100644
+--- a/config.h
++++ b/config.h
+@@ -327,7 +327,7 @@
+ /* CONFIGURE: A list of index filenames to check.  The files are searched
+ ** for in this order.
+ */
+-#define INDEX_NAMES "index.html", "index.htm", "index.xhtml", "index.xht", "Default.htm", "index.cgi"
++#define INDEX_NAMES "cgit.cgi"
+
+ /* CONFIGURE: If this is defined then thttpd will automatically generate
+ ** index pages for directories that don't have an explicit index file.

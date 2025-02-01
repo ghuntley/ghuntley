@@ -1,0 +1,2 @@
+Gerrit-HttpModule: dev.overalls.gerrit.HttpModule
+Gerrit-PluginName: overalls

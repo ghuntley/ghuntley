@@ -1,0 +1,39 @@
+# { lib, ... }:
+
+# let
+#     # Asserts a value to ensure it is not a path type.
+#     #
+#     # This function checks if a given value is a Nix path and throws an error if it is,
+#     # to prevent accidentally exposing local filesystem paths (ie. secrets) in the Nix store.
+#     # All other value types are passed through unchanged.
+#     #
+#     # Type: string -> any -> any
+#     #
+#     # Args:
+#     #   optionName: The name of the option being validated, used in error messages
+#     #   value: The value to validate
+#     #
+#     # Return: The input value if it's not a path
+#     #
+#     # Example:
+#     #   assertStringPath "config.myOption" "regular-string"
+#     #   => "regular-string"
+#     #
+#     #   assertStringPath "config.myOption" /local/path
+#     #   => throws error
+#     assertStringPath =
+#       optionName: value:
+#       if builtins.isPath value then
+#         throw ''
+#           ${optionName}:
+#             ${toString value}
+#             is a Nix path, but should be a string, since Nix
+#             paths are copied into the world-readable Nix store.
+#         ''
+#       else
+#         value;
+# in
+# {
+#   __functor = _: assertStringPath;
+#   inherit tests;
+# }

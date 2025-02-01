@@ -1,0 +1,18 @@
+
+# { assertDoesNotThrow, assertThrows, it, runTestsuite, assertStringPath }:
+
+# let
+
+#   pathsThrow = it "a path will throw" [
+#     (assertThrows assertStringPath "config.myOption" /local/path );
+#   ]
+
+#   pathsThrow = it "a string won't throw" [
+#     (assertThrows assertStringPath "config.myOption" "/local/path" )
+#   ];
+
+# in
+# runTestsuite "getBins" [
+#   pathsThrow
+#   stringsDont
+# ]

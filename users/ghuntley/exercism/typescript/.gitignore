@@ -1,0 +1,23 @@
+*.swp
+.DS_Store
+.idea
+npm-debug.log
+build
+babel-output
+lintreport.json
+debug.log
+
+# Binaries downloaded by binary download scripts
+bin/configlet
+bin/configlet.exe
+
+# Node modules
+exercises/**/node_modules
+common/node_modules
+node_modules
+
+# Maintainer specific generated files
+exercises/**/yarn.lock
+tmp_exercises
+tmp
+exercise-package.json

@@ -1,0 +1,108 @@
+From 96f66ec32e003c6c215aa2a644281289a71dae7d Mon Sep 17 00:00:00 2001
+From: Ilan Joselevich <personal@ilanjoselevich.com>
+Date: Sun, 4 Aug 2024 02:35:27 +0300
+Subject: [PATCH] Fix: Use mkDerivation with src instead of runCommand for test
+ derivation
+
+The problem with using runCommand and recreating the src directory with
+lndir is that it changes the file types of individual files, they will
+now be a symlink instead of a regular file. If you have a crate that tests
+that a file is of regular type then it will fail inside the crate2nix derivation.
+---
+ templates/nix/crate2nix/default.nix | 81 ++++++++-----------
+ 1 file changed, 35 insertions(+), 46 deletions(-)
+
+diff --git a/templates/nix/crate2nix/default.nix b/templates/nix/crate2nix/default.nix
+index c53925e..90e10c6 100644
+--- a/templates/nix/crate2nix/default.nix
++++ b/templates/nix/crate2nix/default.nix
+@@ -120,52 +120,41 @@ rec {
+               testPostRun
+             ]);
+         in
+-        pkgs.runCommand "run-tests-${testCrate.name}"
+-          {
+-            inherit testCrateFlags;
+-            buildInputs = testInputs;
+-          } ''
+-          set -e
+-
+-          export RUST_BACKTRACE=1
+-
+-          # recreate a file hierarchy as when running tests with cargo
+-
+-          # the source for test data
+-          # It's necessary to locate the source in $NIX_BUILD_TOP/source/
+-          # instead of $NIX_BUILD_TOP/
+-          # because we compiled those test binaries in the former and not the latter.
+-          # So all paths will expect source tree to be there and not in the build top directly.
+-          # For example: $NIX_BUILD_TOP := /build in general, if you ask yourself.
+-          # NOTE: There could be edge cases if `crate.sourceRoot` does exist but
+-          # it's very hard to reason about them.
+-          # Open a bug if you run into this!
+-          mkdir -p source/
+-          cd source/
+-
+-          ${pkgs.buildPackages.xorg.lndir}/bin/lndir ${crate.src}
+-
+-          # build outputs
+-          testRoot=target/debug
+-          mkdir -p $testRoot
+-
+-          # executables of the crate
+-          # we copy to prevent std::env::current_exe() to resolve to a store location
+-          for i in ${crate}/bin/*; do
+-            cp "$i" "$testRoot"
+-          done
+-          chmod +w -R .
+-
+-          # test harness executables are suffixed with a hash, like cargo does
+-          # this allows to prevent name collision with the main
+-          # executables of the crate
+-          hash=$(basename $out)
+-          for file in ${drv}/tests/*; do
+-            f=$testRoot/$(basename $file)-$hash
+-            cp $file $f
+-            ${testCommand}
+-          done
+-        '';
++        pkgs.stdenvNoCC.mkDerivation {
++          name = "run-tests-${testCrate.name}";
++
++          inherit (crate) src;
++
++          inherit testCrateFlags;
++
++          buildInputs = testInputs;
++
++          buildPhase = ''
++            set -e
++            export RUST_BACKTRACE=1
++
++            # build outputs
++            testRoot=target/debug
++            mkdir -p $testRoot
++
++            # executables of the crate
++            # we copy to prevent std::env::current_exe() to resolve to a store location
++            for i in ${crate}/bin/*; do
++              cp "$i" "$testRoot"
++            done
++            chmod +w -R .
++
++            # test harness executables are suffixed with a hash, like cargo does
++            # this allows to prevent name collision with the main
++            # executables of the crate
++            hash=$(basename $out)
++            for file in ${drv}/tests/*; do
++              f=$testRoot/$(basename $file)-$hash
++              cp $file $f
++              ${testCommand}
++            done
++          '';
++        };
+     in
+     pkgs.runCommand "${crate.name}-linked"
+       {
+--
+2.44.0

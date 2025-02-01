@@ -1,0 +1,5 @@
+[gerrit]
+host=cl.ponderoos.com
+port=29418
+project=depot
+defaultbranch=canon

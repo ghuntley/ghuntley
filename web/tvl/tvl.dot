@@ -1,0 +1,173 @@
+digraph tvl {
+  node [fontname = "JetBrains Mono"];
+  overlap = false;
+  splines = polyline;
+
+  TVL [style="bold" href="http://tvl.fyi"];
+  tazjin -> TVL [style="bold"];
+
+  // people
+  subgraph {
+    Irenes [href="https://www.pluralpride.com/"];
+    K900 [href="https://0upti.me/"];
+    Profpatsch [href="http://profpatsch.de/"];
+    adisbladis [href="http://nixos.expert/"];
+    amjoseph;
+    andi [label="andi-" href="https://andreas.rammhold.de/"];
+    aurora [href="https://nonegenderleftfox.aventine.se/"];
+    benjojo [href="https://benjojo.co.uk/"];
+    cynthia [href="https://cynthia.re/"];
+    edef [href="https://edef.eu/files/edef.hs"];
+    ericvolp [href="https://ericv.me"];
+    espes;
+    eta [href="https://theta.eu.org/"];
+    etu [href="https://elis.nu/"];
+    ezemtsov [href="https://github.com/ezemtsov"];
+    firefly [href="http://firefly.nu/"];
+    flokli [href="https://flokli.de/"];
+    fzakaria [href="https://fzakaria.com/"];
+    ghuntley [href="https://ghuntley.com/"];
+    aspen [href="http://gws.fyi"];
+    implr [href="https://twitter.com/implring"];
+    isomer [href="https://www.lorier.net/"];
+    j4m3s [href="https://github.com/j4m3s-s"];
+    jusrin [href="https://jusrin.dev/"];
+    kn;
+    lassulus;
+    leah2 [href="https://leahneukirchen.org/"];
+    lukegb [href="https://lukegb.com/"];
+    marcusr [href="http://marcus.nordaaker.com/"];
+    ncl;
+    nikky [href="http://nikky.moe/"];
+    nyanotech [href="https://twitter.com/nyanotech"];
+    seven [href="https://open.spotify.com/user/so7"];
+    sterni [href="https://sterni.lv/"];
+    tazjin [href="https://tazj.in/"];
+    wpcarro [href="https://wpcarro.dev/"];
+    raitobezarius [href="https://ryan.lahfa.xyz/"];
+    vova [href="https://github.com/vkryachko"];
+    yuuko;
+  }
+
+  // companies (blue)
+  subgraph {
+    node [color="#4285f4" fontcolor="#4285f4"];
+    spotify [href="https://www.spotify.com/"];
+    google [href="https://www.google.com/"];
+  }
+
+  // communities? (red)
+  subgraph {
+    node [color="#db4437" fontcolor="#db4437"];
+    eve [href="https://www.eveonline.com/"];
+    nix [href="https://nixos.org/nix/"];
+    tvix [href="https://code.tvl.fyi/tree/tvix"];
+    ircv3 [href="https://ircv3.net/"];
+    muccc [label="µccc" href="https://muc.ccc.de/"];
+    afra [label="AfRA" href="https://afra-berlin.de/"];
+  }
+
+  // special
+  subgraph {
+    baby [color="pink" fontcolor="pink" href="https://cynthia.re/s/baby"];
+    unspecific [color="grey" fontcolor="grey"];
+  }
+
+  // primary edges (how did they end up in TVL?)
+  subgraph {
+    // Direct edges
+    nix -> TVL;
+    tvix -> TVL;
+
+    spotify -> tazjin;
+    google -> tazjin;
+    eve -> tazjin;
+    unspecific -> tazjin;
+    edef -> tazjin;
+    ezemtsov -> tazjin;
+
+    // via nix
+    adisbladis -> nix;
+    jusrin -> nix;
+    ghuntley -> nix;
+    flokli -> nix;
+    andi -> nix;
+    Profpatsch -> nix;
+    lassulus -> nix;
+    etu -> nix;
+    vova -> nix;
+
+    // via tvix
+    j4m3s -> tvix;
+    amjoseph -> tvix;
+    K900 -> tvix;
+
+    // via edef
+    benjojo -> edef;
+    espes -> edef;
+    firefly -> edef;
+    leah2 -> aurora;
+    ncl -> edef;
+
+    // via spotify
+    seven -> spotify;
+
+    // via google
+    Irenes -> google;
+    isomer -> google;
+    lukegb -> google;
+    wpcarro -> google;
+    fzakaria -> google;
+
+    // random primary
+    aspen -> wpcarro;
+    aurora -> eve;
+    cynthia -> benjojo;
+    eta -> unspecific;
+    ericvolp -> lukegb;
+    marcusr -> unspecific;
+    implr -> lukegb;
+    afra -> unspecific;
+    nikky -> afra;
+    kn -> flokli;
+    sterni -> Profpatsch;
+    yuuko -> ncl;
+    raitobezarius -> flokli;
+  }
+
+  // secondary edges (how are they connected otherwise?)
+  subgraph {
+    edge [weight=0 style="dotted" color="grey" arrowhead="none"];
+
+    // ircv3
+    eta -> ircv3;
+    firefly -> ircv3;
+    raitobezarius -> ircv3;
+
+    // µccc
+    leah2 -> muccc;
+
+    // random
+    leah2 -> edef;
+    lukegb -> isomer;
+    eta -> firefly;
+    cynthia -> firefly;
+    cynthia -> lukegb;
+    implr -> google;
+    nyanotech -> google;
+    lukegb -> benjojo;
+    espes -> benjojo;
+    espes -> aurora;
+    aspen -> nix;
+    edef -> nix;
+    ezemtsov -> nix;
+    raitobezarius -> nix;
+  }
+
+  // baby
+  subgraph {
+    edge [weight=0 style="dotted" color="pink" arrowhead="none"];
+    cynthia -> baby;
+    eta -> baby;
+  }
+}

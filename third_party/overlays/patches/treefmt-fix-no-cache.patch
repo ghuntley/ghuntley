@@ -1,0 +1,42 @@
+From 601af097720079ea40db100b1dd6aefba4685e7c Mon Sep 17 00:00:00 2001
+From: Florian Klink <flokli@flokli.de>
+Date: Mon, 1 Jul 2024 17:34:08 +0300
+Subject: [PATCH] fix: only try opening the cache if cache is enabled
+
+Otherwise `--no-cache` still fails to open the cache.
+---
+ cli/format.go | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/cli/format.go b/cli/format.go
+index 492a4f3..8ccf578 100644
+--- a/cli/format.go
++++ b/cli/format.go
+@@ -118,9 +118,11 @@ func (f *Format) Run() (err error) {
+ 		f.formatters[name] = formatter
+ 	}
+
+-	// open the cache
+-	if err = cache.Open(f.TreeRoot, f.ClearCache, f.formatters); err != nil {
+-		return err
++	// open the cache if configured
++	if !f.NoCache {
++		if cache.Open(f.TreeRoot, f.ClearCache, f.formatters); err != nil {
++			return err
++		}
+ 	}
+
+ 	// create an app context and listen for shutdown
+@@ -148,7 +150,9 @@ func (f *Format) Run() (err error) {
+ 	f.processedCh = make(chan *walk.File, cap(f.filesCh))
+
+ 	// start concurrent processing tasks in reverse order
+-	eg.Go(f.updateCache(ctx))
++	if !f.NoCache {
++		eg.Go(f.updateCache(ctx))
++	}
+ 	eg.Go(f.applyFormatters(ctx))
+ 	eg.Go(f.walkFilesystem(ctx))
+
+--
+2.44.1

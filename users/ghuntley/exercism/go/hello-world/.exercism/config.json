@@ -1,0 +1,35 @@
+{
+  "authors": [
+    "k4rtik"
+  ],
+  "contributors": [
+    "bitfield",
+    "ekingery",
+    "ferhatelmas",
+    "hilary",
+    "kytrinyx",
+    "leenipper",
+    "petertseng",
+    "robphoenix",
+    "SebastianKristof",
+    "sebito91",
+    "tleen"
+  ],
+  "files": {
+    "solution": [
+      "hello_world.go"
+    ],
+    "test": [
+      "hello_world_test.go"
+    ],
+    "example": [
+      ".meta/example.go"
+    ],
+    "invalidator": [
+      "go.mod"
+    ]
+  },
+  "blurb": "The classical introductory exercise. Just say \"Hello, World!\"",
+  "source": "This is an exercise to introduce users to using Exercism",
+  "source_url": "http://en.wikipedia.org/wiki/%22Hello,_world!%22_program"
+}

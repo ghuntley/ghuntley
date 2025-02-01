@@ -1,0 +1,16 @@
+{
+    "recommendations": [
+        "haskell.haskell",
+        "robbowen.synthwave-vscode",
+        "editorconfig.editorconfig",
+        "hashicorp.terraform",
+        "jnoortheen.nix-ide",
+        "equinusocio.vsc-material-theme",
+        "fabiospampinato.vscode-todo-plus",
+        "formulahendry.auto-close-tag",
+        "formulahendry.auto-rename-tag",
+        "streetsidesoftware.code-spell-checker",
+        "golang.go",
+        "rubymaniac.vscode-direnv"
+    ]
+}
