@@ -24,36 +24,40 @@ let
   # home
   crowbar = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA+ADi60itKAWFkKDy1PbkIkgCHMcIcfpbeR0Pmq6kj8";
 
+  homeDefault.publicKeys = allDefault.publicKeys ++ [
+    crowbar
+  ];
+
   # development
   devDefault.publicKeys = ghuntley;
 
 in
 {
-  "inbox-hello-credentials.age" = prdDefault;
+  "inbox-hello-credentials.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
 
-  "nix-cache-signkey.age" = prdDefault;
-  "nix-cache-pubkey.age" = prdDefault;
+  "nix-cache-signkey.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
+  "nix-cache-pubkey.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
 
-  "wastebin-secret-file.age" = prdDefault;
+  "wastebin-secret-file.age".publicKeys = prdDefault.publicKeys;
 
-  "postgres-keycloak-credentials.age" = prdDefault;
+  "postgres-keycloak-credentials.age".publicKeys = prdDefault.publicKeys;
 
-  "acme-cloudflare-api-token.age" = prdDefault;
+  "acme-cloudflare-api-token.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
 
-  "buildkite-agent-token.age" = prdDefault;
-  "buildkite-graphql-token.age" = prdDefault;
-  "buildkite-ssh-private-key.age" = prdDefault;
-  "buildkite-ssh-public-key.age" = prdDefault;
+  "buildkite-agent-token.age".publicKeys = prdDefault.publicKeys;
+  "buildkite-graphql-token.age".publicKeys = prdDefault.publicKeys;
+  "buildkite-ssh-private-key.age".publicKeys = prdDefault.publicKeys;
+  "buildkite-ssh-public-key.age".publicKeys = prdDefault.publicKeys;
 
-  "buildkite-besadii-config.age" = prdDefault;
-  "gerrit-besadii-config.age" = prdDefault;
+  "buildkite-besadii-config.age".publicKeys = prdDefault.publicKeys;
+  "gerrit-besadii-config.age".publicKeys = prdDefault.publicKeys;
 
-  "deploy-buildkite-credentials.age" = prdDefault;
-  "deploy-dns-credentials.age" = prdDefault;
-  "deploy-keycloak-ponderoos-credentials.age" = prdDefault;
+  "deploy-buildkite-credentials.age".publicKeys = prdDefault.publicKeys;
+  "deploy-dns-credentials.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
+  "deploy-keycloak-ponderoos-credentials.age".publicKeys = prdDefault.publicKeys;
 
-  "ovh-tfstate-credentials.age" = prdDefault;
-  "ovh-backup-credentials.age" = prdDefault;
-  "ovh-backup-encryption-key.age" = prdDefault;
-  "backup-cli-credentials.age" = prdDefault;
+  "ovh-tfstate-credentials.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
+  "ovh-backup-credentials.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
+  "ovh-backup-encryption-key.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
+  "backup-cli-credentials.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
 }
