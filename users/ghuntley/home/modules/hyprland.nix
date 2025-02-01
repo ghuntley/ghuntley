@@ -199,7 +199,7 @@ in
       bind = $mainMod, B, exec, ${browser}
       bind = $mainMod SHIFT, S, exec, ${grim} -g "$(${slurp})" - | ${convert} - -shave 3x3 PNG:- | ${swappy} -f -
       bind = $mainMod SHIFT, E, exec, ${paste} | ${swappy} -f -
-      bind = $mainMod SHIFT, P, exec, ${_1password-gui} --quick-access; ${_1password-gui} --quick-access
+      bind = $mainMod SHIFT, P, exec, ${_1password-gui} --quick-access
       bind=SUPER, F, fullscreen
       # bind = $mainMod, P, pseudo, # dwindle
       bind = $mainMod, S, togglesplit, # dwindle
@@ -248,7 +248,7 @@ in
       bind = $mainMod SHIFT, 0, movetoworkspace, 10
 
       # Scratchpads
-      bind=$mainMod,T,exec,${pypr} toggle term && hyprctl dispatch bringactivetotop
+      bind=$mainMod,grave,exec,${pypr} toggle term && hyprctl dispatch bringactivetotop
       bind=$mainMod,C,exec,${pypr} toggle calculator && hyprctl dispatch bringactivetotop
       bind=$mainMod,A,exec,${pypr} toggle pavucontrol && hyprctl dispatch bringactivetotop
       $scratchpadsize = size 80% 85%
@@ -510,8 +510,7 @@ in
                   "default": "🎜"
               },
               "escape": true,
-              "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null" // Script in resources folder
-              // "exec": "$HOME/.config/waybar/mediaplayer.py --player spotify 2> /dev/null" // Filter player based on name
+              "exec": "$HOME/bin/cider"
           }
       }
     '';
