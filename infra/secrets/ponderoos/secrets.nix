@@ -22,7 +22,7 @@ let
   ];
 
   # home
-  crowbar = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA+ADi60itKAWFkKDy1PbkIkgCHMcIcfpbeR0Pmq6kj8";
+  crowbar = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMBCGLUhUwafgC6Ol6l2sY5N0/PAdyDC89LgB2ptbf1q";
 
   homeDefault.publicKeys = allDefault.publicKeys ++ [
     crowbar
