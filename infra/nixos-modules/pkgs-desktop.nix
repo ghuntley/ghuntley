@@ -14,6 +14,11 @@ in
 {
 
   # Core System Configuration
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1"; # Hint electron apps to use wayland
+  };
+
+  # Core System Packages
   environment.systemPackages = [
     # Desktop Environment & Window Management
     pkgs.ags # Widget and desktop component framework for GNOME/GTK
