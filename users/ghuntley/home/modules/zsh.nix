@@ -12,6 +12,7 @@
 
     initExtra = ''
       export PATH="$HOME/bin:$PATH"
+      eval "$(direnv hook zsh)"
     '';
   };
 
