@@ -24,6 +24,7 @@ let
   bpython = pkgs.python3Packages.bpython + "/bin/bpython";
   nm-connection-editor = pkgs.networkmanagerapplet + "/bin/nm-connection-editor";
   _1password-gui = pkgs._1password-gui + "/bin/1password";
+  steam = pkgs.steam + "/bin/steam";
 in
 
 {
@@ -84,12 +85,24 @@ in
       monitor=,preferred,auto,auto
       # See https://wiki.hyprland.org/Configuring/Keywords/ for more
 
+      # Bind applications to windows
+      $steam = class:^(steam)$
+      windowrulev2 = float,$steam
+      windowrulev2 = workspace 9,$steam
+
+      # Bind applications to windows
+      $cider = class:^(cider)$
+      windowrulev2 = float,$steam
+      windowrulev2 = workspace 2,$cider
+
+
       # Execute your favorite apps at launch
       exec-once = dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY
       exec-once = ${waybar}
       exec-once = ${hyprpaper}
       exec-once = ${pypr}
       exec-once = ${_1password-gui} --silent
+      exec-once = ${steam}
 
       # Cursor size in qt applications
       env = XCURSOR_SIZE, 18
@@ -245,10 +258,6 @@ in
       # Move/resize windows with mainMod + LMB/RMB and dragging
       bindm = $mainMod, mouse:272, movewindow
       bindm = $mainMod, mouse:273, resizewindow
-
-      # Moonlander
-      bind = $mainMod SHIFT CTRL, w, exec, command
-      bind = $mainMod SHIFT CTRL, m, exec, ${browser} "https://configure.zsa.io/moonlander/layouts/KR0rp/latest/0"
     '';
 
     ".config/hypr/pyprland.json".text = ''
