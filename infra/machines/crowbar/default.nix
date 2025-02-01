@@ -106,6 +106,10 @@ in
   services.depot.restic = {
     enable = true;
     interval = "*:0/10"; # Every 10 minutes
+    keep-last = 1;
+    keep-hourly = 24;
+    keep-daily = 2;
+    keep-weekly = 0;
     keep-monthly = 0;
     keep-yearly = 0;
     paths = [
