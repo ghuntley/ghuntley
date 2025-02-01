@@ -115,6 +115,8 @@ in
     ];
     exclude = [
       ".Trash*"
+      "/home/ghuntley/go"
+      "/home/ghuntley/Downloads"
       "/home/ghuntley/.1password"
       "/home/ghuntley/.cache"
       "/home/ghuntley/.cargo"
