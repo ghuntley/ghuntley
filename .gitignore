@@ -1,6 +1,10 @@
 # Ignore depot runtime data
-.data
+.gcroots
 
 # Ignore Nix result symlinks
 result
 result-*
+
+# Ignore Linux trash and macOS DS_Store
+.Trash*
+.DS_Store
