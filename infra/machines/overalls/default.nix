@@ -183,11 +183,15 @@ in
         enableBackups = true;
         credentialsFile = config.age.secrets.ovh-files-credentials.path;
         region = "GRA";
-        extraArgs = [
-          "--cache /tmp/geesefs-cache"
-          "--dir-mode 0755"
-          "--file-mode 0644"
-        ];
+        cluster = {
+          enable = true;
+          nodeId = "000";
+          address = "overalls.lorikeet-bangus.ts.net";
+          port = 5619;
+          peers = [
+            { nodeId = "100"; address = "crowbar.lorikeet-bangus.ts.net:5619"; }
+          ];
+        };
       };
     };
   };
