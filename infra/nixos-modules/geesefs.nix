@@ -7,6 +7,10 @@ with lib;
 
 let
   cfg = config.services.depot.geesefs;
+
+  # Function to resolve hostname to IP address using nslookup
+  resolveHostname = hostname: ''$(${pkgs.dnsutils}/bin/nslookup "${hostname}" | grep 'Address: ' | tail -n1 | awk '{print $2}' || echo "${hostname}")'';
+
 in
 {
   options.services.depot.geesefs = {
@@ -85,12 +89,6 @@ in
               description = "Enable cluster mode";
             };
 
-            enableGrpcReflection = mkOption {
-              type = types.bool;
-              default = false;
-              description = "Enable gRPC reflection (only valid when cluster mode is enabled)";
-            };
-
             nodeId = mkOption {
               type = types.str;
               description = "Node ID for this cluster node";
@@ -100,7 +98,7 @@ in
             address = mkOption {
               type = types.str;
               description = "Address for this cluster node";
-              example = "127.0.0.0";
+              example = "crowbar";
             };
 
             port = mkOption {
@@ -115,12 +113,12 @@ in
                   nodeId = mkOption {
                     type = types.str;
                     description = "Peer node ID";
-                    example = "node2";
+                    example = "1000";
                   };
                   address = mkOption {
                     type = types.str;
                     description = "Peer node address";
-                    example = "192.168.1.11:5000";
+                    example = "overalls:5619";
                   };
                 };
               });
@@ -136,7 +134,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.geesefs ];
+    environment.systemPackages = [ pkgs.geesefs pkgs.dnsutils ];
 
     systemd.services = mapAttrs'
       (name: mount:
@@ -152,23 +150,31 @@ in
           serviceConfig = {
             Type = "simple";
             ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p ${mount.mountPoint}";
-            ExecStart = ''
-              ${pkgs.geesefs}/bin/geesefs \
-                -f \
-                --cache /var/cache/geesefs \
-                --endpoint ${mount.endpoint} \
-                --region ${mount.region} \
-                --uid-attr ${mount.uidAttr} \
-                --gid-attr ${mount.gidAttr} \
-                --dir-mode ${toString mount.dirMode} \
-                --file-mode ${toString mount.fileMode} \
-                ${lib.optionalString mount.cluster.enable "--cluster"} \
-                ${lib.optionalString (mount.cluster.enable && mount.cluster.enableGrpcReflection) "--grpc-reflection"} \
-                ${lib.optionalString mount.cluster.enable "--cluster-me ${mount.cluster.nodeId}:${mount.cluster.address}:${toString mount.cluster.port}"} \
-                ${lib.concatMapStrings (peer: " --cluster-peer ${peer.nodeId}:${peer.address}") mount.cluster.peers} \
-                ${toString mount.extraArgs} \
-                ${mount.bucket} ${mount.mountPoint}
-            '';
+            ExecStart =
+              let
+                clusterMe = lib.optionalString mount.cluster.enable
+                  "--cluster-me ${mount.cluster.nodeId}:${resolveHostname mount.cluster.address}:${toString mount.cluster.port}";
+                clusterPeers = lib.concatMapStrings
+                  (peer: " --cluster-peer ${peer.nodeId}:${resolveHostname peer.address}")
+                  mount.cluster.peers;
+              in
+              toString (pkgs.writeShellScript "start-geesefs-${name}" ''
+                ${pkgs.geesefs}/bin/geesefs \
+                  -f \
+                  --cache /var/cache/geesefs \
+                  --endpoint ${mount.endpoint} \
+                  --region ${mount.region} \
+                  --uid-attr ${mount.uidAttr} \
+                  --gid-attr ${mount.gidAttr} \
+                  --dir-mode ${toString mount.dirMode} \
+                  --file-mode ${toString mount.fileMode} \
+                  ${lib.optionalString mount.cluster.enable "--cluster"} \
+                  ${lib.optionalString mount.cluster.enable "--grpc-reflection"} \
+                  ${clusterMe} \
+                  ${clusterPeers} \
+                  ${toString mount.extraArgs} \
+                  ${mount.bucket} ${mount.mountPoint}
+              '');
             ExecStop = "${pkgs.fuse}/bin/fusermount -u ${mount.mountPoint}";
             Restart = "on-failure";
             RestartSec = "5s";
@@ -181,7 +187,7 @@ in
     networking.firewall.interfaces."tailscale0".allowedTCPPorts = lib.optionals (any (mount: mount.cluster.enable) (attrValues cfg.mounts))
       (lib.unique (map (mount: mount.cluster.port) (filter (mount: mount.cluster.enable) (attrValues cfg.mounts)))); # GeeseFS cluster ports
 
-    # Add the mount points to restic backup paths
+    # Add the mount points to restic backup paths if enableBackups is true
     services.depot.restic.paths = mapAttrsToList
       (name: mount: if mount.enableBackups then mount.mountPoint else null)
       (filterAttrs (name: mount: mount.enableBackups) cfg.mounts);

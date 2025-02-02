@@ -148,10 +148,10 @@ in
         cluster = {
           enable = true;
           nodeId = "100";
-          address = "crowbar";
+          address = "crowbar.lorikeet-bangus.ts.net";
           port = 5619;
           peers = [
-            { nodeId = "000"; address = "overalls:5619"; }
+            { nodeId = "000"; address = "overalls.lorikeet-bangus.ts.net:5619"; }
           ];
         };
       };
