@@ -149,7 +149,10 @@ in
 
           serviceConfig = {
             Type = "simple";
-            ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p ${mount.mountPoint}";
+            ExecStartPre = pkgs.writeShellScript "geesefs-pre-${name}" ''
+              ${pkgs.coreutils}/bin/mkdir -p ${mount.mountPoint}
+              ${pkgs.coreutils}/bin/chown ${mount.uidAttr}:${mount.gidAttr} ${mount.mountPoint}
+            '';
             ExecStart =
               let
                 clusterMe = lib.optionalString mount.cluster.enable
@@ -169,6 +172,7 @@ in
                   --dir-mode ${toString mount.dirMode} \
                   --file-mode ${toString mount.fileMode} \
                   ${lib.optionalString mount.cluster.enable "--cluster"} \
+                  ${lib.optionalString mount.cluster.enable "--debug_grpc"} \
                   ${lib.optionalString mount.cluster.enable "--grpc-reflection"} \
                   ${clusterMe} \
                   ${clusterPeers} \
