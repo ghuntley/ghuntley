@@ -16,6 +16,12 @@ in
   options.services.depot.geesefs = {
     enable = mkEnableOption "GeeseFS S3 FUSE filesystem";
 
+    debug = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Enable debug logging for GeeseFS";
+    };
+
     mounts = mkOption {
       type = types.attrsOf (types.submodule {
         options = {
@@ -164,6 +170,7 @@ in
               toString (pkgs.writeShellScript "start-geesefs-${name}" ''
                 ${pkgs.geesefs}/bin/geesefs \
                   -f \
+                  ${lib.optionalString cfg.debug "--debug"} \
                   --cache /var/cache/geesefs \
                   --endpoint ${mount.endpoint} \
                   --region ${mount.region} \

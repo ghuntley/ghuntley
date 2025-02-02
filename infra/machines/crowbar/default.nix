@@ -137,6 +137,7 @@ in
   # Run GeeseFS to serve S3 buckets
   services.depot.geesefs = {
     enable = true;
+    debug = true;
     mounts = {
       "files" = {
         bucket = "ponderoos-files";
