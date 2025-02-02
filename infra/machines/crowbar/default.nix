@@ -134,33 +134,6 @@ in
     ];
   };
 
-  # Run GeeseFS to serve S3 buckets
-  services.depot.geesefs = {
-    enable = true;
-    debug = true;
-    mounts = {
-      "files" = {
-        bucket = "ponderoos-files";
-        endpoint = "https://s3.gra.io.cloud.ovh.net/";
-        mountPoint = "/mnt/files.ponderoos.com";
-        enableBackups = false;
-        uidAttr = "ghuntley";
-        gidAttr = "users";
-        credentialsFile = config.age.secrets.ovh-files-credentials.path;
-        region = "GRA";
-        cluster = {
-          enable = true;
-          nodeId = "100";
-          address = "crowbar.lorikeet-bangus.ts.net";
-          port = 5619;
-          peers = [
-            { nodeId = "000"; address = "overalls.lorikeet-bangus.ts.net:5619"; }
-          ];
-        };
-      };
-    };
-  };
-
   # Configure secrets for services that need them.
   age.secrets =
     let
