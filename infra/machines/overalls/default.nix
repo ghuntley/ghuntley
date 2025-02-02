@@ -256,6 +256,10 @@ in
 
   services.depot.nix-cache.enable = false;
 
+  boot.kernelModules = [ "kvm-intel" ]; # Use kvm-amd for AMD CPUs
+  virtualisation.libvirtd.enable = true;
+  users.extraGroups.libvirtd.members = [ "ghuntley" ];
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It's perfectly fine and recommended to leave
