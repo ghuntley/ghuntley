@@ -38,6 +38,10 @@ let
         # Forbids our meta.ci attribute
         # https://github.com/NixOS/nixpkgs/pull/191171#issuecomment-1260650771
         checkMeta = false;
+        permittedInsecurePackages = [
+          "dotnet-sdk-6.0.428" # Sonarr's .NET SDK dependency
+          "aspnetcore-runtime-6.0.36" # Sonarr's .NET SDK dependency
+        ];
       };
 
     inherit localSystem crossSystem;
