@@ -9,7 +9,7 @@ let
   cfg = config.services.depot.geesefs;
 
   # Function to resolve hostname to IP address using nslookup
-  resolveHostname = hostname: ''$(${pkgs.dnsutils}/bin/nslookup "${hostname}" | grep 'Address: ' | tail -n1 | awk '{print $2}' || echo "${hostname}")'';
+  resolveHostname = hostname: ''$(${pkgs.dnsutils}/bin/nslookup "${hostname}" | grep 'Address: ' | tail -n1 | ${pkgs.gawk}/bin/awk '{print $2}' || echo "${hostname}")'';
 
 in
 {
