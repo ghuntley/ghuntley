@@ -61,7 +61,6 @@ in
       (name: mount:
         nameValuePair "geesefs-${name}" {
           description = "GeeseFS mount for ${mount.bucket}";
-          wantedBy = [ "multi-user.target" ];
           after = [ "network-online.target" ];
           wants = [ "network-online.target" ];
 
@@ -74,6 +73,8 @@ in
             ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p ${mount.mountPoint}";
             ExecStart = ''
               ${pkgs.geesefs}/bin/geesefs \
+                -f \
+                --cache /var/cache/geesefs \
                 --endpoint ${mount.endpoint} \
                 --region ${mount.region} \
                 ${toString mount.extraArgs} \
@@ -93,6 +94,4 @@ in
       cfg.mounts;
 
   };
-
-
 }
