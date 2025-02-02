@@ -68,5 +68,15 @@ in rec {
   crowbarSystem = (nixosFor depot.infra.machines.crowbar).system;
   iso = import ./nixos-installer/iso.nix;
 
-  meta.ci.targets = [ "overallsSystem" "crowbarSystem" "iso" ];
+  # Fix crowbar ISO generation by passing the target system configuration
+  crowbarIso = (import ./nixos-installer/iso.nix) {
+    inherit depot;
+    targetSystem = depot.infra.machines.crowbar;
+  };
+
+  meta.ci.targets = [
+    "overallsSystem"
+    "crowbarSystem"
+    "crowbarIso"
+  ];
 }
