@@ -42,10 +42,91 @@ in
             description = "AWS region";
           };
 
+          enableBackups = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Whether to include this mount in restic backups";
+          };
+
           extraArgs = mkOption {
             type = types.listOf types.str;
             default = [ ];
             description = "Additional arguments to pass to geesefs";
+          };
+
+          uidAttr = mkOption {
+            type = types.str;
+            default = "root";
+            description = "User ID metadata attribute name";
+          };
+
+          gidAttr = mkOption {
+            type = types.str;
+            default = "wheel";
+            description = "Group ID metadata attribute name";
+          };
+
+          dirMode = mkOption {
+            type = types.ints.between 0 511; # 0-777 in octal
+            default = 493; # 0755 in octal
+            description = "Default permission bits for directories (octal)";
+          };
+
+          fileMode = mkOption {
+            type = types.ints.between 0 511; # 0-777 in octal
+            default = 420; # 0644 in octal
+            description = "Default permission bits for files (octal)";
+          };
+
+          cluster = {
+            enable = mkOption {
+              type = types.bool;
+              default = false;
+              description = "Enable cluster mode";
+            };
+
+            enableGrpcReflection = mkOption {
+              type = types.bool;
+              default = false;
+              description = "Enable gRPC reflection (only valid when cluster mode is enabled)";
+            };
+
+            nodeId = mkOption {
+              type = types.str;
+              description = "Node ID for this cluster node";
+              example = "node1";
+            };
+
+            address = mkOption {
+              type = types.str;
+              description = "Address for this cluster node";
+              example = "127.0.0.0";
+            };
+
+            port = mkOption {
+              type = types.int;
+              description = "Port for this cluster node";
+              example = 5619;
+            };
+
+            peers = mkOption {
+              type = types.listOf (types.submodule {
+                options = {
+                  nodeId = mkOption {
+                    type = types.str;
+                    description = "Peer node ID";
+                    example = "node2";
+                  };
+                  address = mkOption {
+                    type = types.str;
+                    description = "Peer node address";
+                    example = "192.168.1.11:5000";
+                  };
+                };
+              });
+              default = [ ];
+              description = "List of peer nodes in the cluster";
+            };
           };
         };
       });
@@ -77,6 +158,14 @@ in
                 --cache /var/cache/geesefs \
                 --endpoint ${mount.endpoint} \
                 --region ${mount.region} \
+                --uid-attr ${mount.uidAttr} \
+                --gid-attr ${mount.gidAttr} \
+                --dir-mode ${toString mount.dirMode} \
+                --file-mode ${toString mount.fileMode} \
+                ${lib.optionalString mount.cluster.enable "--cluster"} \
+                ${lib.optionalString (mount.cluster.enable && mount.cluster.enableGrpcReflection) "--grpc-reflection"} \
+                ${lib.optionalString mount.cluster.enable "--cluster-me ${mount.cluster.nodeId}:${mount.cluster.address}:${toString mount.cluster.port}"} \
+                ${lib.concatMapStrings (peer: " --cluster-peer ${peer.nodeId}:${peer.address}") mount.cluster.peers} \
                 ${toString mount.extraArgs} \
                 ${mount.bucket} ${mount.mountPoint}
             '';
@@ -88,10 +177,14 @@ in
       )
       cfg.mounts;
 
+    # Open tailscale firewall ports for GeeseFS cluster communication
+    networking.firewall.interfaces."tailscale0".allowedTCPPorts = lib.optionals (any (mount: mount.cluster.enable) (attrValues cfg.mounts))
+      (lib.unique (map (mount: mount.cluster.port) (filter (mount: mount.cluster.enable) (attrValues cfg.mounts)))); # GeeseFS cluster ports
+
     # Add the mount points to restic backup paths
     services.depot.restic.paths = mapAttrsToList
-      (name: mount: mount.mountPoint)
-      cfg.mounts;
+      (name: mount: if mount.enableBackups then mount.mountPoint else null)
+      (filterAttrs (name: mount: mount.enableBackups) cfg.mounts);
 
   };
 }

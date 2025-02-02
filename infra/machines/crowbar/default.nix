@@ -20,6 +20,7 @@ in
     (mod "nvidia.nix")
     (mod "podman.nix")
     (mod "restic.nix")
+    (mod "geesefs.nix")
   ];
 
   boot.tmp.cleanOnBoot = true;
@@ -133,6 +134,30 @@ in
     ];
   };
 
+  # Run GeeseFS to serve S3 buckets
+  services.depot.geesefs = {
+    enable = true;
+    mounts = {
+      "files" = {
+        bucket = "ponderoos-files";
+        endpoint = "https://s3.gra.io.cloud.ovh.net/";
+        mountPoint = "/mnt/files.ponderoos.com";
+        enableBackups = false;
+        credentialsFile = config.age.secrets.ovh-files-credentials.path;
+        region = "GRA";
+        cluster = {
+          enable = true;
+          nodeId = "100";
+          address = "crowbar";
+          port = 5619;
+          peers = [
+            { nodeId = "000"; address = "overalls:5619"; }
+          ];
+        };
+      };
+    };
+  };
+
   # Configure secrets for services that need them.
   age.secrets =
     let
@@ -148,6 +173,9 @@ in
 
       ovh-backup-encryption-key.file = secretFile "ovh-backup-encryption-key";
       ovh-backup-encryption-key.symlink = false;
+
+      ovh-files-credentials.file = secretFile "ovh-files-credentials";
+      ovh-files-credentials.symlink = false;
 
       nix-cache-pubkey.file = secretFile "nix-cache-pubkey";
       nix-cache-pubkey.symlink = false;

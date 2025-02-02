@@ -180,6 +180,7 @@ in
         bucket = "ponderoos-files";
         endpoint = "https://s3.gra.io.cloud.ovh.net/";
         mountPoint = "/mnt/files.ponderoos.com";
+        enableBackups = true;
         credentialsFile = config.age.secrets.ovh-files-credentials.path;
         region = "GRA";
         extraArgs = [
