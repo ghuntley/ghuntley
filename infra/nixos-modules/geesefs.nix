@@ -176,6 +176,7 @@ in
                   --region ${mount.region} \
                   --uid-attr ${mount.uidAttr} \
                   --gid-attr ${mount.gidAttr} \
+                  -o allow_root \
                   --dir-mode ${toString mount.dirMode} \
                   --file-mode ${toString mount.fileMode} \
                   ${lib.optionalString mount.cluster.enable "--cluster"} \
