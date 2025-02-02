@@ -22,6 +22,8 @@ in
     (mod "podman.nix")
     (mod "restic.nix")
     (mod "geesefs.nix")
+    (mod "plex.nix")
+
     # (mod "nixos-mailserver.nix")
 
     (auth "ponderoos/slapd")
