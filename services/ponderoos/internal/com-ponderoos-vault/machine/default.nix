@@ -26,6 +26,6 @@ in
   meta.ci.targets = [
     "vm"
     "iso"
-    "url";
-    };
-    }
+    "url"
+  ];
+}
