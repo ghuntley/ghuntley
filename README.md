@@ -1,3 +1,8 @@
+<!--
+ Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+ SPDX-License-Identifier: Proprietary
+-->
+
 # ghuntley's personal monorepo ![Views](https://komarev.com/ghpvc/?username=ghuntley) [![LinkedIn](https://img.shields.io/badge/-LinkedIn-5c5c5c?&logo=Linkedin&?logoColor=white&link=https://www.linkedin.com/in/geoffreyhuntley/)](https://www.linkedin.com/in/geoffreyhuntley/)
 
 
