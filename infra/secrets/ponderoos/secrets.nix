@@ -61,4 +61,6 @@ in
   "ovh-files-credentials.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
   "ovh-backup-encryption-key.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
   "backup-cli-credentials.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
+
+  "vscode-marketplace-credentials.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
 }
