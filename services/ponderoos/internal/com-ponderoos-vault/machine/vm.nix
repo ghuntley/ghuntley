@@ -3,17 +3,21 @@
 
 { depot, pkgs, ... }:
 
-{
-  vm = (import (pkgs.path + "/nixos/lib/eval-config.nix") {
+let
+  nixosSystem = (import (pkgs.path + "/nixos/lib/eval-config.nix") {
     system = builtins.currentSystem;
     pkgs = pkgs;
     modules = [
       ({ modulesPath, pkgs, ... }: {
         imports = [
           (modulesPath + "/virtualisation/qemu-vm.nix")
+          (modulesPath + "/installer/cd-dvd/iso-image.nix")
         ];
 
         system.stateVersion = "23.11";
+
+        # Set empty root password
+        users.users.root.initialPassword = "";
 
         virtualisation = {
           memorySize = 2048;
@@ -30,7 +34,14 @@
         };
 
         networking.firewall.allowedTCPPorts = [ 8200 ];
+
+        isoImage.makeEfiBootable = true;
+        isoImage.makeUsbBootable = true;
       })
     ];
-  }).config.system.build.vm;
+  }).config;
+in
+{
+  vm = nixosSystem.system.build.vm;
+  iso = nixosSystem.system.build.isoImage;
 }

@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
 
-{ depot, config, lib, ... }:
+{ depot, config, lib, pkgs, ... }:
 
 let
   cfg = config.services.depot.harmonia;
@@ -22,13 +22,18 @@ in
       example = "nix-cache.ponderoos.com";
       description = "The hostname part of the public URL used as base for all frontend requests.";
     };
-
   };
 
   config = lib.mkIf cfg.enable {
+    services.harmonia = {
+      enable = true;
+      signKeyPaths = [ cfg.signKeyPath ];
+    };
 
-    services.harmonia.enable = true;
-    services.harmonia.signKeyPaths = [ cfg.signKeyPath ];
+    # Override the systemd service to add RUST_LOG
+    systemd.services.harmonia.environment = {
+      RUST_LOG = "debug,actix_web::middleware=debug";
+    };
 
     services.nginx = {
       virtualHosts."${cfg.hostname}" = {
@@ -44,11 +49,23 @@ in
           proxy_set_header Upgrade $http_upgrade;
           proxy_set_header Connection $connection_upgrade;
 
+          # Increase timeouts for large files
+          proxy_connect_timeout 300s;
+          proxy_send_timeout 300s;
+          proxy_read_timeout 300s;
+
+          # Increase buffer sizes
+          proxy_buffer_size 16k;
+          proxy_buffers 8 16k;
+          proxy_busy_buffers_size 32k;
+
+          # Increase max temp file sizes for very large files (up to 64GB)
+          proxy_max_temp_file_size 65536m;
+          proxy_temp_file_write_size 64k;
+
           add_header X-Robots-Tag "none";
         '';
-
       };
     };
-
   };
 }

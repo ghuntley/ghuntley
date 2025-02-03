@@ -20,7 +20,7 @@ import (nixpkgs.path + "/nixos/tests/make-test-python.nix") (
       services.vault = {
         enable = true;
         package = pkgs.vault;
-        address = "127.0.0.1:8200";
+        address = "127.0.0.1:8100";
       };
 
       networking.firewall.allowedTCPPorts = [ 8200 ];
