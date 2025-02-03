@@ -31,5 +31,10 @@
   },
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
-  "files.trimFinalNewlines": true
+  "files.trimFinalNewlines": true,
+  "cursor.aipreview.enabled": true,
+  "cursor.general.enableShadowWorkspace": true,
+  "cursor.general.gitGraphIndexing": "enabled",
+  "nix.enableLanguageServer": true,
+  "nix.formatterPath": "nixpkgs-fmt"
 }
