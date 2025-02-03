@@ -1,0 +1,87 @@
+---
+description: Rust Style
+globs: *.rs
+---
+# Rust Style
+
+Enforces Rust coding style, async best practices, and safety patterns.
+
+<rule>
+name: rust_style
+description: Enforces Rust coding style, async best practices, and safety patterns
+filters:
+  - type: file_extension
+    pattern: "\\.rs$"
+actions:
+  - type: reject
+    conditions:
+      # Safety patterns
+      - pattern: "unsafe\\s*\\{(?![^}]*//\\s*SAFETY:)"
+        message: "Unsafe blocks must include a SAFETY: comment explaining why the code is safe"
+      - pattern: "unwrap\\(\\)|expect\\("
+        message: "Avoid using unwrap() or expect(). Use proper error handling with Result/Option and the ? operator"
+      - pattern: "panic!|unimplemented!"
+        message: "Avoid panic! and unimplemented! in production code. Return Result for error handling"
+
+      # Async patterns
+      - pattern: "std::thread::sleep"
+        message: "Use tokio::time::sleep for async-aware sleeping"
+      - pattern: "std::sync::(Mutex|RwLock)"
+        message: "Use tokio::sync::{Mutex, RwLock} for async-aware synchronization primitives"
+      - pattern: "async\\s+fn.*?\\{[^}]*Thread::spawn"
+        message: "Use tokio::spawn instead of Thread::spawn in async contexts"
+
+      # Channel patterns
+      - pattern: "mpsc::channel\\(\\)"
+        message: "Consider using tokio::sync::mpsc for async-aware channels"
+      - pattern: "tokio::sync::mpsc::channel\\(0\\)"
+        message: "Unbounded channels can lead to memory issues. Consider using bounded channels"
+
+      # Naming conventions
+      - pattern: "[A-Z][a-z]*_[a-z]"
+        message: "Use snake_case for function names and PascalCase for types"
+      - pattern: "fn [a-z]+[A-Z]"
+        message: "Function names should be snake_case"
+
+      # Debug/logging
+      - pattern: "println!|print!|dbg!"
+        message: "Use a proper logging framework (tracing/log) instead of println or dbg"
+
+      # Testing
+      - pattern: "#\\[test\\]\\s+async\\s+fn"
+        message: "Use #[tokio::test] for async test functions"
+
+  - type: suggest
+    message: |
+      Consider these Rust best practices:
+      - Use proper error handling with Result/Option and the ? operator
+      - Document unsafe blocks with SAFETY comments
+      - Use tokio primitives for async operations
+      - Use bounded channels for backpressure
+      - Implement structured concurrency patterns
+      - Use tracing/log for logging
+      - Write async-aware tests with tokio::test
+      - Consider implementing custom error types with thiserror
+      - Use environment variables for configuration
+      - Document public APIs with rustdoc
+
+examples:
+  - input: |
+      async fn process() {
+          let result = risky_operation().unwrap();
+          println!("Got: {}", result);
+          std::thread::sleep(Duration::from_secs(1));
+      }
+    output: "Multiple issues: unwrap(), println!, and std::thread::sleep in async context"
+
+  - input: |
+      let (tx, rx) = mpsc::channel();
+      std::thread::spawn(move || {
+          tx.send(42).unwrap();
+      });
+    output: "Use tokio primitives: tokio::sync::mpsc and tokio::spawn"
+
+metadata:
+  priority: high
+  version: 1.1
+</rule>

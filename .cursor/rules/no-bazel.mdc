@@ -1,0 +1,54 @@
+---
+description: No Bazel
+globs: *
+---
+# No Bazel
+
+Strictly prohibits any Bazel-related code, recommendations, or tooling.
+
+<rule>
+name: no_bazel
+description: Strictly prohibits Bazel usage and recommendations
+filters:
+  # Match any Bazel-related terms
+  - type: content
+    pattern: "(?i)\\b(bazel|blaze|bzl|BUILD|WORKSPACE|starlark|\\.star)\\b"
+  # Match build system recommendations
+  - type: intent
+    pattern: "build_system_recommendation"
+  # Match file extensions
+  - type: file_extension
+    pattern: "\\.(bzl|star|bazel)$"
+  # Match file names
+  - type: file_name
+    pattern: "^(BUILD|WORKSPACE)$"
+
+actions:
+  - type: reject
+    message: |
+      Bazel and related tools are not allowed in this codebase:
+      - No Bazel build files or configurations
+      - No Starlark (.star/.bzl) files
+      - No Bazel-related tooling or dependencies
+      - No recommendations of Bazel as a build system
+
+      Please use Nix for build and dependency management.
+
+  - type: suggest
+    message: |
+      Instead of Bazel, consider:
+      - Nix for reproducible builds and dependencies
+      - Make for simple build automation
+      - Language-native build tools
+      - Shell scripts for basic automation
+
+examples:
+  - input: "How should I structure the build?"
+    output: "Use Nix for reproducible builds and dependency management. See our Nix documentation for examples."
+  - input: "Can we add a Bazel rule?"
+    output: "We use Nix overlays instead of Bazel rules. Please convert this to a Nix overlay."
+
+metadata:
+  priority: critical
+  version: 2.0
+</rule>

@@ -1,0 +1,44 @@
+---
+description: Nix Documentation
+globs: *.nix
+---
+# Nix Documentation
+
+Rules for documenting Nix files with consistent formatting.
+
+<rule>
+name: nix_documentation
+description: Rules for documenting Nix files
+filters:
+  - type: file_extension
+    pattern: "\\.nix$"
+actions:
+  - type: reject
+    conditions:
+      - pattern: "^[^#]"
+        message: "Module-level documentation missing at file start"
+      - pattern: "^[^#].*=.*->.*(?!#)"
+        message: "Function type signature documentation missing"
+  - type: suggest
+    message: |
+      Follow these documentation conventions:
+
+      1. Module-level documentation at file start
+      2. Function documentation with type signatures
+      3. Argument and return value documentation
+      4. Example usage in documentation
+      5. Inline documentation for complex logic
+examples:
+  - input: |
+      # Module purpose
+      #
+      # Detailed description
+
+      # functionName :: type1 -> type2
+      # Arguments and usage...
+      functionName = arg1: arg2: ...
+    output: "Correctly documented Nix module"
+metadata:
+  priority: medium
+  version: 1.0
+</rule>

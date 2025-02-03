@@ -1,0 +1,64 @@
+---
+description: Depot Third Party Package Overlays
+globs: *.nix
+---
+# Depot Third Party Package Overlays
+
+Rules for creating and maintaining third-party package overlays in the depot repository.
+
+<rule>
+name: third_party_overlay
+description: Standards for creating new third-party package overlays
+filters:
+  - type: file_path
+    pattern: "third_party/.*/default\\.nix$"
+actions:
+  - type: reject
+    conditions:
+      - pattern: "^[^#]"
+        message: "License header missing at file start"
+      - pattern: "pkgs\\.PACKAGE_NAME"
+        message: "PACKAGE_NAME placeholder must be replaced with actual package name"
+      - pattern: "pkgs\\.[a-zA-Z0-9_-]+(?!\\.overrideAttrs)"
+        message: "Must use overrideAttrs for package customization"
+  - type: suggest
+    message: |
+      Follow these conventions when creating a new third-party package overlay:
+
+      1. Create a new directory under third_party/ named after the package
+      2. Create a default.nix with this minimal structure:
+         ```nix
+         # Copyright (c) YEAR Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+         # SPDX-License-Identifier: Proprietary
+
+         { pkgs, ... }:
+
+         pkgs.PACKAGE_NAME.overrideAttrs (old: {
+           # Add custom patches if needed
+           patches = (old.patches or []) ++ [
+             # ./patches/custom.patch  # uncomment if needed
+           ];
+         })
+         ```
+      3. Replace PACKAGE_NAME with the actual package name
+      4. Keep all package-specific patches in the same directory
+      5. Document any non-obvious modifications
+
+examples:
+  - input: |
+      # Copyright (c) 2024 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+      # SPDX-License-Identifier: Proprietary
+
+      { pkgs, ... }:
+
+      pkgs.addlicense.overrideAttrs (old: {
+        patches = (old.patches or []) ++ [
+          ./patches/custom.patch
+        ];
+      })
+    output: "Correctly structured third-party package overlay"
+
+metadata:
+  priority: high
+  version: 1.1
+</rule>

@@ -1,0 +1,41 @@
+---
+description: # Depot Nix Yants Testing
+globs: *.nix
+---
+# Nix Yants Testing
+
+Rules for writing tests using the yants testing library.
+
+<rule>
+name: nix_yants_testing
+description: Rules for writing tests using yants testing library
+filters:
+  - type: file_path
+    pattern: ".*/tests/default\\.nix$"
+actions:
+  - type: reject
+    conditions:
+      - pattern: "runTestsuite.*(?!\\[.*it.*\\])"
+        message: "Tests should be organized in suites using 'it'"
+      - pattern: "assertEq.*(?!\".*\")"
+        message: "Test cases should have descriptive names"
+  - type: suggest
+    message: |
+      Follow these testing conventions:
+      1. Use proper test suite structure
+      2. Include descriptive test names
+      3. Test both success and failure cases
+      4. Mock external dependencies
+      5. Group related tests together
+examples:
+  - input: |
+      testSuite = it "feature description" [
+        (assertEq "should handle valid input"
+          expectedValue
+          actualValue)
+      ];
+    output: "Correctly structured test suite"
+metadata:
+  priority: medium
+  version: 1.0
+</rule>
