@@ -67,6 +67,8 @@ in rec {
   overallsSystem = (nixosFor depot.infra.machines.overalls).system;
   crowbarSystem = (nixosFor depot.infra.machines.crowbar).system;
   iso = import ./nixos-installer/iso.nix;
+  # qemu = import ./nixos-installer/qemu.nix;
+  test = import ./nixos-installer/test.nix;
 
   # Fix crowbar ISO generation by passing the target system configuration
   crowbarIso = (import ./nixos-installer/iso.nix) {
@@ -74,9 +76,22 @@ in rec {
     targetSystem = depot.infra.machines.crowbar;
   };
 
+  # Create test target for crowbar ISO
+  crowbarTest = (import ./nixos-installer/test.nix) {
+    inherit depot;
+    targetSystem = depot.infra.machines.crowbar;
+  };
+
+  # Create QEMU image for crowbar
+  # crowbarQemu = (import ./nixos-installer/qemu.nix) {
+  #   inherit depot;
+  #   targetSystem = depot.infra.machines.crowbar;
+  # };
+
   meta.ci.targets = [
     "overallsSystem"
     "crowbarSystem"
     "crowbarIso"
+    "crowbarTest"
   ];
 }
