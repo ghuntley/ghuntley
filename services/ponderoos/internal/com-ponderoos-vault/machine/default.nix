@@ -3,4 +3,17 @@
 
 { depot, pkgs, ... }:
 
-(import ./vm.nix { inherit depot pkgs; })
+let
+  machine = import ./vm.nix { inherit depot pkgs; };
+in
+rec {
+  vm = machine.vm;
+
+  tests = {
+    vault = import ./test.nix { inherit depot pkgs; };
+  };
+
+  meta.ci = {
+    inherit vm tests;
+  };
+}
