@@ -1,15 +1,8 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
 
-{ nixpkgs ? import <nixpkgs> { } }:
+{ depot, pkgs, ... }:
 
-let
-  pkgs = import <nixpkgs> {
-    config = {
-      allowUnfree = true;
-    };
-  };
-in
 {
   vm = (import (pkgs.path + "/nixos/lib/eval-config.nix") {
     system = builtins.currentSystem;
