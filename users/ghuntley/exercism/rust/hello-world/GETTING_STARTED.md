@@ -1,3 +1,8 @@
+<!--
+ Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+ SPDX-License-Identifier: Proprietary
+-->
+
 # Getting Started
 
 These exercises lean on Test-Driven Development (TDD), but they're not

@@ -1,3 +1,8 @@
+<!--
+ Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+ SPDX-License-Identifier: Proprietary
+-->
+
 # Hello World
 
 Welcome to Hello World on Exercism's Rust Track.

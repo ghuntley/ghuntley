@@ -1,3 +1,8 @@
+<!--
+ Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+ SPDX-License-Identifier: Proprietary
+-->
+
 ---
 name: Develop in Windows on Google Cloud
 description: Get started with Windows development on Google Cloud.
