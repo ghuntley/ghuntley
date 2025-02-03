@@ -16,11 +16,17 @@ let
   '';
 
   depot-addlicense = pkgs.writeShellScriptBin "depot-addlicense" ''
-    exec ${pkgs.addlicense}/bin/addlicense -f ${config} ''${DEPOT_ROOT}
+    if [ $# -eq 0 ]; then
+      # No arguments provided, use DEPOT_ROOT
+      exec ${pkgs.addlicense}/bin/addlicense -f ${config} ''${DEPOT_ROOT}
+    else
+      # Arguments provided, use them as file paths
+      exec ${pkgs.addlicense}/bin/addlicense -f ${config} "$@"
+    fi
   '';
 
   check = pkgs.writeShellScriptBin "depot-addlicense-check" ''
-    exec ${pkgs.addlicense}/bin/addlicense -chceck -f ${config} ''${DEPOT_ROOT}
+    exec ${pkgs.addlicense}/bin/addlicense -check -f ${config} ''${DEPOT_ROOT}
   '';
 
 in
