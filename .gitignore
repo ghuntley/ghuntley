@@ -8,3 +8,7 @@ result-*
 # Ignore Linux trash and macOS DS_Store
 .Trash*
 .DS_Store
+
+# Disk images
+*.iso
+*.qcow2
