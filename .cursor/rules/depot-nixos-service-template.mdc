@@ -54,8 +54,10 @@ actions:
 
         tests = import ./test.nix { inherit depot pkgs; };
 
-        meta.ci = {
-          inherit vm tests iso;
+        meta.ci.targets = [
+            "vm"
+            "iso"
+            "url";
         };
       }
       ```

@@ -12,16 +12,20 @@ let
   isoHash = builtins.substring 11 32 (toString machine.iso);
   isoName = builtins.baseNameOf (toString machine.iso);
 in
-rec {
+{
+  # Default package should be the VM
+  default = machine.vm;
+
+  # Individual components
   vm = machine.vm;
   iso = machine.iso;
-  url = getIsoUrl iso;
+  url = getIsoUrl machine.iso;
 
-  tests = {
-    machine = import ./test.nix { inherit depot pkgs; };
-  };
+  tests = import ./test.nix { inherit depot pkgs; };
 
-  meta.ci = {
-    inherit vm tests iso;
-  };
-}
+  meta.ci.targets = [
+    "vm"
+    "iso"
+    "url";
+    };
+    }
