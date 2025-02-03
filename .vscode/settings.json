@@ -24,39 +24,20 @@
   ],
   "todo.timekeeping.created.enabled": true,
   "todo.embedded.provider": "ag",
-  "vim.easymotion": true,
-  "vim.hlsearch": true,
-  "vim.incsearch": true,
-  "vim.useCtrlKeys": true,
-  "vim.useSystemClipboard": true,
-  "vim.insertModeKeyBindings": [
-    {
-      "before": ["j", "j"],
-      "after": ["<Esc>"]
-    }
-  ],
-  "vim.normalModeKeyBindingsNonRecursive": [
-    {
-      "before": ["<leader>", "d"],
-      "after": ["d", "d"]
-    },
-    {
-      "before": ["<C-n>"],
-      "commands": [":nohl"]
-    },
-    {
-      "before": ["K"],
-      "commands": ["lineBreakInsert"],
-      "silent": true
-    }
-  ],
-  "vim.leader": "<space>",
-  "vim.handleKeys": {
-    "<C-a>": false,
-    "<C-f>": false
-  },
   "workbench.colorTheme": "SynthWave '84",
-  "ocaml.sandbox": {
-    "kind": "global"
-  }
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  },
+  "python.formatting.provider": "black",
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.pylintEnabled": false,
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true
 }

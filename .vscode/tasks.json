@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Add License",
+      "type": "shell",
+      "command": "direnv exec . depot-addlicense ${file}",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent"
+      },
+      "group": {
+        "kind": "none"
+      }
+    },
+    {
+      "label": "Format",
+      "type": "shell",
+      "command": "direnv exec . depot-fmt ${file}",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent"
+      },
+      "group": {
+        "kind": "none"
+      }
+    }
+
+  ]
+}
