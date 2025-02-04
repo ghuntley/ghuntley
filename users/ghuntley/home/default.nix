@@ -24,10 +24,15 @@ rec {
   });
 
   crowbar = home ./machines/crowbar.nix;
-
   crowbarHome = crowbar.activation-script;
 
+  prybar = home ./machines/prybar.nix;
+  prybarHome = crowbar.activation-script;
+
   meta.ci.targets = [
+    "crowbar"
     "crowbarHome"
+    "prybar"
+    "prybarHome"
   ];
 }

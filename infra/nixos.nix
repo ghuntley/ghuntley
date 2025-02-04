@@ -66,6 +66,7 @@ in rec {
   # Systems that should be built in CI
   overallsSystem = (nixosFor depot.infra.machines.overalls).system;
   crowbarSystem = (nixosFor depot.infra.machines.crowbar).system;
+  prybarSystem = (nixosFor depot.infra.machines.prybar).system;
   # iso = import ./nixos-installer/iso.nix;
   # # qemu = import ./nixos-installer/qemu.nix;
   # test = import ./nixos-installer/test.nix;
@@ -91,5 +92,6 @@ in rec {
   meta.ci.targets = [
     "overallsSystem"
     "crowbarSystem"
+    "prybarSystem"
   ];
 }

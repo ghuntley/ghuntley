@@ -6,4 +6,5 @@
 (with depot.infra.machines; [
   overalls
   crowbar
+  prybar
 ])
