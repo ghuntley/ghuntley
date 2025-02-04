@@ -98,6 +98,9 @@ in
     pkgs.yt-dlp # Feature-rich video downloader for YouTube and other sites
   ];
 
+  # Security
+  services.hypridle.enable = true;
+
   # Flatpak Packages
   services.flatpak.enable = true;
   systemd.services.flatpak-repo = {

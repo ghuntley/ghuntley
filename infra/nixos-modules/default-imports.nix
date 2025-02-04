@@ -20,6 +20,7 @@ in
     (mod "cache.nix")
     (mod "disable-documentation.nix")
 
+    (mod "physlock.nix")
     (mod "fail2ban.nix")
     (mod "i18n.nix")
     (mod "known-hosts.nix")

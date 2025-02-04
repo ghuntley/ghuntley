@@ -7,6 +7,7 @@
   home.file."bin/cursor" = {
     text = ''
       #!/usr/bin/env bash
+      mkdir ~/Applications
       cd ~/Applications
 
       if ! ls cursor*.AppImage >/dev/null 2>&1; then

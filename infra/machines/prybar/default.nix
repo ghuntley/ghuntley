@@ -16,7 +16,7 @@ let
 in
 {
   imports = [
-    (mod "defaults-bare-metal.nix")
+    (mod "defaults-laptop.nix")
     (mod "podman.nix")
     (mod "restic.nix")
   ];
@@ -91,10 +91,10 @@ in
 
   services.throttled.enable = true;
 
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
     extraPackages = with pkgs; [
-      vpl-gpu-rt # for newer GPUs on NixOS >24.05 or unstable
+      vpl-gpu-rt
     ];
   };
 
