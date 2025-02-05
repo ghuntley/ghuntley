@@ -14,7 +14,7 @@ let
           (modulesPath + "/installer/cd-dvd/iso-image.nix")
         ];
 
-        system.stateVersion = "23.11";
+        system.stateVersion = "24.11";
 
         # Set empty root password
         users.users.root.initialPassword = "";

@@ -35,6 +35,9 @@ in
     (scm "livegrep.nix")
     (scm "wastebin.nix")
     (scm "upterm.nix")
+
+    (mod "vaultwarden.nix")
+
   ];
 
   boot.tmp.cleanOnBoot = true;
@@ -253,6 +256,13 @@ in
       };
 
     };
+
+  services.depot.vaultwarden = {
+    enable = true;
+    domain = "vault.ponderoos.com";
+    port = 8222;
+    enableSignups = true;
+  };
 
   services.depot.nix-cache.enable = false;
 
