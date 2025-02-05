@@ -207,6 +207,13 @@ in
       ovh-backup-encryption-key.file = secretFile "ovh-backup-encryption-key";
       ovh-backup-encryption-key.symlink = false;
 
+      vaultwarden-credentials = {
+        file = secretFile "vaultwarden-credentials";
+        mode = "0440";
+        group = "vaultwarden";
+        symlink = false;
+      };
+
       nix-cache-pubkey.file = secretFile "nix-cache-pubkey";
       nix-cache-pubkey.symlink = false;
 
@@ -270,7 +277,7 @@ in
     enable = true;
     domain = "vault.ponderoos.com";
     port = 8222;
-    enableSignups = true;
+    enableSignups = false;
   };
 
   services.depot.nix-cache.enable = false;

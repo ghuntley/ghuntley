@@ -34,6 +34,7 @@ let
 in
 {
   "archivebox-admin-password.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
+  "vaultwarden-credentials.age".publicKeys = prdDefault.publicKeys;
 
   "inbox-hello-credentials.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
 

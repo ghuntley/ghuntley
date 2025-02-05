@@ -22,6 +22,7 @@ in
   environment.systemPackages = [
     # Desktop Environment & Window Management
     pkgs.ags # Widget and desktop component framework for GNOME/GTK
+    pkgs.bitwarden-desktop # Bitwarden desktop client
     pkgs.brightnessctl # CLI tool and library for reading/controlling device brightness
     pkgs.btop # Resource monitor showing CPU, memory, disks, network and processes
     pkgs.cava # Console-based audio visualizer that responds to audio input

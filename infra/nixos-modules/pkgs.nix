@@ -16,6 +16,7 @@ in
   environment.systemPackages = [
     depot.third_party.agenix.cli # Age-encrypted secrets management tool
     pkgs.bind # DNS utilities like dig, nslookup, etc.
+    pkgs.bitwarden-cli # Bitwarden CLI
     pkgs.cachix # Binary cache hosting service for Nix
     pkgs.diff-so-fancy # Git diff output beautifier
     pkgs.direnv # Per-directory environment variable manager
