@@ -228,3 +228,11 @@ resource "cloudflare_record" "com_ponderoos_media" {
   value   = var.com_ponderoos_ipv4
   proxied = false
 }
+
+resource "cloudflare_record" "com_ponderoos_vault" {
+  zone_id = var.com_ponderoos_cloudflare_zone_id
+  name    = "vault"
+  type    = "A"
+  value   = var.com_ponderoos_ipv4
+  proxied = false
+}
