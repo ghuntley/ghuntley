@@ -37,8 +37,8 @@ in
     (scm "upterm.nix")
 
     (mod "vaultwarden.nix")
-    (mod "archive.nix")
-
+    (mod "healthchecks.nix")
+    (mod "archivebox.nix")
   ];
 
   boot.tmp.cleanOnBoot = true;
@@ -180,9 +180,10 @@ in
 
   services.depot.archivebox = {
     enable = true;
+    enableBackups = false;
     domain = "archive.ponderoos.com";
     port = 8000;
-    adminUsername = "admin";
+    adminUsername = "ghuntley";
     adminPasswordFile = config.age.secrets.archivebox-admin-password.path;
   };
 
@@ -192,8 +193,13 @@ in
       secretFile = name: depot.infra.secrets.ponderoos."${name}.age";
     in
     {
-      archivebox-admin-password.file = secretFile "archivebox-admin-password";
-      archivebox-admin-password.symlink = false;
+
+      archivebox-admin-password = {
+        file = secretFile "archivebox-admin-password";
+        mode = "0440";
+        group = "archivebox";
+        symlink = false;
+      };
 
       backup-cli-credentials.file = secretFile "backup-cli-credentials";
       backup-cli-credentials.symlink = false;
@@ -281,6 +287,14 @@ in
   };
 
   services.depot.nix-cache.enable = false;
+
+  # Run a healthchecks instance
+  services.depot.healthchecks = {
+    enable = true;
+    domain = "healthchecks.ponderoos.com";
+    port = 8001;
+  };
+
 
   boot.kernelModules = [ "kvm-intel" ]; # Use kvm-amd for AMD CPUs
   virtualisation.libvirtd.enable = true;

@@ -1,0 +1,59 @@
+---
+description: Depot Insecure Packages
+globs: *.nix
+---
+# Depot Insecure Packages
+
+Rules for handling insecure packages in the depot repository with nix.
+
+<rule>
+name: insecure_packages
+description: Standards for handling insecure package allowances
+filters:
+  - type: file_path
+    pattern: "third_party/nixpkgs/default\\.nix$"
+  - type: file_path
+    pattern: ".*\\.nix$"
+actions:
+  - type: reject
+    conditions:
+      - pattern: "nixpkgs\\.config\\.permittedInsecurePackages"
+        message: "Do not set permittedInsecurePackages at the module level. Add to //third_party/nixpkgs/default.nix instead"
+  - type: suggest
+    message: |
+      Follow these conventions when allowing insecure packages:
+
+      1. Add insecure package allowances to the global config in //third_party/nixpkgs/default.nix:
+         ```nix
+         config = {
+           permittedInsecurePackages = [
+             "package-name-version" # Required by service-name
+           ];
+         };
+         ```
+
+      2. Always include a comment explaining which service requires the package
+
+      3. Do not set permittedInsecurePackages in:
+         - Individual NixOS modules
+         - Service configurations
+         - Machine configurations
+
+      4. If a service requires an insecure package, document it in the module's
+         description or README.md
+
+examples:
+  - input: |
+      # Bad: Setting at module level
+      nixpkgs.config.permittedInsecurePackages = [ "package-1.2.3" ];
+
+      # Good: Added to third_party/nixpkgs/default.nix
+      permittedInsecurePackages = [
+        "package-1.2.3" # Required by service-name
+      ];
+    output: "Correctly configured insecure package allowance"
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>

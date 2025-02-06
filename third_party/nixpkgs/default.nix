@@ -41,6 +41,8 @@ let
         permittedInsecurePackages = [
           "dotnet-sdk-6.0.428" # Sonarr's .NET SDK dependency
           "aspnetcore-runtime-6.0.36" # Sonarr's .NET SDK dependency
+          "python3.12-django-3.1.14" # Required by archivebox
+          "python3.12-youtube-dl-2021.12.17" # Required by archivebox for video archiving
         ];
       };
 

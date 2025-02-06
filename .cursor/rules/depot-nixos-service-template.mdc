@@ -1,8 +1,8 @@
 ---
-description: NixOS Service Template
+description: Depot NixOS Service Template
 globs: *.nix
 ---
-# NixOS Service Template
+# Depot NixOS Service Template
 
 Rules for creating new NixOS services following the depot standard structure.
 

@@ -1,8 +1,8 @@
 ---
-description: # Depot Nix Yants Testing
+description: Depot Nix Yants Testing
 globs: *.nix
 ---
-# Nix Yants Testing
+# Depot Nix Yants Testing
 
 Rules for writing tests using the yants testing library.
 

@@ -35,8 +35,6 @@ in
       description = "The ArchiveBox package to use";
     };
 
-    backupDir = mkStringOption "/var/backup/archivebox";
-
     createAdmin = lib.mkOption {
       type = lib.types.bool;
       default = true;
@@ -173,14 +171,32 @@ in
       default = { };
       description = "Additional ArchiveBox configuration options";
     };
+
+    insecurePackages = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ "python3.12-django-3.1.14" ];
+      description = "List of insecure packages to permit for archivebox";
+    };
+
+    enableBackups = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Whether to enable automatic backups using depot.restic";
+    };
   };
 
   config = lib.mkIf cfg.enable {
     # Ensure ripgrep is installed
     environment.systemPackages = [
       pkgs.ripgrep
+      pkgs.ripgrep-all
       pkgs.youtube-dl
     ];
+
+    # Enable Sonic search backend for full-text search
+    services.sonic-server = {
+      enable = true;
+    };
 
     systemd.services.archivebox = {
       description = "ArchiveBox web archiving service";
@@ -202,12 +218,14 @@ in
         SAVE_WARC = lib.boolToString cfg.saveWarc;
         SAVE_WGET = lib.boolToString cfg.saveWget;
         SAVE_WGET_REQUISITES = lib.boolToString cfg.saveWgetRequisites;
+        #SEARCH_BACKEND_ENGINE = "sonic"; // TODO: Enable Sonic search backend for full-text search
+        SEARCH_BACKEND_ENGINE = "ripgrep";
         CURL_USER_AGENT = cfg.curlUserAgent;
         WGET_USER_AGENT = cfg.wgetUserAgent;
         CHROME_USER_AGENT = cfg.chromeUserAgent;
         RESOLUTION = cfg.resolution;
         GIT_DOMAINS = cfg.gitDomains;
-        RIPGREP_BINARY = "${pkgs.ripgrep}/bin/rg";
+        RIPGREP_BINARY = "${pkgs.ripgrep-all}/bin/rga";
         YOUTUBEDL_BINARY = "${pkgs.youtube-dl}/bin/youtube-dl";
       } // cfg.extraConfig;
 
@@ -215,7 +233,7 @@ in
         Type = "simple";
         User = "archivebox";
         Group = "archivebox";
-        ExecStart = "${cfg.package}/bin/archivebox server --port ${toString cfg.port} 0.0.0.0";
+        ExecStart = "${cfg.package}/bin/archivebox server 127.0.0.1:${toString cfg.port}";
         WorkingDirectory = cfg.dataDir;
         StateDirectory = "archivebox";
         StateDirectoryMode = "0750";
@@ -224,27 +242,46 @@ in
         ProtectSystem = "strict";
         ProtectHome = true;
         PrivateTmp = true;
-        ReadWritePaths = [ cfg.dataDir cfg.backupDir ];
+        ReadWritePaths = [ cfg.dataDir ];
       };
 
       preStart = ''
-        if [ ! -f ${cfg.dataDir}/data/sonic.db ]; then
+        if [ ! -f ${cfg.dataDir}/index.sqlite3 ]; then
           ${cfg.package}/bin/archivebox init
 
           ${lib.optionalString cfg.createAdmin ''
-            password=$(cat ${cfg.adminPasswordFile})
+            # First create the superuser without password
             ${cfg.package}/bin/archivebox manage createsuperuser \
               --noinput \
               --username ${cfg.adminUsername} \
-              --email ${cfg.adminEmail} \
-              --password "$password"
+              --email ${cfg.adminEmail}
           ''}
         fi
+
+        # Set the password using changepassword with a script
+        cat > /tmp/set_password.py << EOF
+        from django.contrib.auth.models import User
+        from django.contrib.auth.hashers import make_password
+        with open('${cfg.adminPasswordFile}', 'r') as f:
+            password = f.read().strip()
+        user = User.objects.get(username='${cfg.adminUsername}')
+        user.password = make_password(password)
+        user.save()
+        EOF
+
+        ${cfg.package}/bin/archivebox manage shell < /tmp/set_password.py
+        rm /tmp/set_password.py
 
         # Write configuration to ArchiveBox.conf
         ${cfg.package}/bin/archivebox config --set PUBLIC_INDEX=${lib.boolToString cfg.publicIndex}
         ${cfg.package}/bin/archivebox config --set PUBLIC_SNAPSHOTS=${lib.boolToString cfg.publicSnapshots}
         ${cfg.package}/bin/archivebox config --set PUBLIC_ADD_VIEW=${lib.boolToString cfg.publicAdd}
+        ${cfg.package}/bin/archivebox config --set RIPGREP_BINARY=${pkgs.ripgrep-all}/bin/rga
+
+        ${cfg.package}/bin/archivebox version
+        ${cfg.package}/bin/archivebox config --get SEARCH_BACKEND_ENGINE
+
+
       '';
     };
 
@@ -259,15 +296,15 @@ in
     users.groups.archivebox = { };
 
     # Configure backups using depot.restic
-    services.depot.restic = {
+    services.depot.restic = lib.mkIf cfg.enableBackups {
       enable = true;
       paths = [
         cfg.dataDir
+        "/var/lib/sonic"
       ];
       exclude = [
-        "*.tmp"
-        "*.log"
-        "**/cache/**"
+        "logs"
+        "*.cache"
       ];
     };
 
