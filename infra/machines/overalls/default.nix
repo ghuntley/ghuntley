@@ -37,6 +37,7 @@ in
     (scm "upterm.nix")
 
     (mod "vaultwarden.nix")
+    (mod "archive.nix")
 
   ];
 
@@ -177,7 +178,13 @@ in
     signKeyPath = config.age.secrets.nix-cache-signkey.path;
   };
 
-
+  services.depot.archivebox = {
+    enable = true;
+    domain = "archive.ponderoos.com";
+    port = 8000;
+    adminUsername = "admin";
+    adminPasswordFile = config.age.secrets.archivebox-admin-password.path;
+  };
 
   # Configure secrets for services that need them.
   age.secrets =
@@ -185,6 +192,8 @@ in
       secretFile = name: depot.infra.secrets.ponderoos."${name}.age";
     in
     {
+      archivebox-admin-password.file = secretFile "archivebox-admin-password";
+      archivebox-admin-password.symlink = false;
 
       backup-cli-credentials.file = secretFile "backup-cli-credentials";
       backup-cli-credentials.symlink = false;

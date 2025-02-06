@@ -33,6 +33,8 @@ let
 
 in
 {
+  "archivebox-admin-password.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
+
   "inbox-hello-credentials.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
 
   "nix-cache-signkey.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
