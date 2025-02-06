@@ -36,6 +36,7 @@ in
 
     # System Monitoring & Control
     pkgs.cpufrequtils # Tools for viewing/adjusting CPU frequency scaling
+    pkgs.cpupower-gui # Change the frequency limits of your cpu and its governor
     pkgs.gnome-system-monitor # GUI system resource and process monitor
     pkgs.inxi # Command line system information tool - shows hardware, software info
     pkgs.nvtopPackages.full # GPU process monitoring tool with support for NVIDIA/AMD/Intel
@@ -137,7 +138,6 @@ in
 
   # Desktop Environment Tools
   programs.waybar.enable = true;
-  programs.hyprlock.enable = true;
   programs.nm-applet.indicator = true;
 
   # System Tools
@@ -164,16 +164,7 @@ in
   programs.ladybird.enable = true;
 
   # Security & Authentication
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
-  };
-
-  programs._1password.enable = true;
-  programs._1password-gui = {
-    enable = true;
-    polkitPolicyOwners = [ "ghuntley" ];
-  };
+  programs.ssh.startAgent = true;
 
   # NixOS Compatibility
   programs.appimage.enable = true;

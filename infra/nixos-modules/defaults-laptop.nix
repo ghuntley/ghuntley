@@ -39,6 +39,15 @@ in
   powerManagement.enable = true;
   powerManagement.cpuFreqGovernor = "powersave";
 
+  services.auto-cpufreq.enable = true;
+  #services.auto-cpufreq.settings = {
+  #   ideapad_laptop_conservation_mode = true;
+  #};
+  environment.systemPackages = with pkgs; [
+    auto-cpufreq
+  ];
+
+
   services.logind.lidSwitch = "suspend-then-hibernate";
   services.logind.extraConfig = ''
     HandlePowerKey=suspend

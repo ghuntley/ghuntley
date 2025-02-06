@@ -21,6 +21,10 @@ in
     (mod "restic.nix")
   ];
 
+  services.vaultwarden.enable = true;
+  services.alloy.enable = true;
+
+
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -171,7 +175,7 @@ in
 
     };
 
-  services.depot.nix-cache.enable = false;
+  services.depot.nix-cache.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
