@@ -10,13 +10,19 @@
     users.mgmt = {
       isNormalUser = true;
       extraGroups = [ "git" "wheel" "docker" "podman" "libvirtd" ];
-      shell = pkgs.bash;
+      shell = pkgs.zsh;
       openssh.authorizedKeys.keys = depot.users.mgmt.keys.all;
     };
     users.ghuntley = {
+      isNormalUser = true
+        extraGroups = [ "git" "wheel" "docker" "podman" "libvirtd" ];
+      shell = pkgs.zsh;
+      openssh.authorizedKeys.keys = depot.users.ghuntley.keys.all;
+    };
+    users.ohuntley = {
       isNormalUser = true;
-      extraGroups = [ "git" "wheel" "docker" "podman" "libvirtd" ];
-      shell = pkgs.bash;
+      extraGroups = [ ];
+      shell = pkgs.zsh;
       openssh.authorizedKeys.keys = depot.users.ghuntley.keys.all;
     };
   };
