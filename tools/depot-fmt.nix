@@ -104,11 +104,66 @@ let
       --clear-cache \
       --fail-on-change
   '';
+
+  # Test suite for .skip-format functionality
+  testSkipFormat = with depot.nix.yants; it "checks that .skip-format works correctly" (
+    let
+      # Create a temporary directory structure for testing
+      testDir = pkgs.runCommand "test-skip-format" { } ''
+        mkdir -p $out/test/skip-me/nested
+        mkdir -p $out/test/format-me
+
+        # Create test files
+        echo "test" > $out/test/skip-me/test.nix
+        echo "test" > $out/test/skip-me/nested/test.nix
+        echo "test" > $out/test/format-me/test.nix
+
+        # Create .skip-format file
+        touch $out/test/skip-me/.skip-format
+      '';
+
+      # Run filter script on test directory
+      testFilter = pkgs.runCommand "test-filter" { } ''
+        # Source the filter script functions
+        source ${filterScript}
+
+        # Test files that should be skipped
+        if should_skip "${testDir}/test/skip-me/test.nix"; then
+          echo "skip-me/test.nix correctly skipped" >> $out
+        else
+          echo "skip-me/test.nix not skipped" >> $out
+          exit 1
+        fi
+
+        if should_skip "${testDir}/test/skip-me/nested/test.nix"; then
+          echo "skip-me/nested/test.nix correctly skipped" >> $out
+        else
+          echo "skip-me/nested/test.nix not skipped" >> $out
+          exit 1
+        fi
+
+        # Test file that should not be skipped
+        if ! should_skip "${testDir}/test/format-me/test.nix"; then
+          echo "format-me/test.nix correctly not skipped" >> $out
+        else
+          echo "format-me/test.nix incorrectly skipped" >> $out
+          exit 1
+        fi
+      '';
+    in
+    [
+      (assertDoesNotThrow "filter script runs successfully" (drv testFilter))
+    ]
+  );
+
 in
 depot-fmt.overrideAttrs (_: {
-  passthru.meta.ci.extraSteps.check = {
-    label = "depot formatting check";
-    command = check;
-    alwaysRun = true;
+  passthru = {
+    meta.ci.extraSteps.check = {
+      label = "depot formatting check";
+      command = check;
+      alwaysRun = true;
+    };
+    tests = testSkipFormat;
   };
 })
