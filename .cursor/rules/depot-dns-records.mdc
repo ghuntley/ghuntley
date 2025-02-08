@@ -1,0 +1,211 @@
+---
+description: Depot DNS Records
+globs: infra/dns/*.tf
+---
+---
+description: Depot DNS Records
+globs: infra/dns/*.tf
+---
+# Depot DNS Records
+
+Rules for managing DNS records in the depot repository.
+
+<rule>
+name: dns_records
+description: Standards for adding and managing DNS records in the depot repository
+filters:
+  - type: file_path
+    pattern: "infra/dns/dns-.*\\.tf$"
+  - type: content
+    pattern: "cloudflare_record"
+
+actions:
+  - type: reject
+    conditions:
+      - pattern: "^[^#]"
+        message: "License header missing at file start"
+      - pattern: "cloudflare_record.*(?!_[a-z0-9_]+)"
+        message: "Resource name must follow the pattern DOMAINNAME_RECORDNAME"
+
+  - type: suggest
+    message: |
+      Follow these conventions when adding DNS records:
+
+      1. File naming:
+         - Create/edit files in infra/dns/
+         - Name files as dns-TLD-DOMAIN.tf (e.g., dns-com-ponderoos.tf)
+
+      2. Resource naming:
+         - Format: "${TLD}_${DOMAIN}_${RECORDNAME}"
+         - Example: "com_ponderoos_www" for www.ponderoos.com
+
+      3. Record structure:
+         ```hcl
+         resource "cloudflare_record" "com_domain_recordname" {
+           zone_id = var.com_domain_cloudflare_zone_id
+           name    = "subdomain"  # Use "@" for apex
+           type    = "A"         # Record type (A, AAAA, CNAME, MX, TXT, etc.)
+           value   = "target"    # IP or target domain
+           proxied = false       # Whether to proxy through Cloudflare
+         }
+         ```
+
+      4. Common record types:
+         - A: IPv4 address records
+         - AAAA: IPv6 address records
+         - CNAME: Canonical name (alias) records
+         - MX: Mail exchange records
+         - TXT: Text records (SPF, DKIM, etc.)
+         - SRV: Service records
+
+      5. Special considerations:
+         - Group related records together (e.g., all email-related records)
+         - Add comments for complex configurations
+         - Use variables for repeated values
+         - Include TTL when needed
+
+      6. After making changes:
+         ```bash
+         # Review changes interactively
+         deploy-dns plan
+
+         # Apply changes and review output
+         deploy-dns apply
+
+         # If changes applied successfully (return code 0), commit the changes
+         if [ $? -eq 0 ]; then
+           git add "$FILE"
+           git commit -m "feat(dns): update DNS records"
+         fi
+         ```
+
+examples:
+  - input: |
+      # Adding a new subdomain record
+      resource "cloudflare_record" "com_ponderoos_blog" {
+        zone_id = var.com_ponderoos_cloudflare_zone_id
+        name    = "blog"
+        type    = "A"
+        value   = var.com_ponderoos_ipv4
+        proxied = false
+      }
+    output: "Correctly formatted DNS record"
+
+  - input: |
+      # Adding email-related records
+      resource "cloudflare_record" "com_ponderoos_mx_main" {
+        zone_id  = var.com_ponderoos_cloudflare_zone_id
+        name     = "@"
+        type     = "MX"
+        value    = "mail.ponderoos.com"
+        priority = 10
+      }
+    output: "Correctly formatted MX record"
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>---
+description: Depot DNS Records
+globs: infra/dns/*.tf
+---
+# Depot DNS Records
+
+Rules for managing DNS records in the depot repository.
+
+<rule>
+name: dns_records
+description: Standards for adding and managing DNS records in the depot repository
+filters:
+  - type: file_path
+    pattern: "infra/dns/dns-.*\\.tf$"
+  - type: content
+    pattern: "cloudflare_record"
+
+actions:
+  - type: reject
+    conditions:
+      - pattern: "^[^#]"
+        message: "License header missing at file start"
+      - pattern: "cloudflare_record.*(?!_[a-z0-9_]+)"
+        message: "Resource name must follow the pattern DOMAINNAME_RECORDNAME"
+
+  - type: suggest
+    message: |
+      Follow these conventions when adding DNS records:
+
+      1. File naming:
+         - Create/edit files in infra/dns/
+         - Name files as dns-TLD-DOMAIN.tf (e.g., dns-com-ponderoos.tf)
+
+      2. Resource naming:
+         - Format: "${TLD}_${DOMAIN}_${RECORDNAME}"
+         - Example: "com_ponderoos_www" for www.ponderoos.com
+
+      3. Record structure:
+         ```hcl
+         resource "cloudflare_record" "com_domain_recordname" {
+           zone_id = var.com_domain_cloudflare_zone_id
+           name    = "subdomain"  # Use "@" for apex
+           type    = "A"         # Record type (A, AAAA, CNAME, MX, TXT, etc.)
+           value   = "target"    # IP or target domain
+           proxied = false       # Whether to proxy through Cloudflare
+         }
+         ```
+
+      4. Common record types:
+         - A: IPv4 address records
+         - AAAA: IPv6 address records
+         - CNAME: Canonical name (alias) records
+         - MX: Mail exchange records
+         - TXT: Text records (SPF, DKIM, etc.)
+         - SRV: Service records
+
+      5. Special considerations:
+         - Group related records together (e.g., all email-related records)
+         - Add comments for complex configurations
+         - Use variables for repeated values
+         - Include TTL when needed
+
+      6. After making changes:
+         ```bash
+         # Review changes interactively
+         deploy-dns plan
+
+         # Apply changes interactively and review output
+         deploy-dns apply
+
+         # If changes applied successfully (return code 0), commit the changes
+         if [ $? -eq 0 ]; then
+           git add "$FILE"
+           git commit -m "feat(dns): update DNS records"
+         fi
+         ```
+
+examples:
+  - input: |
+      # Adding a new subdomain record
+      resource "cloudflare_record" "com_ponderoos_blog" {
+        zone_id = var.com_ponderoos_cloudflare_zone_id
+        name    = "blog"
+        type    = "A"
+        value   = var.com_ponderoos_ipv4
+        proxied = false
+      }
+    output: "Correctly formatted DNS record"
+
+  - input: |
+      # Adding email-related records
+      resource "cloudflare_record" "com_ponderoos_mx_main" {
+        zone_id  = var.com_ponderoos_cloudflare_zone_id
+        name     = "@"
+        type     = "MX"
+        value    = "mail.ponderoos.com"
+        priority = 10
+      }
+    output: "Correctly formatted MX record"
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>
