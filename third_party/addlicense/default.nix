@@ -84,7 +84,9 @@ let
   };
 
 in
-{
-  inherit program tests;
-  default = program;
+program // {
+  inherit tests;
+  passthru = {
+    inherit program tests;
+  };
 }
