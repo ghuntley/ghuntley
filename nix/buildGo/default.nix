@@ -143,7 +143,7 @@ let
       pkg = package { inherit name srcs deps path sfiles; };
 
       # Copy test files into the nix store
-      testFilesInStore = runCommand "test-files-${name}" {} ''
+      testFilesInStore = runCommand "test-files-${name}" { } ''
         mkdir -p $out
         ${lib.concatMapStrings (tf: ''
           mkdir -p "$out/$(dirname "${tf.dest}")"
@@ -192,9 +192,10 @@ let
       '';
 
     in
-    runCommand "gotest-${name}" {
-      nativeBuildInputs = [ go ];
-    } ''
+    runCommand "gotest-${name}"
+      {
+        nativeBuildInputs = [ go ];
+      } ''
       # Set up test environment
       export GOPATH="$TMPDIR"
       export GO111MODULE=off
