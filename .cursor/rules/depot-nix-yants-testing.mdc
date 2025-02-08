@@ -23,11 +23,13 @@ actions:
         message: "Missing test suite documentation"
       - pattern: "(?<!with )depot\\.nix\\.yants;"
         message: "Import yants using 'with depot.nix.yants;'"
+      - pattern: "passthru|overrideAttrs"
+        message: "Do not use passthru or overrideAttrs for test exports. Return a set instead."
   - type: suggest
     message: |
       Follow these testing conventions:
 
-      1. Test File Structure:
+      1. File Structure and Exports:
          ```nix
          { depot, pkgs, ... }:
 
@@ -41,12 +43,26 @@ actions:
              assertDoesNotThrow;
 
            # Test suites and helper functions here
+           testSuite1 = it "describes test suite 1" [
+             # tests...
+           ];
+
+           testSuite2 = it "describes test suite 2" [
+             # tests...
+           ];
+
          in
          {
-           tests = testSuite1 // {
-             additional = testSuite2;
+           # Export test suites directly in a set
+           default = runTestsuite "main-suite" [ testSuite1 testSuite2 ];
+
+           # Additional exports if needed
+           additional = {
+             suite1 = testSuite1;
+             suite2 = testSuite2;
            };
 
+           # CI configuration if needed
            meta.ci.extraSteps.test = {
              label = "test suite description";
              command = pkgs.writeShellScript "run-tests" ''
@@ -61,7 +77,7 @@ actions:
          - Group related tests into suites using `it`
          - Use descriptive names for test cases
          - Document test suites with comments
-         - Combine multiple test suites using the `//` operator
+         - Return test suites in a clean set structure, not through passthru
 
       3. Test Data Management:
          - Create helper functions for test data setup
@@ -110,38 +126,47 @@ actions:
 
 examples:
   - input: |
-      # Test suite for tool functionality
-      testToolFeatures = it "tests core tool features" [
-        (assertEq "should process input correctly"
-          (pkgs.runCommand "test-result" {
-            nativeBuildInputs = [ depot.tools.your-tool ];
-          } ''
-            cp -r ${testFiles}/* .
-            chmod -R +w .
-            your-tool input.txt
-            cp -r . $out
-          '')
-          expectedOutput)
-      ];
-    output: "Correctly structured test suite with proper setup and assertions"
+      # Bad: Using passthru for test exports
+      testPackage.overrideAttrs (_: {
+        passthru.tests = testSuite;
+      })
+
+      # Good: Clean set structure
+      {
+        default = package;
+        tests = testSuite;
+        meta.ci.extraSteps = {
+          test = {
+            label = "Run test suite";
+            command = runTests;
+          };
+        };
+      }
 
   - input: |
-      # Test data setup
-      testFiles = mkTestDir "test-data" [
-        {
-          path = "input.txt";
-          content = "test content";
-        }
-        {
-          path = "expected.txt";
-          content = "expected output";
-        }
-      ];
-    output: "Well-organized test data setup"
+      # Test suite with proper organization
+      let
+        testFeatures = it "tests core features" [
+          (assertEq "processes input correctly"
+            (runTest inputData)
+            expectedOutput)
+        ];
+
+        testErrors = it "handles errors properly" [
+          (assertThrows "rejects invalid input"
+            (runTest invalidData))
+        ];
+      in
+      {
+        default = runTestsuite "all-tests" [
+          testFeatures
+          testErrors
+        ];
+      }
 
 metadata:
   priority: high
-  version: 1.1
+  version: 1.2
 </rule>
 
 <!--
