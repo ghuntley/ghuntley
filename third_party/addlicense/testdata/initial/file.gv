@@ -1,0 +1,14 @@
+/*
+ * Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+ * SPDX-License-Identifier: Proprietary
+ */
+
+graph ethane {
+    C_0 -- H_0;
+    C_0 -- H_1;
+    C_0 -- H_2;
+    C_0 -- C_1;
+    C_1 -- H_3;
+    C_1 -- H_4;
+    C_1 -- H_5;
+}

@@ -1,0 +1,143 @@
+# Depot BuildGo
+
+Rules for using the buildGo Nix functionality to build Go programs and packages.
+
+<rule>
+name: buildgo_usage
+description: Standards for using buildGo to compile Go programs and packages
+filters:
+  - type: file_path
+    pattern: ".*\\.nix$"
+  - type: content
+    pattern: "buildGo"
+
+actions:
+  - type: reject
+    conditions:
+      - pattern: "import .*nix/buildGo"
+        message: "Do not import buildGo directly. Use depot.nix.buildGo instead"
+
+  - type: suggest
+    message: |
+      Follow these conventions when using buildGo:
+
+      1. Use buildGo via depot.nix:
+         ```nix
+         { depot, pkgs, ... }:
+
+         depot.nix.buildGo.program {
+           name = "program-name";
+           ...
+         }
+         ```
+
+      2. For building executable programs:
+         ```nix
+         depot.nix.buildGo.program {
+           name = "program-name";  # Name of the output binary
+           srcs = [
+             ./main.go
+             ./other.go
+           ];
+           deps = [ ];  # List of Go package dependencies
+         }
+         ```
+
+      3. For building libraries/packages:
+         ```nix
+         depot.nix.buildGo.package {
+           name = "package-name";
+           path = "full/import/path";  # Go import path
+           srcs = [ ./package.go ];
+         }
+         ```
+
+      4. For external dependencies, fetch and build them as packages:
+         ```nix
+         let
+           myDep = depot.nix.buildGo.package {
+             name = "dep-name";
+             path = "github.com/org/repo/pkg";
+             srcs = let
+               src = pkgs.fetchFromGitHub {
+                 owner = "org";
+                 repo = "repo";
+                 rev = "v1.2.3";  # Use specific version
+                 sha256 = "...";  # Get hash with nix-prefetch-url
+               };
+             in [
+               # List all required .go files, excluding tests
+               "${src}/pkg/file1.go"
+               "${src}/pkg/file2.go"
+             ];
+           };
+         in ...
+         ```
+
+      5. When specifying external dependencies:
+         - Always pin to specific versions using git tags or commit hashes
+         - Include all necessary source files (excluding tests)
+         - Use nix-prefetch-url to get correct SHA256 hashes
+         - Consider compatibility with the Go version being used
+
+      6. For version compatibility issues:
+         - Try older versions of dependencies if newer ones require unavailable Go features
+         - Check the Go version provided by buildGo using:
+           ```nix
+           depot.nix.buildGo.go.version
+           ```
+
+examples:
+  - input: |
+      # Bad: Importing buildGo directly
+      let
+        buildGo = import ../../nix/buildGo { inherit pkgs; };
+      in
+      buildGo.program { ... }
+
+      # Good: Using via depot.nix
+      { depot, pkgs, ... }:
+      depot.nix.buildGo.program { ... }
+    output: "Correctly using buildGo via depot.nix"
+
+  - input: |
+      # Program with external dependencies
+      { depot, pkgs, ... }:
+
+      let
+        myDep = depot.nix.buildGo.package {
+          name = "dep";
+          path = "github.com/org/repo";
+          srcs = let
+            src = pkgs.fetchFromGitHub {
+              owner = "org";
+              repo = "repo";
+              rev = "v1.0.0";
+              sha256 = "...";
+            };
+          in [ "${src}/pkg.go" ];
+        };
+      in
+      depot.nix.buildGo.program {
+        name = "app";
+        srcs = [ ./main.go ];
+        deps = [ myDep ];
+      }
+    output: "Go program with external dependency using depot.nix"
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>
+
+This rule provides guidelines for:
+1. Using buildGo via depot.nix
+2. Building programs vs packages
+3. Handling external dependencies
+4. Version compatibility
+5. Best practices for dependency management
+
+<!--
+ Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+ SPDX-License-Identifier: Proprietary
+-->

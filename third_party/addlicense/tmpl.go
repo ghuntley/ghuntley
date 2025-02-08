@@ -154,8 +154,10 @@ func addLicenseToBottom(t *template.Template, d licenseData, path string) error 
 		return err
 	}
 
-	// Check if file already has a license
-	if hasLicense(b) {
+	// Check if file already has a license - check entire file for bottom licenses
+	if bytes.Contains(bytes.ToLower(b), []byte("copyright")) ||
+		bytes.Contains(bytes.ToLower(b), []byte("mozilla public")) ||
+		bytes.Contains(bytes.ToLower(b), []byte("spdx-license-identifier")) {
 		return nil
 	}
 
