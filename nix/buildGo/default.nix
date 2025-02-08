@@ -136,6 +136,89 @@ let
     in
     gopkg;
 
+  # Run tests for a Go package
+  test = { name, srcs, deps ? [ ], path ? name, sfiles ? [ ], testSrcs ? [ ], testFiles ? [ ], testScript ? "" }:
+    let
+      uniqueDeps = allDeps (map (d: d.gopkg) deps);
+      pkg = package { inherit name srcs deps path sfiles; };
+
+      # Copy test files into the nix store
+      testFilesInStore = runCommand "test-files-${name}" {} ''
+        mkdir -p $out
+        ${lib.concatMapStrings (tf: ''
+          mkdir -p "$out/$(dirname "${tf.dest}")"
+          cp -r "${tf.src}" "$out/${tf.dest}"
+        '') testFiles}
+      '';
+
+      # Helper to set up a package in the test GOPATH
+      setupPackage = dep: ''
+        if [ -d "${dep}" ]; then
+          importPath="${dep.goImportPath}"
+          targetDir="$TMPDIR/src/$importPath"
+          mkdir -p "$(dirname "$targetDir")"
+
+          # Copy the package directory with all its files
+          cp -r "${dep}/$importPath" "$targetDir"
+
+          # Copy the compiled package
+          if [ -f "${dep}/$importPath.a" ]; then
+            cp "${dep}/$importPath.a" "$targetDir.a"
+          fi
+        fi
+      '';
+
+      # Set up the package being tested
+      setupTestPackage = ''
+        #!/usr/bin/env ${pkgs.bash}
+        # set -xv
+        # Create test package directory
+        mkdir -p "$TMPDIR/src/${path}"
+        cd "$TMPDIR/src/${path}"
+
+        # Copy source files
+        for src in ${toString srcs}; do
+          cp "$src" .
+        done
+
+        # Copy test files
+        for src in ${toString testSrcs}; do
+          cp "$src" .
+        done
+
+        # Copy test data files from the nix store
+        cp -r "${testFilesInStore}"/* .
+        chmod -R +w .
+      '';
+
+    in
+    runCommand "gotest-${name}" {
+      nativeBuildInputs = [ go ];
+    } ''
+      # Set up test environment
+      export GOPATH="$TMPDIR"
+      export GO111MODULE=off
+      export GOCACHE="$TMPDIR/go-cache"
+      mkdir -p "$GOCACHE"
+
+      # Set up dependencies
+      ${lib.concatMapStrings setupPackage uniqueDeps}
+
+      # Set up test package
+      ${setupTestPackage}
+
+      # Run test script if provided, otherwise run go test directly
+      if [ -n "${testScript}" ]; then
+        ${testScript}
+      else
+        cd "$TMPDIR/src/${path}"
+        ${go}/bin/go test -v .
+      fi
+
+      # Create output directory to mark success
+      mkdir -p $out
+    '';
+
   # Build a tree of Go libraries out of an external Go source
   # directory that follows the standard Go layout and was not built
   # with buildGo.nix.
@@ -150,6 +233,7 @@ in
   # overrideable.
   program = makeOverridable program;
   package = makeOverridable package;
+  test = makeOverridable test;
   external = makeOverridable external;
 
   # re-expose the Go version used
