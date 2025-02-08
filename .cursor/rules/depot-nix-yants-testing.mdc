@@ -11,7 +11,7 @@ name: nix_yants_testing
 description: Rules for writing tests using yants testing library
 filters:
   - type: file_path
-    pattern: ".*/tests/default\\.nix$"
+    pattern: ".*/tests/.*\\.nix$"
 actions:
   - type: reject
     conditions:
@@ -19,25 +19,129 @@ actions:
         message: "Tests should be organized in suites using 'it'"
       - pattern: "assertEq.*(?!\".*\")"
         message: "Test cases should have descriptive names"
+      - pattern: "^[^#].*=.*it"
+        message: "Missing test suite documentation"
+      - pattern: "(?<!with )depot\\.nix\\.yants;"
+        message: "Import yants using 'with depot.nix.yants;'"
   - type: suggest
     message: |
       Follow these testing conventions:
-      1. Use proper test suite structure
-      2. Include descriptive test names
-      3. Test both success and failure cases
-      4. Mock external dependencies
-      5. Group related tests together
+
+      1. Test File Structure:
+         ```nix
+         { depot, pkgs, ... }:
+
+         with depot.nix.yants;
+
+         let
+           inherit (depot.nix.runTestsuite)
+             runTestsuite
+             it
+             assertEq
+             assertDoesNotThrow;
+
+           # Test suites and helper functions here
+         in
+         {
+           tests = testSuite1 // {
+             additional = testSuite2;
+           };
+
+           meta.ci.extraSteps.test = {
+             label = "test suite description";
+             command = pkgs.writeShellScript "run-tests" ''
+               ${depot.nix.yants.check testSuite1}
+               ${depot.nix.yants.check testSuite2}
+             '';
+           };
+         }
+         ```
+
+      2. Test Suite Organization:
+         - Group related tests into suites using `it`
+         - Use descriptive names for test cases
+         - Document test suites with comments
+         - Combine multiple test suites using the `//` operator
+
+      3. Test Data Management:
+         - Create helper functions for test data setup
+         - Use `pkgs.runCommand` for file-based test data
+         - Keep test data close to the tests that use it
+         ```nix
+         mkTestDir = name: files: pkgs.runCommand "test-${name}" {} ''
+           mkdir -p $out
+           ${builtins.concatStringsSep "\n" (builtins.map (file: ''
+             mkdir -p "$(dirname "$out/${file.path}")"
+             echo '${file.content}' > "$out/${file.path}"
+           '') files)}
+         '';
+         ```
+
+      4. Test Assertions:
+         - Use `assertEq` for equality checks
+         - Use `assertDoesNotThrow` for success cases
+         - Use `assertThrows` for error cases
+         - Include descriptive messages for each assertion
+
+      5. Testing Command-Line Tools:
+         - Test both success and failure cases
+         - Test file operations in a clean environment
+         - Use `nativeBuildInputs` to include required tools
+         ```nix
+         pkgs.runCommand "test-result" {
+           nativeBuildInputs = [ depot.tools.your-tool ];
+         } ''
+           # Setup test environment
+           cp -r ${testFiles}/* .
+           chmod -R +w .
+
+           # Run the tool
+           your-tool some-file
+
+           # Copy results
+           cp -r . $out
+         ''
+         ```
+
+      6. CI Integration:
+         - Include test commands in meta.ci.extraSteps
+         - Make test output descriptive for CI logs
+         - Ensure tests are reproducible
+
 examples:
   - input: |
-      testSuite = it "feature description" [
-        (assertEq "should handle valid input"
-          expectedValue
-          actualValue)
+      # Test suite for tool functionality
+      testToolFeatures = it "tests core tool features" [
+        (assertEq "should process input correctly"
+          (pkgs.runCommand "test-result" {
+            nativeBuildInputs = [ depot.tools.your-tool ];
+          } ''
+            cp -r ${testFiles}/* .
+            chmod -R +w .
+            your-tool input.txt
+            cp -r . $out
+          '')
+          expectedOutput)
       ];
-    output: "Correctly structured test suite"
+    output: "Correctly structured test suite with proper setup and assertions"
+
+  - input: |
+      # Test data setup
+      testFiles = mkTestDir "test-data" [
+        {
+          path = "input.txt";
+          content = "test content";
+        }
+        {
+          path = "expected.txt";
+          content = "expected output";
+        }
+      ];
+    output: "Well-organized test data setup"
+
 metadata:
-  priority: medium
-  version: 1.0
+  priority: high
+  version: 1.1
 </rule>
 
 <!--
