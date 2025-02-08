@@ -90,6 +90,13 @@ resource "cloudflare_record" "com_ghuntley_txt_spf_mailgun" {
   value   = "v=spf1 include:mailgun.org ~all"
 }
 
+resource "cloudflare_record" "com_ghuntley_txt_spf_newsletter" {
+  zone_id = var.com_ghuntley_cloudflare_zone_id
+  name    = "newsletter"
+  type    = "TXT"
+  value   = "v=spf1 include:mailgun.org ~all"
+}
+
 resource "cloudflare_record" "com_ghuntley_mx_mailgun_a" {
   zone_id  = var.com_ghuntley_cloudflare_zone_id
   name     = "mg"
@@ -146,6 +153,22 @@ resource "cloudflare_record" "com_ghuntley_mx_10_2" {
   priority = 5
 }
 
+resource "cloudflare_record" "com_ghuntley_mx_newsletter_a" {
+  zone_id  = var.com_ghuntley_cloudflare_zone_id
+  name     = "newsletter"
+  type     = "MX"
+  value    = "mxa.mailgun.org"
+  priority = 10
+}
+
+resource "cloudflare_record" "com_ghuntley_mx_newsletter_b" {
+  zone_id  = var.com_ghuntley_cloudflare_zone_id
+  name     = "newsletter"
+  type     = "MX"
+  value    = "mxb.mailgun.org"
+  priority = 10
+}
+
 # records
 
 resource "cloudflare_record" "com_ghuntley_calendar" {
@@ -191,3 +214,17 @@ resource "cloudflare_record" "com_ghuntley_www" {
 #   value   = var.com_ghuntley_ipv6
 #   proxied = true
 # }
+
+resource "cloudflare_record" "com_ghuntley_txt_domainkey_newsletter" {
+  zone_id = var.com_ghuntley_cloudflare_zone_id
+  name    = "pic._domainkey.newsletter"
+  type    = "TXT"
+  value   = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDJXnDPTG2G4egNwAYhDGfciz1apS+j6MiiqZCEbsywywKkOK7bC/vq23Nz8pR+nbuu3GazHdFN6ckiosDr/eP55avhkLix5dw7Q67aHpD+KgeFg4H8nL3SwRpwnjIYMPL+AgcnALN49rwi/u9vFek+898yztK0RLDUGj9nuJtpsQIDAQAB"
+}
+
+resource "cloudflare_record" "com_ghuntley_newsletter_email" {
+  zone_id = var.com_ghuntley_cloudflare_zone_id
+  name    = "email.newsletter"
+  type    = "CNAME"
+  value   = "mailgun.org"
+}
