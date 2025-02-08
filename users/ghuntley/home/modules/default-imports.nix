@@ -18,16 +18,16 @@ let
 in
 {
   imports = [
-    (mod "pkgs.nix")
-    (mod "editorconfig.nix")
-    (mod "zsh.nix")
     (mod "bat.nix")
+    (mod "editorconfig.nix")
     (mod "gdb.nix")
     (mod "git.nix")
     (mod "neovim.nix")
+    (mod "pkgs.nix")
     (mod "psql.nix")
     (mod "readline.nix")
     (mod "tmux.nix")
+    (mod "zsh.nix")
     (mod "shell-alias-deploy-home.nix")
   ];
 }

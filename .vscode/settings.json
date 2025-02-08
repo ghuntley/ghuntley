@@ -36,5 +36,6 @@
   "cursor.general.enableShadowWorkspace": true,
   "cursor.general.gitGraphIndexing": "enabled",
   "nix.enableLanguageServer": true,
-  "nix.formatterPath": "nixpkgs-fmt"
+  "nix.formatterPath": "nixpkgs-fmt",
+  "cursor.cmdk.useThemedDiffBackground": true
 }

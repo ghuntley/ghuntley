@@ -33,6 +33,7 @@ in
     (mod "time.nix")
     (mod "timezone.nix")
     (mod "users.nix")
+    (mod "zsh.nix")
 
     # TODO(security): don't include vscode support by default in everything
     (mod "nixos-vscode-server-cursor.nix")

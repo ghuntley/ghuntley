@@ -1,0 +1,57 @@
+---
+description: Nix Experimental Features
+globs: *.nix
+---
+
+# Nix Experimental Features
+
+Rules for using Nix experimental features consistently across the codebase.
+
+<rule>
+name: nix_experimental_features
+description: Standards for using Nix experimental features and commands
+filters:
+  # Match any nix commands that might need experimental features
+  - type: content
+    pattern: "(?m)^\\s*nix\\s+(?:run|flake|develop|profile|registry|store|path|eval|build|shell|search|copy|edit|verify|why-depends|bundle|describe|hash|profile|realisation|repl)\\s+"
+  # Match nix-prefetch-github specifically
+  - type: content
+    pattern: "(?m)^\\s*nix\\s+run\\s+nixpkgs#nix-prefetch-github\\s+"
+
+actions:
+  - type: reject
+    conditions:
+      - pattern: "^\\s*nix\\s+(?!--extra-experimental-features)"
+        message: "Nix commands must include --extra-experimental-features when using flakes or new-style commands"
+
+  - type: suggest
+    message: |
+      When using Nix commands that require experimental features:
+
+      1. Always include the --extra-experimental-features flag:
+         ```bash
+         nix --extra-experimental-features 'nix-command flakes' run ...
+         ```
+
+      2. Common experimental features to include:
+         - nix-command (for new-style commands)
+         - flakes (for flake functionality)
+
+      3. For nix-prefetch-github specifically:
+         ```bash
+         nix --extra-experimental-features 'nix-command flakes' run nixpkgs#nix-prefetch-github -- ...
+         ```
+
+examples:
+  - input: |
+      # Bad: Missing experimental features
+      nix run nixpkgs#nix-prefetch-github -- owner repo --rev master
+
+      # Good: Includes experimental features
+      nix --extra-experimental-features 'nix-command flakes' run nixpkgs#nix-prefetch-github -- owner repo --rev master
+    output: "Correctly using Nix experimental features"
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>

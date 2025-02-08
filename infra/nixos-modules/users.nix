@@ -14,8 +14,8 @@
       openssh.authorizedKeys.keys = depot.users.mgmt.keys.all;
     };
     users.ghuntley = {
-      isNormalUser = true
-        extraGroups = [ "git" "wheel" "docker" "podman" "libvirtd" ];
+      isNormalUser = true;
+      extraGroups = [ "git" "wheel" "docker" "podman" "libvirtd" ];
       shell = pkgs.zsh;
       openssh.authorizedKeys.keys = depot.users.ghuntley.keys.all;
     };

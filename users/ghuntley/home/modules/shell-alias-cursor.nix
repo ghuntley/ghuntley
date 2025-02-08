@@ -7,16 +7,34 @@
   home.file."bin/cursor" = {
     text = ''
       #!/usr/bin/env bash
-      mkdir ~/Applications
+      mkdir -p ~/Applications
       cd ~/Applications
 
+      export CURSOR_APPIMAGE_URL="https://downloader.cursor.sh/linux/appImage/x64"
+      export CURSOR_APPIMAGE_FILENAME="cursor.AppImage"
+      export CURSOR_APPIMAGE_FILENAME_NEW="cursor.AppImage.new"
+
+      # Download initial AppImage if it doesn't exist
       if ! ls cursor*.AppImage >/dev/null 2>&1; then
         echo "Downloading Cursor AppImage..."
-        curl -L -o cursor.AppImage "https://download.todesktop.com/230313mzl4w4u92/cursor-0.45.7-build-250130nr6eorv84-x86_64.AppImage"
-        chmod +x cursor.AppImage
+        curl -L -o "$CURSOR_APPIMAGE_FILENAME" "$CURSOR_APPIMAGE_URL"
+        chmod +x "$CURSOR_APPIMAGE_FILENAME"
       fi
 
-      nohup appimage-run cursor*.AppImage "$@" >/dev/null 2>&1 &
+      # Check if AppImage is older than 24 hours
+      if [[ $(find cursor.AppImage -mmin +1440 2>/dev/null) ]]; then
+        # Only download new version if it doesn't already exist
+        if [[ ! -f cursor.AppImage.new ]]; then
+          echo "Current AppImage is older than 24 hours. Starting background update..."
+          (
+            curl -L -o "$CURSOR_APPIMAGE_FILENAME_NEW" "$CURSOR_APPIMAGE_URL" && \
+            chmod +x "$CURSOR_APPIMAGE_FILENAME_NEW" && \
+            mv "$CURSOR_APPIMAGE_FILENAME_NEW" "$CURSOR_APPIMAGE_FILENAME"
+          ) >/dev/null 2>&1 &
+        fi
+      fi
+
+      nohup appimage-run cursor.AppImage "$@" >/dev/null 2>&1 &
       exit 0
     '';
     executable = true;

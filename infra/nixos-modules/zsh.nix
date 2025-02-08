@@ -4,19 +4,15 @@
 { config, lib, pkgs, ... }:
 
 {
+  environment.systemPackages = [ pkgs.starship pkgs.direnv ];
+
   programs.zsh = {
     enable = true;
-    autosuggestion.enable = true;
     enableCompletion = true;
 
-    initExtra = ''
+    interactiveShellInit = ''
       export PATH="$PATH:$HOME/bin:"
-      eval "$(direnv hook zsh)"
+      eval "$(starship init zsh)"
     '';
-  };
-
-  programs.starship = {
-    enable = true;
-    enableZshIntegration = true;
   };
 }
