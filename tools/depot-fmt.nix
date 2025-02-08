@@ -50,20 +50,59 @@ let
     includes = [ "*.rs" ]
   '';
 
+  # Script to check for .skip-format files and filter paths
+  filterScript = pkgs.writeShellScript "filter-paths" ''
+    # Function to check if a path should be skipped
+    should_skip() {
+      local path="$1"
+      while [[ "$path" != "." && "$path" != "/" ]]; do
+        if [[ -f "$path/.skip-format" ]]; then
+          return 0
+        fi
+        path="$(dirname "$path")"
+      done
+      return 1
+    }
+
+    # Filter paths that should be formatted
+    filter_paths() {
+      local paths=("$@")
+      local filtered_paths=()
+
+      for path in "''${paths[@]}"; do
+        if ! should_skip "$path"; then
+          filtered_paths+=("$path")
+        fi
+      done
+
+      echo "''${filtered_paths[@]}"
+    }
+
+    # Get filtered paths
+    FILTERED_PATHS=$(filter_paths "$@")
+
+    # If no paths remain after filtering, exit successfully
+    if [[ -z "$FILTERED_PATHS" ]]; then
+      exit 0
+    fi
+
+    # Run treefmt with filtered paths
+    exec ${pkgs.treefmt}/bin/treefmt \
+      --config-file ${config} \
+      --tree-root $(${pkgs.git}/bin/git rev-parse --show-toplevel) \
+      $FILTERED_PATHS
+  '';
+
   # helper tool for formatting the depot interactively
   depot-fmt = pkgs.writeShellScriptBin "depot-fmt" ''
-    exec ${pkgs.treefmt}/bin/treefmt ''${@} \
-      --config-file ${config} \
-      --tree-root $(${pkgs.git}/bin/git rev-parse --show-toplevel)
+    exec ${filterScript} "''${@}"
   '';
 
   # wrapper script for running formatting checks in CI
   check = pkgs.writeShellScript "depot-fmt-check" ''
-    ${pkgs.treefmt}/bin/treefmt \
+    ${filterScript} . \
       --clear-cache \
-      --fail-on-change \
-      --config-file ${config} \
-      --tree-root .
+      --fail-on-change
   '';
 in
 depot-fmt.overrideAttrs (_: {
