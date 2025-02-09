@@ -1,86 +1,87 @@
 # Git Commands
 
-Rules for handling git commands and other non-interactive commands in the depot repository.
+Rules for handling git commands safely and effectively.
 
 <rule>
 name: git_commands
-description: Standards for handling git and other non-interactive commands
+description: Standards for using git commands safely and effectively
 filters:
   - type: content
-    pattern: "(?m)^\\s*(git|less|head|tail|more)\\s+"
-  - type: content
-    pattern: "(?m)^\\s*.*\\|\\s*(less|head|tail|more)\\s*$"
+    pattern: "(?m)^\\s*git\\s+"
 
 actions:
   - type: reject
     conditions:
-      - pattern: "(?m)^\\s*(git|less|head|tail|more)\\s+(?!.*\\|\\s*cat)"
-        message: "Commands that use pagers must pipe to 'cat' to avoid interactive prompts"
-      - pattern: "(?m)^\\s*.*\\|\\s*(less|head|tail|more)\\s*$"
-        message: "Use 'cat' instead of pagers in pipelines"
+      - pattern: "git push\\s+(?!--force-with-lease).*-f"
+        message: "Use --force-with-lease instead of -f/--force for safer force pushes"
+      - pattern: "git commit\\s+(?!.*-S).*-m"
+        message: "Commits should be signed with -S"
+      - pattern: "git tag\\s+(?!.*-s).*v[0-9]"
+        message: "Version tags should be signed with -s"
 
   - type: suggest
     message: |
-      When using commands that may trigger pagers or interactive prompts:
+      When using git commands:
 
-      1. Always pipe to 'cat' for git commands that show output:
+      1. Force pushes:
          ```bash
-         # Bad: Will open in pager
-         git log
-         git diff
-         git show
+         # Bad: Unsafe force push
+         git push -f
+         git push --force
 
-         # Good: Pipes to cat
-         git log | cat
-         git diff | cat
-         git show | cat
+         # Good: Safe force push
+         git push --force-with-lease
          ```
 
-      2. Use cat instead of less/more/head/tail:
+      2. Commit signing:
          ```bash
-         # Bad: Interactive pagers
-         command | less
-         command | more
-         command | head
-         command | tail
-
-         # Good: Non-interactive alternatives
-         command | cat
-         command | cat | head -n 10
-         command | cat | tail -n 10
-         ```
-
-      3. For git commands that don't show output (commit, push, etc), no pipe needed:
-         ```bash
-         git add .
+         # Bad: Unsigned commit
          git commit -m "message"
-         git push
+
+         # Good: Signed commit
+         git commit -S -m "message"
          ```
 
-      4. When needing specific line ranges, use cat with head/tail:
+      3. Tag signing:
          ```bash
-         # Show first 10 lines
-         git log | cat | head -n 10
+         # Bad: Unsigned version tag
+         git tag v1.0.0
 
-         # Show last 10 lines
-         git log | cat | tail -n 10
+         # Good: Signed version tag
+         git tag -s v1.0.0 -m "Version 1.0.0"
+         ```
 
-         # Show lines 5-10
-         git log | cat | head -n 10 | tail -n 6
+      4. Branch management:
+         ```bash
+         # Create and switch to new branch
+         git switch -c feature/name
+
+         # Delete branch safely
+         git branch -d branch-name  # Fails if not merged
+         git branch -D branch-name  # Force delete, use with caution
+         ```
+
+      5. Commit messages:
+         - Follow conventional commits format
+         - Include scope when relevant
+         - Use imperative mood
+         ```bash
+         git commit -S -m "feat(scope): add new feature"
+         git commit -S -m "fix(scope): resolve bug"
          ```
 
 examples:
   - input: |
-      # Bad: Interactive pager
-      git log
-      git diff HEAD~1
-      some_command | less
+      # Bad: Unsafe git commands
+      git push -f
+      git commit -m "message"
+      git tag v1.0.0
 
-      # Good: Non-interactive output
-      git log | cat
-      git diff HEAD~1 | cat
-      some_command | cat
-    output: "Commands properly configured for non-interactive use"
+      # Good: Safe git commands
+      git push --force-with-lease
+      git commit -S -m "message"
+      git tag -s v1.0.0 -m "Version 1.0.0"
+    output: "Git commands that follow security best practices"
 
 metadata:
   priority: high

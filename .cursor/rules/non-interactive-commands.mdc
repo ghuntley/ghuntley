@@ -1,0 +1,148 @@
+# Non-Interactive Commands
+
+Rules for handling commands that may trigger interactive prompts or pagers.
+
+<rule>
+name: non_interactive_commands
+description: Standards for ensuring commands run non-interactively in scripts and automation
+filters:
+  # Match common commands that might trigger pagers or prompts
+  - type: content
+    pattern: "(?m)^\\s*(git|less|head|tail|more|man|info|diff|svn|hg|bzr|nano|vim|emacs)\\s+"
+  # Match pipe to interactive commands
+  - type: content
+    pattern: "(?m)^\\s*.*\\|\\s*(less|head|tail|more|nano|vim|emacs)\\s*$"
+  # Match commands with common interactive flags
+  - type: content
+    pattern: "(?m)^\\s*.*\\s+(-i|--interactive|--edit)\\s+"
+
+actions:
+  - type: reject
+    conditions:
+      - pattern: "(?m)^\\s*(git|less|head|tail|more|man|info|diff)\\s+(?!.*\\|\\s*cat)"
+        message: "Commands that use pagers must pipe to 'cat' to avoid interactive prompts"
+      - pattern: "(?m)^\\s*.*\\|\\s*(less|head|tail|more)\\s*$"
+        message: "Use 'cat' instead of pagers in pipelines"
+      - pattern: "(?m)^\\s*(vim|nano|emacs)\\s+"
+        message: "Interactive editors should not be used in scripts or automation"
+
+  - type: suggest
+    message: |
+      When writing commands for automation or scripts:
+
+      1. Common commands that need non-interactive handling:
+         ```bash
+         # Git commands
+         # Bad: Will open pager
+         git log
+         git diff
+         git show
+         git blame
+
+         # Good: Pipe to cat
+         git log | cat
+         git diff | cat
+         git show | cat
+         git blame | cat
+
+         # Alternative: Use git's --no-pager
+         git --no-pager log
+         git --no-pager diff
+         ```
+
+      2. Viewing file content:
+         ```bash
+         # Bad: Interactive pagers
+         less file.txt
+         more file.txt
+         head file.txt
+         tail file.txt
+
+         # Good: Non-interactive alternatives
+         cat file.txt
+         cat file.txt | head -n 20  # First 20 lines
+         cat file.txt | tail -n 20  # Last 20 lines
+         ```
+
+      3. Manual pages and documentation:
+         ```bash
+         # Bad: Opens interactive man page
+         man command
+         info command
+
+         # Good: Output directly
+         man command | cat
+         info command | cat
+         ```
+
+      4. Diff and patch operations:
+         ```bash
+         # Bad: May open pager
+         diff file1 file2
+         svn diff
+
+         # Good: Direct output
+         diff file1 file2 | cat
+         svn diff | cat
+         ```
+
+      5. Line ranges and filtering:
+         ```bash
+         # Bad: Interactive head/tail
+         command | head
+         command | tail
+
+         # Good: Explicit line counts
+         command | cat | head -n 10
+         command | cat | tail -n 10
+         command | cat | sed -n '5,10p'  # Lines 5-10
+         ```
+
+      6. Editor avoidance:
+         ```bash
+         # Bad: Interactive editors
+         vim file.txt
+         nano file.txt
+
+         # Good: Use echo, cat, or sed
+         echo "content" > file.txt
+         cat > file.txt << 'EOF'
+         content
+         EOF
+         sed -i 's/old/new/g' file.txt
+         ```
+
+      7. Environment variables to prevent interaction:
+         ```bash
+         # Set these in scripts or CI
+         export EDITOR=cat
+         export GIT_PAGER=cat
+         export PAGER=cat
+         ```
+
+examples:
+  - input: |
+      # Bad: Interactive commands
+      git log
+      less file.txt
+      man command
+      command | head
+      vim config.txt
+
+      # Good: Non-interactive alternatives
+      git log | cat
+      cat file.txt
+      man command | cat
+      command | cat | head -n 10
+      echo "content" > config.txt
+    output: "Commands properly configured for non-interactive use"
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>
+
+<!--
+ Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+ SPDX-License-Identifier: Proprietary
+-->
