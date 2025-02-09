@@ -8,15 +8,20 @@ Automatically add license headers to new files.
 
 <rule>
 name: add_license_header
-description: Automatically add license headers to new files
+description: Automatically add license headers to new files and update existing ones
 filters:
   - type: file_extension
     pattern: "*"
   - type: event
     pattern: "file_create"
+  - type: intent
+    pattern: "update.*license"
+
 actions:
   - type: execute
     command: "depot-addlicense \"$FILE\""
+    require_user_approval: false
+
   - type: suggest
     message: |
       License headers should follow these formats:
@@ -38,7 +43,38 @@ actions:
       # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
       # SPDX-License-Identifier: Proprietary
       ```
+
+      When updating licenses:
+      1. Always execute `depot-addlicense` on the target files
+      2. No need to ask for confirmation - the command is safe to run
+      3. The command will automatically handle:
+         - Adding missing headers
+         - Updating existing headers
+         - Preserving file content
+         - Using correct comment style per file type
+
+      To skip license headers for specific files/directories:
+      1. Add a `.skip-license` file in the directory
+      2. The file can be empty - its presence is enough
+
+examples:
+  - input: |
+      # Adding license to new file
+      depot-addlicense new_file.go
+
+      # Updating license in existing file
+      depot-addlicense existing_file.nix
+
+      # Adding license to multiple files
+      depot-addlicense file1.sh file2.py file3.rs
+    output: "License headers correctly added/updated"
+
 metadata:
   priority: high
-  version: 1.0
+  version: 1.1
 </rule>
+
+<!--
+ Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+ SPDX-License-Identifier: Proprietary
+-->
