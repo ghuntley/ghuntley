@@ -10,6 +10,12 @@
 
 with builtins; let
   prettyPrint = lib.generators.toPretty { };
+  debugEnabled = false;  # Set to true only when debugging is needed
+
+  debugTrace = msg: val:
+    if debugEnabled
+    then builtins.trace msg val
+    else val;
 
   # typedef' :: struct {
   #   name = string;
@@ -42,13 +48,17 @@ with builtins; let
     , def ? null
     , match ? null
     }: {
-      inherit name checkToBool toError;
+      inherit name checkToBool toError def match;
 
       # check :: a -> bool
       #
       # This function is used to determine whether a given type is
       # conformant.
-      check = value: checkToBool (checkType value);
+      check = value:
+        let
+          result = checkToBool (checkType value);
+        in
+        debugTrace "Type check result: ${builtins.toJSON result}" result;
 
       # checkType :: a -> struct { ok = bool; err = option string; }
       #
@@ -65,13 +75,19 @@ with builtins; let
       # makes it possible to execute a type attribute set like a normal
       # function.
       __functor = self: value:
-        let result = self.checkType value;
-        in if checkToBool result then value
-        else throw (toError value result);
+        let
+          result = self.checkType value;
+        in
+        if checkToBool result
+        then debugTrace "Value passed type check" value
+        else
+          let error = toError value result;
+          in throw error;
     };
 
   typeError = type: val:
-    "expected type '${type}', but value '${prettyPrint val}' is of type '${typeOf val}'";
+    let error = "expected type '${type}', but value '${prettyPrint val}' is of type '${typeOf val}'";
+    in debugTrace "Type error: ${error}" error;
 
   # typedef :: string -> (a -> bool) -> type
   #
@@ -80,29 +96,37 @@ with builtins; let
   typedef = name: check: typedef' {
     inherit name;
     checkType = v:
-      let res = check v;
-      in {
+      let
+        res = check v;
+      in
+      debugTrace "Check result for ${name}: ${builtins.toJSON res}"
+      {
         ok = res;
       } // (lib.optionalAttrs (!res) {
         err = typeError name v;
       });
   };
 
-  checkEach = name: t: l: foldl'
-    (acc: e:
-      let
-        res = t.checkType e;
-        isT = t.checkToBool res;
-      in
-      {
-        ok = acc.ok && isT;
-        err =
-          if isT
-          then acc.err
-          else acc.err + "${prettyPrint e}: ${t.toError e res}\n";
-      })
-    { ok = true; err = "expected type ${name}, but found:\n"; }
-    l;
+  checkEach = name: t: l:
+    let
+      result = foldl'
+        (acc: e:
+          let
+            res = t.checkType e;
+            isT = t.checkToBool res;
+          in
+          debugTrace "Checking element result: ${builtins.toJSON res}"
+          {
+            ok = acc.ok && isT;
+            err =
+              if isT
+              then acc.err
+              else acc.err + "${prettyPrint e}: ${t.toError e res}\n";
+          })
+        { ok = true; err = "expected type ${name}, but found:\n"; }
+        l;
+    in
+    debugTrace "Final check result: ${builtins.toJSON result}" result;
 in
 lib.fix (self: {
   # Primitive types
@@ -130,12 +154,15 @@ lib.fix (self: {
   option = t: typedef' rec {
     name = "option<${t.name}>";
     checkType = v:
-      let res = t.checkType v;
-      in {
-        ok = isNull v || (self.type t).checkToBool res;
-        err = "expected type ${name}, but value does not conform to '${t.name}': "
-          + t.toError v res;
-      };
+      let
+        res = t.checkType v;
+        result = {
+          ok = isNull v || (self.type t).checkToBool res;
+          err = "expected type ${name}, but value does not conform to '${t.name}': "
+            + t.toError v res;
+        };
+      in
+      debugTrace "Option check result: ${builtins.toJSON result}" result;
   };
 
   eitherN = tn: typedef "either<${concatStringsSep ", " (map (x: x.name) tn)}>"
@@ -147,24 +174,30 @@ lib.fix (self: {
     name = "list<${t.name}>";
 
     checkType = v:
-      if isList v
-      then checkEach name (self.type t) v
-      else {
-        ok = false;
-        err = typeError name v;
-      };
+      let
+        result = if isList v
+        then checkEach name (self.type t) v
+        else {
+          ok = false;
+          err = typeError name v;
+        };
+      in
+      debugTrace "List check result: ${builtins.toJSON result}" result;
   };
 
   attrs = t: typedef' rec {
     name = "attrs<${t.name}>";
 
     checkType = v:
-      if isAttrs v
-      then checkEach name (self.type t) (attrValues v)
-      else {
-        ok = false;
-        err = typeError name v;
-      };
+      let
+        result = if isAttrs v
+        then checkEach name (self.type t) (attrValues v)
+        else {
+          ok = false;
+          err = typeError name v;
+        };
+      in
+      debugTrace "Attrs check result: ${builtins.toJSON result}" result;
   };
 
   # Structs / record types
@@ -185,25 +218,32 @@ lib.fix (self: {
       # its definition and creates a typecheck result. These results
       # are aggregated during the actual checking.
       checkField = def: name: value:
-        let result = def.checkType value; in rec {
-          ok = def.checkToBool result;
-          err =
-            if !ok && isNull value
-            then "missing required ${def.name} field '${name}'\n"
-            else "field '${name}': ${def.toError value result}\n";
-        };
+        let
+          result = def.checkType value;
+          checkResult = rec {
+            ok = def.checkToBool result;
+            err =
+              if !ok && isNull value
+              then "missing required ${def.name} field '${name}'\n"
+              else "field '${name}': ${def.toError value result}\n";
+          };
+        in
+        debugTrace "Field check result: ${builtins.toJSON checkResult}" checkResult;
 
       # checkExtraneous determines whether a (closed) struct contains
       # any fields that are not part of the definition.
       checkExtraneous = def: has: acc:
-        if (length has) == 0 then acc
-        else if (hasAttr (head has) def)
-        then checkExtraneous def (tail has) acc
-        else
-          checkExtraneous def (tail has) {
-            ok = false;
-            err = acc.err + "unexpected struct field '${head has}'\n";
-          };
+        let
+          result = if (length has) == 0 then acc
+          else if (hasAttr (head has) def)
+          then checkExtraneous def (tail has) acc
+          else
+            checkExtraneous def (tail has) {
+              ok = false;
+              err = acc.err + "unexpected struct field '${head has}'\n";
+            };
+        in
+        debugTrace "Extraneous check result: ${builtins.toJSON result}" result;
 
       # checkStruct combines all structure checks and creates one
       # typecheck result from them
@@ -218,7 +258,7 @@ lib.fix (self: {
               in checkField def."${n}" n v)
             (attrNames def);
 
-          combined = foldl'
+          result = foldl'
             (acc: res: {
               ok = acc.ok && res.ok;
               err = if !res.ok then acc.err + res.err else acc.err;
@@ -226,17 +266,17 @@ lib.fix (self: {
             init
             checkedFields;
         in
-        {
-          ok = combined.ok && extraneous.ok;
-          err = combined.err + extraneous.err;
-        };
+        debugTrace "Struct check result: ${builtins.toJSON result}" result;
 
       struct' = name: def: typedef' {
         inherit name def;
         checkType = value:
-          if isAttrs value
-          then (checkStruct (self.attrs self.type def) value)
-          else { ok = false; err = typeError name value; };
+          let
+            result = if isAttrs value
+            then (checkStruct (self.attrs self.type def) value)
+            else { ok = false; err = typeError name value; };
+          in
+          debugTrace "Struct type check result: ${builtins.toJSON result}" result;
 
         toError = _: result: "expected '${name}'-struct, but found:\n" + result.err;
       };
@@ -364,5 +404,4 @@ lib.fix (self: {
           # use throw here to avoid spamming the build log
             throw "restriction '${restriction}' predicate returned unexpected value '${prettyPrint iok}' instead of boolean";
     };
-
 })

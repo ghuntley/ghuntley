@@ -17,43 +17,94 @@ filters:
   # Match nix-prefetch-github specifically
   - type: content
     pattern: "(?m)^\\s*nix\\s+run\\s+nixpkgs#nix-prefetch-github\\s+"
+  # Match nix build commands
+  - type: content
+    pattern: "(?m)^\\s*nix\\s+build\\s+"
 
 actions:
   - type: reject
     conditions:
       - pattern: "^\\s*nix\\s+(?!--extra-experimental-features)"
         message: "Nix commands must include --extra-experimental-features when using flakes or new-style commands"
+      - pattern: "--extra-experimental-features\\s+['\"]nix-command['\"](?![^'\"]*flakes)"
+        message: "When using nix-command, also include flakes in experimental features"
 
   - type: suggest
     message: |
       When using Nix commands that require experimental features:
 
-      1. Always include the --extra-experimental-features flag:
+      1. Always include the --extra-experimental-features flag with both nix-command and flakes:
          ```bash
-         nix --extra-experimental-features 'nix-command flakes' run ...
+         # Bad: Missing experimental features
+         nix build .#package
+         nix run nixpkgs#package
+         nix develop
+
+         # Bad: Only including nix-command
+         nix --extra-experimental-features 'nix-command' build .#package
+
+         # Good: Including both required features
+         nix --extra-experimental-features 'nix-command flakes' build .#package
+         nix --extra-experimental-features 'nix-command flakes' run nixpkgs#package
+         nix --extra-experimental-features 'nix-command flakes' develop
          ```
 
-      2. Common experimental features to include:
-         - nix-command (for new-style commands)
-         - flakes (for flake functionality)
-
-      3. For nix-prefetch-github specifically:
+      2. For scripts and automation, consider setting the environment variable:
          ```bash
-         nix --extra-experimental-features 'nix-command flakes' run nixpkgs#nix-prefetch-github -- ...
+         export NIX_CONFIG="experimental-features = nix-command flakes"
+
+         # Then commands can be run without the flag
+         nix build .#package
+         nix run nixpkgs#package
          ```
+
+      3. Common commands requiring experimental features:
+         ```bash
+         # Building packages
+         nix --extra-experimental-features 'nix-command flakes' build .#package
+
+         # Running packages
+         nix --extra-experimental-features 'nix-command flakes' run nixpkgs#package
+
+         # Development shells
+         nix --extra-experimental-features 'nix-command flakes' develop
+
+         # Flake operations
+         nix --extra-experimental-features 'nix-command flakes' flake update
+         nix --extra-experimental-features 'nix-command flakes' flake check
+
+         # Store operations
+         nix --extra-experimental-features 'nix-command flakes' store verify
+         nix --extra-experimental-features 'nix-command flakes' store gc
+         ```
+
+      4. For nix-prefetch-github specifically:
+         ```bash
+         nix --extra-experimental-features 'nix-command flakes' run nixpkgs#nix-prefetch-github -- \
+           owner repo --rev master
+         ```
+
+      5. When using in CI/automation:
+         - Set NIX_CONFIG in your CI environment
+         - Or use a wrapper script that always includes the features
+         - Document the requirement in CI configuration
 
 examples:
   - input: |
       # Bad: Missing experimental features
-      nix run nixpkgs#nix-prefetch-github -- owner repo --rev master
+      nix build .#package
+      nix run nixpkgs#hello
+      nix develop
 
-      # Good: Includes experimental features
-      nix --extra-experimental-features 'nix-command flakes' run nixpkgs#nix-prefetch-github -- owner repo --rev master
+      # Good: Includes required experimental features
+      nix --extra-experimental-features 'nix-command flakes' build .#package
+      nix --extra-experimental-features 'nix-command flakes' run nixpkgs#hello
+      nix --extra-experimental-features 'nix-command flakes' develop
     output: "Correctly using Nix experimental features"
 
 metadata:
   priority: high
-  version: 1.0
+  version: 2.0
 </rule>
 
 <!--

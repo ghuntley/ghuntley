@@ -11,7 +11,7 @@
 # and can use derivation outputs if IfD is enabled.
 #
 # You build a testsuite by bundling assertions into
-# “it”s and then bundling the “it”s into a testsuite.
+# "it"s and then bundling the "it"s into a testsuite.
 #
 # Running the testsuite will abort evaluation if
 # any assertion fails.
@@ -47,12 +47,21 @@ let
 
   # Returns true if the given expression throws when `deepSeq`-ed
   throws = expr:
-    !(builtins.tryEval (builtins.deepSeq expr { })).success;
+    let
+      result = builtins.tryEval (builtins.deepSeq expr { });
+      debug1 = builtins.trace "Evaluating expression for throws: ${builtins.toJSON expr}" null;
+      debug2 = builtins.trace "Result: ${builtins.toJSON result}" null;
+    in
+    !result.success;
 
   # rewrite the builtins.partition result
   # to use `ok` and `err` instead of `right` and `wrong`.
   partitionTests = pred: xs:
-    let res = builtins.partition pred xs;
+    let
+      debug1 = builtins.trace "Partitioning tests..." null;
+      debug2 = builtins.trace "Input: ${builtins.toJSON xs}" null;
+      res = builtins.partition pred xs;
+      debug3 = builtins.trace "Partition result: ${builtins.toJSON res}" null;
     in {
       ok = res.right;
       err = res.wrong;
@@ -71,7 +80,7 @@ let
     };
 
   # The result of an assert,
-  # either it’s true (yep) or false (nope).
+  # either it's true (yep) or false (nope).
   # If it's nope we return an additional context
   # attribute which gives details on the failure
   # depending on the type of assert performed.
@@ -102,6 +111,11 @@ let
   # more assert types and is not exposed to the user.
   assertBoolContext = defun [ AssertErrorContext string bool AssertResult ]
     (context: desc: res:
+      let
+        debug1 = builtins.trace "Asserting: ${desc}" null;
+        debug2 = builtins.trace "Result: ${builtins.toJSON res}" null;
+        debug3 = builtins.trace "Context: ${builtins.toJSON context}" null;
+      in
       if res
       then { yep = { test = desc; }; }
       else {
@@ -115,6 +129,9 @@ let
   assertEq = defun [ string any any AssertResult ]
     (desc: left: right:
       let
+        debug1 = builtins.trace "Asserting equality: ${desc}" null;
+        debug2 = builtins.trace "Left: ${builtins.toJSON left}" null;
+        debug3 = builtins.trace "Right: ${builtins.toJSON right}" null;
         context = { not-equal = { inherit left right; }; };
       in
       assertBoolContext context desc (left == right));
@@ -123,6 +140,8 @@ let
   assertThrows = defun [ string any AssertResult ]
     (desc: expr:
       let
+        debug1 = builtins.trace "Asserting throws: ${desc}" null;
+        debug2 = builtins.trace "Expression: ${builtins.toJSON expr}" null;
         context = { should-throw = { inherit expr; }; };
       in
       assertBoolContext context desc (throws expr));
@@ -130,6 +149,10 @@ let
   # assert that the expression does not throw when `deepSeq`-ed
   assertDoesNotThrow = defun [ string any AssertResult ]
     (desc: expr:
+      let
+        debug1 = builtins.trace "Asserting does not throw: ${desc}" null;
+        debug2 = builtins.trace "Expression: ${builtins.toJSON expr}" null;
+      in
       assertBoolContext { unexpected-throw = { }; } desc (!(throws expr)));
 
   # Annotate a bunch of asserts with a descriptive name
@@ -146,16 +169,30 @@ let
   runTestsuite = defun [ string (list ItResult) drv ]
     (name: itResults:
       let
+        debug1 = builtins.trace "Running test suite: ${name}" null;
+        debug2 = builtins.trace "Number of test groups: ${toString (builtins.length itResults)}" null;
+
         goodAss = ass: AssertResult.match ass {
           yep = _: true;
           nope = _: false;
         };
+
+        debug3 = builtins.trace "Checking test results..." null;
         res = partitionTests
           (it:
-            (partitionTests goodAss it.asserts).err == [ ]
+            let
+              asserts = partitionTests goodAss it.asserts;
+              debug4 = builtins.trace "Test group: ${it.it-desc}" null;
+              debug5 = builtins.trace "Passed assertions: ${toString (builtins.length asserts.ok)}" null;
+              debug6 = builtins.trace "Failed assertions: ${toString (builtins.length asserts.err)}" null;
+              debug7 = if asserts.err != [] then builtins.trace "Failed assertions: ${builtins.toJSON asserts.err}" null else null;
+            in
+            asserts.err == [ ]
           )
           itResults;
         prettyRes = lib.generators.toPretty { } res;
+        debug8 = builtins.trace "Test suite results:" null;
+        debug9 = builtins.trace prettyRes null;
       in
       if res.err == [ ]
       then

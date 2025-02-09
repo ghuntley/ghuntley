@@ -18,6 +18,10 @@ filters:
 actions:
   - type: execute
     command: |
+      # First ensure code is properly formatted and has license headers
+      depot-fmt "$DEPOT_ROOT"
+      depot-addlicense "$FILE"
+
       # Extract the change type and scope from the changes
       CHANGE_TYPE=""
       case "$CHANGE_DESCRIPTION" in
@@ -34,15 +38,27 @@ actions:
       # Extract scope from file path
       SCOPE=$(dirname "$FILE" | tr '/' '-')
 
-      # Commit the changes
+      # Stage and commit the changes
       git add "$FILE"
       git commit -m "$CHANGE_TYPE($SCOPE): $CHANGE_DESCRIPTION"
 
   - type: suggest
     message: |
-      Changes should be committed using conventional commits format:
+      Before committing changes:
+      1. Format code with depot-fmt:
+         ```bash
+         depot-fmt $DEPOT_ROOT
+         ```
 
-      Format: <type>(<scope>): <description>
+      2. Add license headers:
+         ```bash
+         depot-addlicense $FILE
+         ```
+
+      3. Use conventional commits format:
+         ```
+         <type>(<scope>): <description>
+         ```
 
       Types:
       - feat: A new feature
@@ -62,17 +78,35 @@ examples:
       # After adding a new function
       CHANGE_DESCRIPTION="add user authentication function"
       FILE="src/auth/login.ts"
-    output: "feat(src-auth): add user authentication function"
+    output: |
+      # Format code first
+      depot-fmt $DEPOT_ROOT
+
+      # Add license headers
+      depot-addlicense src/auth/login.ts
+
+      # Commit with conventional format
+      git add src/auth/login.ts
+      git commit -m "feat(src-auth): add user authentication function"
 
   - input: |
       # After fixing a bug
       CHANGE_DESCRIPTION="fix incorrect date parsing"
       FILE="lib/utils/date.js"
-    output: "fix(lib-utils): fix incorrect date parsing"
+    output: |
+      # Format code first
+      depot-fmt $DEPOT_ROOT
+
+      # Add license headers
+      depot-addlicense lib/utils/date.js
+
+      # Commit with conventional format
+      git add lib/utils/date.js
+      git commit -m "fix(lib-utils): fix incorrect date parsing"
 
 metadata:
   priority: high
-  version: 1.0
+  version: 1.1
 </rule>
 
 

@@ -1,88 +1,86 @@
 # Git Commands
 
-Rules for using git commands safely and effectively.
+Rules for handling git commands and other non-interactive commands in the depot repository.
 
 <rule>
 name: git_commands
-description: Standards for using git commands safely and effectively
+description: Standards for handling git and other non-interactive commands
 filters:
   - type: content
-    pattern: "git.*diff|git.*log|git.*status|git.*blame|git.*show"
+    pattern: "(?m)^\\s*(git|less|head|tail|more)\\s+"
+  - type: content
+    pattern: "(?m)^\\s*.*\\|\\s*(less|head|tail|more)\\s*$"
 
 actions:
   - type: reject
     conditions:
-      - pattern: "git (diff|log|status|blame|show)(?! .*--no-pager)"
-        message: "Always use --no-pager with git commands that might produce interactive output"
-      - pattern: "git (?!--no-pager).*\\| less"
-        message: "Do not pipe git output to less/more - use --no-pager instead"
+      - pattern: "(?m)^\\s*(git|less|head|tail|more)\\s+(?!.*\\|\\s*cat)"
+        message: "Commands that use pagers must pipe to 'cat' to avoid interactive prompts"
+      - pattern: "(?m)^\\s*.*\\|\\s*(less|head|tail|more)\\s*$"
+        message: "Use 'cat' instead of pagers in pipelines"
 
   - type: suggest
     message: |
-      When using git commands that might produce interactive output:
+      When using commands that may trigger pagers or interactive prompts:
 
-      1. ALWAYS use --no-pager for commands that might page output:
+      1. Always pipe to 'cat' for git commands that show output:
          ```bash
-         # Bad
-         git diff
+         # Bad: Will open in pager
          git log
-         git status -vv
-         git blame file.txt
-         git show HEAD
+         git diff
+         git show
 
-         # Good
-         git --no-pager diff
-         git --no-pager log
-         git --no-pager status -vv
-         git --no-pager blame file.txt
-         git --no-pager show HEAD
+         # Good: Pipes to cat
+         git log | cat
+         git diff | cat
+         git show | cat
          ```
 
-      2. Place --no-pager BEFORE the git subcommand:
+      2. Use cat instead of less/more/head/tail:
          ```bash
-         # Bad
-         git diff --no-pager  # Won't work
+         # Bad: Interactive pagers
+         command | less
+         command | more
+         command | head
+         command | tail
 
-         # Good
-         git --no-pager diff  # Correct placement
+         # Good: Non-interactive alternatives
+         command | cat
+         command | cat | head -n 10
+         command | cat | tail -n 10
          ```
 
-      3. Common commands that need --no-pager:
-         - git diff
-         - git log
-         - git blame
-         - git show
-         - git status (with -v or -vv)
-         - git help
+      3. For git commands that don't show output (commit, push, etc), no pipe needed:
+         ```bash
+         git add .
+         git commit -m "message"
+         git push
+         ```
 
-      4. When writing scripts or automation:
-         - Always use --no-pager to ensure non-interactive output
-         - Consider using specific git plumbing commands
-         - Use -n/--max-count to limit output when appropriate
-         - Avoid piping to pagers (less, more, etc.)
+      4. When needing specific line ranges, use cat with head/tail:
+         ```bash
+         # Show first 10 lines
+         git log | cat | head -n 10
 
-      5. For large outputs:
-         - Use specific paths/files instead of entire repo
-         - Add commit range limits
-         - Use --max-count or similar options
-         - Consider using more specific commands
+         # Show last 10 lines
+         git log | cat | tail -n 10
+
+         # Show lines 5-10
+         git log | cat | head -n 10 | tail -n 6
+         ```
 
 examples:
   - input: |
-      # Bad: Will invoke pager
+      # Bad: Interactive pager
+      git log
       git diff HEAD~1
-      git log -p
-      git status -vv
-      git show HEAD
-      git diff | less
+      some_command | less
 
       # Good: Non-interactive output
-      git --no-pager diff HEAD~1
-      git --no-pager log -p
-      git --no-pager status -vv
-      git --no-pager show HEAD
-      git --no-pager diff  # Direct output, no pager needed
-    output: "Git commands that won't invoke pager"
+      git log | cat
+      git diff HEAD~1 | cat
+      some_command | cat
+    output: "Commands properly configured for non-interactive use"
 
 metadata:
   priority: high
