@@ -39,6 +39,7 @@ in
     (mod "vaultwarden.nix")
     (mod "healthchecks.nix")
     (mod "archivebox.nix")
+    (mod "open-webui.nix")
   ];
 
   boot.tmp.cleanOnBoot = true;
@@ -185,6 +186,12 @@ in
     port = 8000;
     adminUsername = "ghuntley";
     adminPasswordFile = config.age.secrets.archivebox-admin-password.path;
+  };
+
+  services.depot.open-webui = {
+    enable = true;
+    port = 8001;
+    stateDir = "/var/lib/open-webui";
   };
 
   # Configure secrets for services that need them.
