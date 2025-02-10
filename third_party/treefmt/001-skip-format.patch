@@ -1,0 +1,281 @@
+commit b8c985d57a40c741d69cbbee6ed3129473a05caa
+Author: Geoffrey Huntley <ghuntley@ghuntley.com>
+Date:   Mon Feb 10 10:09:13 2025 +0000
+
+    depot: skip folders/files if .skip-format is found inside
+
+diff --git a/walk/filesystem.go b/walk/filesystem.go
+index 0ea7eea..e61c3cd 100644
+--- a/walk/filesystem.go
++++ b/walk/filesystem.go
+@@ -44,6 +44,9 @@ func (f *FilesystemReader) process() error {
+ 		return fmt.Errorf("path '%s' is outside of the root '%s'", path, f.root)
+ 	}
+
++	// track directories that should be skipped
++	skipDirs := make(map[string]bool)
++
+ 	// walk the path
+ 	err := filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
+ 		// return errors immediately
+@@ -51,6 +54,23 @@ func (f *FilesystemReader) process() error {
+ 			return err
+ 		}
+
++		// Check if we're in a directory that should be skipped
++		for skipDir := range skipDirs {
++			if strings.HasPrefix(path, skipDir) {
++				return nil
++			}
++		}
++
++		// Check for .skip-format file in current directory if this is a directory
++		if info.IsDir() {
++			skipFile := filepath.Join(path, ".skip-format")
++			if _, err := os.Stat(skipFile); err == nil {
++				skipDirs[path] = true
++				f.log.Debugf("skipping directory %s due to .skip-format file", path)
++				return nil
++			}
++		}
++
+ 		// ignore directories and symlinks
+ 		if info.IsDir() || info.Mode()&os.ModeSymlink == os.ModeSymlink {
+ 			return nil
+diff --git a/walk/filesystem_test.go b/walk/filesystem_test.go
+index 8c5b74c..431c3e2 100644
+--- a/walk/filesystem_test.go
++++ b/walk/filesystem_test.go
+@@ -4,6 +4,8 @@ import (
+ 	"context"
+ 	"errors"
+ 	"io"
++	"os"
++	"path/filepath"
+ 	"testing"
+ 	"time"
+
+@@ -85,3 +87,60 @@ func TestFilesystemReader(t *testing.T) {
+ 	as.Equal(0, statz.Value(stats.Formatted))
+ 	as.Equal(0, statz.Value(stats.Changed))
+ }
++
++func TestFilesystemReader_SkipFormat(t *testing.T) {
++	as := require.New(t)
++
++	// Create a temporary directory with test files
++	tempDir := t.TempDir()
++
++	// Create some test files and directories
++	files := []string{
++		"file1.txt",
++		"dir1/file2.txt",
++		"dir1/subdir/file3.txt",
++		"dir2/file4.txt",
++	}
++
++	for _, f := range files {
++		path := filepath.Join(tempDir, f)
++		err := os.MkdirAll(filepath.Dir(path), 0o755)
++		as.NoError(err)
++		err = os.WriteFile(path, []byte("test"), 0o644)
++		as.NoError(err)
++	}
++
++	// Create .skip-format file in dir1
++	err := os.WriteFile(filepath.Join(tempDir, "dir1", ".skip-format"), []byte{}, 0o644)
++	as.NoError(err)
++
++	statz := stats.New()
++	r := walk.NewFilesystemReader(tempDir, "", &statz, 1024)
++
++	// Read all files
++	var foundFiles []string
++	for {
++		ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
++		files := make([]*walk.File, 8)
++		n, err := r.Read(ctx, files)
++		cancel()
++
++		for i := 0; i < n; i++ {
++			foundFiles = append(foundFiles, files[i].RelPath)
++		}
++
++		if errors.Is(err, io.EOF) {
++			break
++		}
++		as.NoError(err)
++	}
++
++	// Should only find files not in dir1 or its subdirectories
++	expectedFiles := []string{
++		"file1.txt",
++		"dir2/file4.txt",
++	}
++
++	as.ElementsMatch(expectedFiles, foundFiles)
++	as.Equal(2, statz.Value(stats.Traversed))
++}
+diff --git a/walk/git.go b/walk/git.go
+index cb5c4c8..dbb3876 100644
+--- a/walk/git.go
++++ b/walk/git.go
+@@ -66,21 +66,20 @@ func (g *GitReader) Read(ctx context.Context, files []*File) (n int, err error)
+ 		return unquoted, nil
+ 	}
+
+-LOOP:
++	// track directories that should be skipped
++	skipDirs := make(map[string]bool)
+
++LOOP:
+ 	for n < len(files) {
+ 		select {
+-		// exit early if the context was cancelled
+ 		case <-ctx.Done():
+ 			err = ctx.Err()
+ 			if err == nil {
+ 				return n, fmt.Errorf("context cancelled: %w", ctx.Err())
+ 			}
+-
+ 			return n, nil
+
+ 		default:
+-			// read the next file
+ 			if g.scanner.Scan() {
+ 				entry, err := nextLine()
+ 				if err != nil {
+@@ -88,16 +87,35 @@ LOOP:
+ 				}
+
+ 				path := filepath.Join(g.root, g.path, entry)
++				dir := filepath.Dir(path)
++
++				// Check if we're in a directory that should be skipped
++				skip := false
++				for skipDir := range skipDirs {
++					if strings.HasPrefix(dir, skipDir) {
++						skip = true
++						break
++					}
++				}
++				if skip {
++					continue
++				}
++
++				// Check for .skip-format in the directory
++				skipFile := filepath.Join(dir, ".skip-format")
++				if _, err := os.Stat(skipFile); err == nil {
++					skipDirs[dir] = true
++					g.log.Debugf("skipping directory %s due to .skip-format file", dir)
++					continue
++				}
+
+ 				g.log.Debugf("processing file: %s", path)
+
+ 				info, err := os.Stat(path)
+ 				if os.IsNotExist(err) {
+-					// the underlying file might have been removed
+ 					g.log.Warnf(
+ 						"Path %s is in the worktree but appears to have been removed from the filesystem", path,
+ 					)
+-
+ 					continue
+ 				} else if err != nil {
+ 					return n, fmt.Errorf("failed to stat %s: %w", path, err)
+@@ -110,9 +128,7 @@ LOOP:
+ 				}
+ 				n++
+ 			} else {
+-				// nothing more to read
+ 				err = io.EOF
+-
+ 				break LOOP
+ 			}
+ 		}
+diff --git a/walk/git_test.go b/walk/git_test.go
+index acef85b..68b37b3 100644
+--- a/walk/git_test.go
++++ b/walk/git_test.go
+@@ -4,7 +4,9 @@ import (
+ 	"context"
+ 	"errors"
+ 	"io"
++	"os"
+ 	"os/exec"
++	"path/filepath"
+ 	"testing"
+ 	"time"
+
+@@ -68,3 +70,71 @@ func TestGitReader(t *testing.T) {
+ 	as.Equal(0, statz.Value(stats.Formatted))
+ 	as.Equal(0, statz.Value(stats.Changed))
+ }
++
++func TestGitReader_SkipFormat(t *testing.T) {
++	as := require.New(t)
++
++	// Create a temporary directory with test files
++	tempDir := t.TempDir()
++
++	// Initialize git repo
++	cmd := exec.Command("git", "init")
++	cmd.Dir = tempDir
++	as.NoError(cmd.Run())
++
++	// Create some test files and directories
++	files := []string{
++		"file1.txt",
++		"dir1/file2.txt",
++		"dir1/subdir/file3.txt",
++		"dir2/file4.txt",
++	}
++
++	for _, f := range files {
++		path := filepath.Join(tempDir, f)
++		err := os.MkdirAll(filepath.Dir(path), 0o755)
++		as.NoError(err)
++		err = os.WriteFile(path, []byte("test"), 0o644)
++		as.NoError(err)
++	}
++
++	// Create .skip-format file in dir1
++	err := os.WriteFile(filepath.Join(tempDir, "dir1", ".skip-format"), []byte{}, 0o644)
++	as.NoError(err)
++
++	// Add all files to git
++	cmd = exec.Command("git", "add", ".")
++	cmd.Dir = tempDir
++	as.NoError(cmd.Run())
++
++	statz := stats.New()
++	r, err := walk.NewGitReader(tempDir, "", &statz)
++	as.NoError(err)
++
++	// Read all files
++	var foundFiles []string
++	for {
++		ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
++		files := make([]*walk.File, 8)
++		n, err := r.Read(ctx, files)
++		cancel()
++
++		for i := 0; i < n; i++ {
++			foundFiles = append(foundFiles, files[i].RelPath)
++		}
++
++		if errors.Is(err, io.EOF) {
++			break
++		}
++		as.NoError(err)
++	}
++
++	// Should only find files not in dir1 or its subdirectories
++	expectedFiles := []string{
++		"file1.txt",
++		"dir2/file4.txt",
++	}
++
++	as.ElementsMatch(expectedFiles, foundFiles)
++	as.Equal(2, statz.Value(stats.Traversed))
++}
