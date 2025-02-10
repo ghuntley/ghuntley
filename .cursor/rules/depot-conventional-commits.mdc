@@ -18,11 +18,16 @@ filters:
 actions:
   - type: execute
     command: |
-      # Format the file first
-      depot-fmt "$FILE"
+      # First check what changes need to be committed
+      git status
 
-      # Stage the formatted file
-      git add "$FILE"
+      # Format all changed files
+      depot-fmt "$DEPOT_ROOT"
+
+      # Add license headers to all changed files
+      for FILE in $(git diff --name-only); do
+        depot-addlicense "$FILE"
+      done
 
       # Extract the change type and scope from the changes
       CHANGE_TYPE=""
@@ -40,14 +45,38 @@ actions:
       # Extract scope from file path
       SCOPE=$(dirname "$FILE" | tr '/' '-')
 
-      # Commit the changes
+      # Stage and commit the changes
+      git add "$FILE"
       git commit -m "$CHANGE_TYPE($SCOPE): $CHANGE_DESCRIPTION"
 
   - type: suggest
     message: |
-      Changes should be committed using conventional commits format:
+      Follow these steps when committing changes:
 
-      Format: <type>(<scope>): <description>
+      1. Always check what needs to be committed first:
+         ```bash
+         git status
+         ```
+         This will show:
+         - Changes staged for commit
+         - Changes not staged for commit
+         - Untracked files
+
+      2. Group related changes into logical commits
+         - Each commit should represent one logical change
+         - Multiple files can be included if they're part of the same change
+         - Unrelated changes should be in separate commits
+
+      3. Format code and add license headers:
+         ```bash
+         depot-fmt $DEPOT_ROOT
+         depot-addlicense $FILE
+         ```
+
+      4. Use conventional commits format:
+         ```
+         <type>(<scope>): <description>
+         ```
 
       Types:
       - feat: A new feature
@@ -64,20 +93,45 @@ actions:
 
 examples:
   - input: |
-      # After adding a new function
+      # Check current changes
+      $ git status
+      Changes not staged for commit:
+        modified:   src/auth/login.ts
+
+      # After determining it's a new feature
       CHANGE_DESCRIPTION="add user authentication function"
       FILE="src/auth/login.ts"
-    output: "feat(src-auth): add user authentication function"
+    output: |
+      # Format and add license
+      depot-fmt $DEPOT_ROOT
+      depot-addlicense src/auth/login.ts
+
+      # Commit with conventional format
+      git add src/auth/login.ts
+      git commit -m "feat(src-auth): add user authentication function"
 
   - input: |
-      # After fixing a bug
+      # Check current changes
+      $ git status
+      Changes not staged for commit:
+        modified:   lib/utils/date.js
+        modified:   lib/utils/time.js
+
+      # After determining it's a bug fix affecting multiple files
       CHANGE_DESCRIPTION="fix incorrect date parsing"
-      FILE="lib/utils/date.js"
-    output: "fix(lib-utils): fix incorrect date parsing"
+      FILES="lib/utils/date.js lib/utils/time.js"
+    output: |
+      # Format and add license to all files
+      depot-fmt $DEPOT_ROOT
+      depot-addlicense lib/utils/date.js lib/utils/time.js
+
+      # Commit related changes together
+      git add lib/utils/date.js lib/utils/time.js
+      git commit -m "fix(lib-utils): fix incorrect date parsing"
 
 metadata:
   priority: high
-  version: 1.0
+  version: 1.1
 </rule>
 
 <!--
