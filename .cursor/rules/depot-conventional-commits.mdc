@@ -46,7 +46,8 @@ actions:
       SCOPE=$(dirname "$FILE" | tr '/' '-')
 
       # Stage and commit the changes
-      git add "$FILE"
+      git add -u  # Stage all tracked, modified files
+      git add "$FILE"  # Stage any new files
       git commit -m "$CHANGE_TYPE($SCOPE): $CHANGE_DESCRIPTION"
 
   - type: suggest
@@ -62,16 +63,21 @@ actions:
          - Changes not staged for commit
          - Untracked files
 
-      2. Group related changes into logical commits
+      2. Format code and add license headers:
+         ```bash
+         # Format all files in the depot
+         depot-fmt "$DEPOT_ROOT"
+
+         # Add license headers to changed files
+         for FILE in $(git diff --name-only); do
+           depot-addlicense "$FILE"
+         done
+         ```
+
+      3. Group related changes into logical commits
          - Each commit should represent one logical change
          - Multiple files can be included if they're part of the same change
          - Unrelated changes should be in separate commits
-
-      3. Format code and add license headers:
-         ```bash
-         depot-fmt $DEPOT_ROOT
-         depot-addlicense $FILE
-         ```
 
       4. Use conventional commits format:
          ```
@@ -102,8 +108,10 @@ examples:
       CHANGE_DESCRIPTION="add user authentication function"
       FILE="src/auth/login.ts"
     output: |
-      # Format and add license
-      depot-fmt $DEPOT_ROOT
+      # Format all files
+      depot-fmt "$DEPOT_ROOT"
+
+      # Add license headers to changed files
       depot-addlicense src/auth/login.ts
 
       # Commit with conventional format
@@ -121,8 +129,10 @@ examples:
       CHANGE_DESCRIPTION="fix incorrect date parsing"
       FILES="lib/utils/date.js lib/utils/time.js"
     output: |
-      # Format and add license to all files
-      depot-fmt $DEPOT_ROOT
+      # Format all files
+      depot-fmt "$DEPOT_ROOT"
+
+      # Add license headers to all changed files
       depot-addlicense lib/utils/date.js lib/utils/time.js
 
       # Commit related changes together
@@ -131,7 +141,7 @@ examples:
 
 metadata:
   priority: high
-  version: 1.1
+  version: 1.2
 </rule>
 
 <!--
