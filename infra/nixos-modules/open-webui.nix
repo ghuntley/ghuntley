@@ -32,6 +32,12 @@ in
       description = "Port on which Open WebUI will listen";
     };
 
+    domain = mkOption {
+      type = types.str;
+      default = "chat.ponderoos.com";
+      description = "Domain name for the Open WebUI instance";
+    };
+
     stateDir = mkOption {
       type = types.path;
       default = "/var/lib/open-webui";
@@ -41,10 +47,18 @@ in
 
   config = mkIf cfg.enable {
 
+    services.ollama.enable = true;
+    services.ollama.loadModels = [
+      "deepseek-r1:8b"
+    ];
+
     services.open-webui = {
       enable = true;
       port = cfg.port;
       stateDir = cfg.stateDir;
+      environment = {
+        ENABLE_SIGNUP = "False";
+      };
     };
 
     # Configure nginx reverse proxy
