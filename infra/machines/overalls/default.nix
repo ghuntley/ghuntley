@@ -190,7 +190,8 @@ in
 
   services.depot.open-webui = {
     enable = true;
-    port = 8001;
+    domain = "chat.ponderoos.com";
+    port = 8005;
     stateDir = "/var/lib/open-webui";
   };
 
