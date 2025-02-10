@@ -6,11 +6,14 @@
 #
 # All types (should) compose as expected.
 
-{ lib ? (import <nixpkgs> { }).lib, ... }:
+{ lib ? (import <nixpkgs> { }).lib
+, enableDebug ? false  # Can be overridden when importing
+, ...
+}:
 
 with builtins; let
   prettyPrint = lib.generators.toPretty { };
-  debugEnabled = false;  # Set to true only when debugging is needed
+  debugEnabled = enableDebug; # Control debug output via parameter
 
   debugTrace = msg: val:
     if debugEnabled
@@ -100,9 +103,9 @@ with builtins; let
         res = check v;
       in
       debugTrace "Check result for ${name}: ${builtins.toJSON res}"
-      {
-        ok = res;
-      } // (lib.optionalAttrs (!res) {
+        {
+          ok = res;
+        } // (lib.optionalAttrs (!res) {
         err = typeError name v;
       });
   };
@@ -116,13 +119,13 @@ with builtins; let
             isT = t.checkToBool res;
           in
           debugTrace "Checking element result: ${builtins.toJSON res}"
-          {
-            ok = acc.ok && isT;
-            err =
-              if isT
-              then acc.err
-              else acc.err + "${prettyPrint e}: ${t.toError e res}\n";
-          })
+            {
+              ok = acc.ok && isT;
+              err =
+                if isT
+                then acc.err
+                else acc.err + "${prettyPrint e}: ${t.toError e res}\n";
+            })
         { ok = true; err = "expected type ${name}, but found:\n"; }
         l;
     in
@@ -175,12 +178,13 @@ lib.fix (self: {
 
     checkType = v:
       let
-        result = if isList v
-        then checkEach name (self.type t) v
-        else {
-          ok = false;
-          err = typeError name v;
-        };
+        result =
+          if isList v
+          then checkEach name (self.type t) v
+          else {
+            ok = false;
+            err = typeError name v;
+          };
       in
       debugTrace "List check result: ${builtins.toJSON result}" result;
   };
@@ -190,12 +194,13 @@ lib.fix (self: {
 
     checkType = v:
       let
-        result = if isAttrs v
-        then checkEach name (self.type t) (attrValues v)
-        else {
-          ok = false;
-          err = typeError name v;
-        };
+        result =
+          if isAttrs v
+          then checkEach name (self.type t) (attrValues v)
+          else {
+            ok = false;
+            err = typeError name v;
+          };
       in
       debugTrace "Attrs check result: ${builtins.toJSON result}" result;
   };
@@ -234,14 +239,15 @@ lib.fix (self: {
       # any fields that are not part of the definition.
       checkExtraneous = def: has: acc:
         let
-          result = if (length has) == 0 then acc
-          else if (hasAttr (head has) def)
-          then checkExtraneous def (tail has) acc
-          else
-            checkExtraneous def (tail has) {
-              ok = false;
-              err = acc.err + "unexpected struct field '${head has}'\n";
-            };
+          result =
+            if (length has) == 0 then acc
+            else if (hasAttr (head has) def)
+            then checkExtraneous def (tail has) acc
+            else
+              checkExtraneous def (tail has) {
+                ok = false;
+                err = acc.err + "unexpected struct field '${head has}'\n";
+              };
         in
         debugTrace "Extraneous check result: ${builtins.toJSON result}" result;
 
@@ -272,9 +278,10 @@ lib.fix (self: {
         inherit name def;
         checkType = value:
           let
-            result = if isAttrs value
-            then (checkStruct (self.attrs self.type def) value)
-            else { ok = false; err = typeError name value; };
+            result =
+              if isAttrs value
+              then (checkStruct (self.attrs self.type def) value)
+              else { ok = false; err = typeError name value; };
           in
           debugTrace "Struct type check result: ${builtins.toJSON result}" result;
 

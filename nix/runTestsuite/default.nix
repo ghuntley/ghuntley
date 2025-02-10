@@ -52,7 +52,7 @@ let
       debug1 = builtins.trace "Evaluating expression for throws: ${builtins.toJSON expr}" null;
       debug2 = builtins.trace "Result: ${builtins.toJSON result}" null;
     in
-    !result.success;
+      !result.success;
 
   # rewrite the builtins.partition result
   # to use `ok` and `err` instead of `right` and `wrong`.
@@ -62,7 +62,8 @@ let
       debug2 = builtins.trace "Input: ${builtins.toJSON xs}" null;
       res = builtins.partition pred xs;
       debug3 = builtins.trace "Partition result: ${builtins.toJSON res}" null;
-    in {
+    in
+    {
       ok = res.right;
       err = res.wrong;
     };
@@ -185,7 +186,7 @@ let
               debug4 = builtins.trace "Test group: ${it.it-desc}" null;
               debug5 = builtins.trace "Passed assertions: ${toString (builtins.length asserts.ok)}" null;
               debug6 = builtins.trace "Failed assertions: ${toString (builtins.length asserts.err)}" null;
-              debug7 = if asserts.err != [] then builtins.trace "Failed assertions: ${builtins.toJSON asserts.err}" null else null;
+              debug7 = if asserts.err != [ ] then builtins.trace "Failed assertions: ${builtins.toJSON asserts.err}" null else null;
             in
             asserts.err == [ ]
           )
