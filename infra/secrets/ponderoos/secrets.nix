@@ -33,6 +33,9 @@ let
 
 in
 {
+  "geoipupdate-account-id.age".publicKeys = prdDefault.publicKeys;
+  "geoipupdate-license-key.age".publicKeys = prdDefault.publicKeys;
+
   "archivebox-admin-password.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
   "vaultwarden-credentials.age".publicKeys = prdDefault.publicKeys;
 

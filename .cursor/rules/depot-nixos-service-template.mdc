@@ -11,209 +11,245 @@ name: nixos_service_template
 description: Standards for creating new NixOS services
 filters:
   - type: file_path
+    pattern: "infra/nixos-modules/.*\\.nix$"
+  - type: file_path
     pattern: "services/.*/machine/.*\\.nix$"
   - type: file_path
     pattern: "services/.*/machine/README\\.md$"
 actions:
+  - type: reject
+    conditions:
+      - pattern: "^[^#]"
+        message: "License header missing at file start"
+      - pattern: "mkOption(?!.*type)"
+        message: "mkOption must specify a type"
+      - pattern: "serviceConfig(?!.*Restart)"
+        message: "serviceConfig should specify Restart behavior"
+      - pattern: "wantedBy(?!.*multi-user\\.target)"
+        message: "Service should be wanted by multi-user.target by default"
+
   - type: suggest
     message: |
-      Follow this standard structure for new NixOS services:
+      Follow these conventions when creating a new NixOS service:
 
-      1. Create these files under services/YOUR_SERVICE/machine/:
-         - default.nix (main entry point)
+      1. File Structure:
+         Create these files under infra/nixos-modules/ or services/YOUR_SERVICE/machine/:
+         - service-name.nix (main module)
          - vm.nix (VM/ISO configuration)
          - test.nix (test suite)
          - README.md (documentation)
 
-      2. Use these file templates:
+      2. Module Structure:
+         ```nix
+         # Copyright (c) YEAR Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+         # SPDX-License-Identifier: Proprietary
 
-      default.nix:
-      ```nix
-      # Copyright (c) YEAR Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
-      # SPDX-License-Identifier: Proprietary
+         # NixOS module for SERVICE_DESCRIPTION
+         { depot, pkgs, config, lib, ... }:
 
-      { depot, pkgs, ... }:
+         let
+           inherit (builtins) attrValues mapAttrs;
+           inherit (lib)
+             concatStringsSep
+             mkEnableOption
+             mkIf
+             mkOption
+             types;
 
-      with depot.nix.harmonia;
+           cfg = config.services.depot.SERVICE_NAME;
+           description = "SERVICE_DESCRIPTION";
 
-      let
-        machine = import ./vm.nix { inherit depot pkgs; };
+           # Helper functions for argument preparation
+           prepareArgs = args:
+             concatStringsSep " "
+               (attrValues (mapAttrs (key: value: "-${key} \"${toString value}\"")
+                 args));
+         in
+         {
+           options.services.depot.SERVICE_NAME = {
+             enable = mkEnableOption description;
 
-        # Extract just the hash part from the store path
-        isoHash = builtins.substring 11 32 (toString machine.iso);
-        isoName = builtins.baseNameOf (toString machine.iso);
-      in
-      {
-        # Default package should be the VM
-        default = machine.vm;
+             # Required configuration options
+             args = mkOption {
+               type = types.attrsOf types.str;
+               description = "Key value pairs for command line arguments";
+             };
 
-        # Individual components
-        vm = machine.vm;
-        iso = machine.iso;
-        url = getIsoUrl machine.iso;
+             # Optional configuration with defaults
+             secretsFile = mkOption {
+               type = types.str;
+               default = config.age.secretsDir + "/SERVICE_NAME";
+               description = "Path to secrets file";
+             };
+         };
 
-        tests = import ./test.nix { inherit depot pkgs; };
+           config = mkIf cfg.enable {
+             systemd.services.SERVICE_NAME = {
+               inherit description;
 
-        meta.ci.targets = [
-          "vm"
-          "iso"
-          "url"
-        ];
-      }
-      ```
+               # Service configuration
+               script = "${pkgs.SERVICE_NAME}/bin/SERVICE_NAME ${prepareArgs cfg.args}";
+               wantedBy = [ "multi-user.target" ];
 
-      vm.nix:
-      ```nix
-      # Copyright (c) YEAR Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
-      # SPDX-License-Identifier: Proprietary
+               serviceConfig = {
+                 # Standard service configuration
+                 Restart = "always";
+                 StateDirectory = "SERVICE_NAME";
+                 DynamicUser = true;
 
-      { depot, pkgs, ... }:
+                 # Security settings
+                 LoadCredential = "secrets:${cfg.secretsFile}";
 
-      let
-        nixosSystem = (import (pkgs.path + "/nixos/lib/eval-config.nix") {
-          system = builtins.currentSystem;
-          pkgs = pkgs;
-          modules = [
-            ({ modulesPath, pkgs, ... }: {
-              imports = [
-                (modulesPath + "/virtualisation/qemu-vm.nix")
-                (modulesPath + "/installer/cd-dvd/iso-image.nix")
-              ];
+                 # Hardening options
+                 CapabilityBoundingSet = "";
+                 LockPersonality = true;
+                 NoNewPrivileges = true;
+                 PrivateDevices = true;
+                 PrivateTmp = true;
+                 ProtectClock = true;
+                 ProtectControlGroups = true;
+                 ProtectHome = true;
+                 ProtectHostname = true;
+                 ProtectKernelLogs = true;
+                 ProtectKernelModules = true;
+                 ProtectKernelTunables = true;
+                 ProtectSystem = "strict";
+                 RestrictAddressFamilies = [ "AF_INET" "AF_INET6" ];
+                 RestrictNamespaces = true;
+                 RestrictRealtime = true;
+                 RestrictSUIDSGID = true;
+                 SystemCallArchitectures = "native";
+                 SystemCallFilter = [ "@system-service" ];
+                 UMask = "0077";
+               };
+             };
+           };
+         }
+         ```
 
-              system.stateVersion = "24.11";
+      3. Service Configuration Best Practices:
+         - Use mkEnableOption for the enable flag
+         - Define clear types for all options
+         - Use descriptive option names
+         - Provide meaningful defaults where appropriate
+         - Document all options
+         - Use systemd hardening options
+         - Handle secrets securely
+         - Implement proper argument handling
 
-              # Set empty root password for development
-              users.users.root.initialPassword = "";
+      4. Testing:
+         ```nix
+         # test.nix
+         let
+           nixpkgs = import <nixpkgs> {
+             config.allowUnfree = true;
+           };
+         in
+         import (nixpkgs.path + "/nixos/tests/make-test-python.nix") (
+           { pkgs, ... }: {
+             name = "SERVICE_NAME";
 
-              virtualisation = {
-                memorySize = 2048;
-                cores = 2;
-                graphics = false;
-              };
+             nodes.machine = { config, pkgs, ... }: {
+               imports = [ ./service-name.nix ];
 
-              # Add your service configuration here
-              services.YOUR_SERVICE = {
-                enable = true;
-                # Add service-specific configuration
-              };
+               services.depot.SERVICE_NAME = {
+                 enable = true;
+                 args = {
+                   # Test configuration
+                 };
+               };
+             };
 
-              # Configure networking if needed
-              networking.firewall.allowedTCPPorts = [ ];
+             testScript = ''
+               start_all()
 
-              isoImage.makeEfiBootable = true;
-              isoImage.makeUsbBootable = true;
-            })
-          ];
-        }).config;
-      in
-      {
-        vm = nixosSystem.system.build.vm;
-        iso = nixosSystem.system.build.isoImage;
-      }
-      ```
+               # Wait for service to start
+               machine.wait_for_unit("SERVICE_NAME.service")
 
-      test.nix:
-      ```nix
-      # Copyright (c) YEAR Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
-      # SPDX-License-Identifier: Proprietary
+               # Basic service tests
+               machine.succeed("systemctl is-active SERVICE_NAME.service")
 
-      let
-        nixpkgs = import <nixpkgs> {
-          config = {
-            allowUnfree = true;
-          };
-        };
-      in
-      import (nixpkgs.path + "/nixos/tests/make-test-python.nix") (
-        { pkgs, ... }: {
-          name = "YOUR_SERVICE";
+               # Custom test cases
+               ...
+             '';
+           }
+         )
+         ```
 
-          nodes.machine = { config, pkgs, ... }: {
-            nixpkgs.config.allowUnfree = true;
-            virtualisation.memorySize = 2048;
-            virtualisation.cores = 2;
+      5. Documentation:
+         ```markdown
+         # SERVICE_NAME
 
-            # Add your service configuration here
-            services.YOUR_SERVICE = {
-              enable = true;
-              # Add service-specific configuration
-            };
-          };
+         NixOS module for SERVICE_DESCRIPTION.
 
-          testScript = ''
-            start_all()
+         ## Usage
 
-            # Wait for service to start
-            machine.wait_for_unit("YOUR_SERVICE.service")
+         Enable the service in your NixOS configuration:
 
-            # Add your test cases here
-            machine.succeed("systemctl is-active YOUR_SERVICE.service")
-          '';
-        }
-      )
-      ```
+         ```nix
+         services.depot.SERVICE_NAME = {
+           enable = true;
+           args = {
+             # Required configuration
+           };
+         };
+         ```
 
-      README.md:
-      ```markdown
-      <!--
-       Copyright (c) YEAR Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
-       SPDX-License-Identifier: Proprietary
-      -->
+         ## Options
 
-      # YOUR_SERVICE Machine
+         | Option | Type | Default | Description |
+         |--------|------|---------|-------------|
+         | enable | boolean | false | Enable the service |
+         | args | attrs | - | Service arguments |
+         | secretsFile | string | "/run/agenix/SERVICE_NAME" | Path to secrets |
 
-      A NixOS VM configuration for running YOUR_SERVICE.
+         ## Security
 
-      ## Usage
-
-      Build and run the VM:
-      ```bash
-      depot build //services/YOUR_PATH/machine
-      depot run //services/YOUR_PATH/machine
-      ```
-
-      Build specific components:
-      ```bash
-      # Build the ISO
-      depot build //services/YOUR_PATH/machine:iso
-
-      # Run the tests
-      depot test //services/YOUR_PATH/machine:tests
-      ```
-
-      ## Getting the ISO URL
-
-      To get the URL where the ISO is stored:
-      ```bash
-      # This will output the URL where the ISO can be downloaded
-      depot eval //services/YOUR_PATH/machine:url
-      ```
-
-      The URL is generated using Harmonia's storage system and can be used to download the ISO from any machine with appropriate access.
-      ```
+         This service:
+         - Runs as a dynamic user
+         - Uses systemd credentials for secrets
+         - Implements standard systemd hardening options
+         ```
 
 examples:
   - input: |
-      services/myapp/machine/
-      ├── default.nix
-      ├── vm.nix
-      ├── test.nix
-      └── README.md
-    output: "Correctly structured NixOS service"
+      # Bad: Missing license header and description
+      { pkgs, ... }:
+      {
+        options.services.myservice.enable = true;
+      }
+
+      # Good: Complete module with proper structure
+      # Copyright (c) 2024 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+      # SPDX-License-Identifier: Proprietary
+
+      # NixOS module for My Service Description
+      { depot, pkgs, config, lib, ... }:
+
+      let
+        cfg = config.services.depot.myservice;
+        description = "My Service Description";
+      in
+      {
+        options.services.depot.myservice = {
+          enable = mkEnableOption description;
+        };
+
+        config = mkIf cfg.enable {
+          systemd.services.myservice = {
+            inherit description;
+            wantedBy = [ "multi-user.target" ];
+            serviceConfig.Restart = "always";
+          };
+        };
+      }
 
 metadata:
   priority: high
-  version: 1.0
+  version: 2.0
 </rule>
-```
 
-This rule provides a template for creating new NixOS services with:
-
-1. A consistent file structure
-2. Standard boilerplate for VM/ISO creation
-3. Basic test framework setup
-4. Documentation template
-5. Proper license headers
-6. Integration with depot build system
-
-The templates are generalized versions of the Vault service files, with placeholders like YOUR_SERVICE and YOUR_PATH that developers can replace with their specific service details.
+<!--
+ Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+ SPDX-License-Identifier: Proprietary
+-->

@@ -85,6 +85,9 @@ in
     pkgs.ghostty # Modern terminal emulator with GPU acceleration and ligatures
     pkgs.kitty # Fast, feature-rich terminal emulator with GPU acceleration
 
+    # Browsers
+    pkgs.google-chrome # Google Chrome web browser
+
     # Gaming
     pkgs.lutris # Game manager for Linux - handles various gaming platforms
     pkgs.protonup-qt # GUI tool for managing Proton-GE versions in Steam
