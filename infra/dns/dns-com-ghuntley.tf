@@ -228,3 +228,11 @@ resource "cloudflare_record" "com_ghuntley_newsletter_email" {
   type    = "CNAME"
   value   = "mailgun.org"
 }
+
+resource "cloudflare_record" "com_ghuntley_stats" {
+  zone_id = var.com_ghuntley_cloudflare_zone_id
+  name    = "stats"
+  type    = "A"
+  value   = var.com_ghuntley_ipv4
+  proxied = true
+}
