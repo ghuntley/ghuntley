@@ -73,7 +73,7 @@ resource "cloudflare_record" "com_ghuntley_txt_dmarc" {
   zone_id = var.com_ghuntley_cloudflare_zone_id
   name    = "_dmarc"
   type    = "TXT"
-  value   = "v=DMARC1; p=none; rua=mailto:ghuntley+dmarc@ghuntley.com"
+  value   = "v=DMARC1; p=none; rua=mailto:6e5d61cb962c43ec955ec71eefd4b6d3@dmarc-reports.cloudflare.net"
 }
 
 resource "cloudflare_record" "com_ghuntley_txt_spf" {
@@ -233,6 +233,6 @@ resource "cloudflare_record" "com_ghuntley_stats" {
   zone_id = var.com_ghuntley_cloudflare_zone_id
   name    = "stats"
   type    = "A"
-  value   = var.com_ghuntley_ipv4
-  proxied = true
+  value   = var.com_ponderoos_ipv4
+  proxied = false
 }
