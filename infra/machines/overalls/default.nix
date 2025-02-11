@@ -40,6 +40,10 @@ in
     (mod "healthchecks.nix")
     (mod "archivebox.nix")
     (mod "open-webui.nix")
+
+    (mod "geoipupdate.nix")
+    (mod "goatcounter.nix")
+
   ];
 
   boot.tmp.cleanOnBoot = true;
@@ -85,7 +89,7 @@ in
     enable = true;
     interval = "1 hour";
     diskThreshold = 64; # GiB
-    maxFreed = 64; # GiB
+    maxFreed = 8; # GiB
     preserveGenerations = "90d";
   };
 
@@ -189,7 +193,7 @@ in
   };
 
   services.depot.open-webui = {
-    enable = true;
+    enable = false;
     domain = "chat.ponderoos.com";
     port = 8005;
     stateDir = "/var/lib/open-webui";
@@ -207,6 +211,13 @@ in
         mode = "0440";
         group = "archivebox";
         symlink = false;
+      };
+
+      geoipupdate-license-key = {
+        file = secretFile "geoipupdate-license-key";
+        symlink = false;
+        mode = "0440";
+        group = "geoip";
       };
 
       backup-cli-credentials.file = secretFile "backup-cli-credentials";
@@ -303,6 +314,18 @@ in
     port = 8001;
   };
 
+  services.depot.geoipupdate = {
+    enable = true;
+    accountId = 1125904;
+    licenseKey = config.age.secrets.geoipupdate-license-key.path;
+  };
+
+  services.depot.goatcounter = {
+    enable = true;
+    domain = "stats.ghuntley.com";
+    port = 8010;
+    stateDir = "/var/lib/goatcounter/com-ghuntley";
+  };
 
   boot.kernelModules = [ "kvm-intel" ]; # Use kvm-amd for AMD CPUs
   virtualisation.libvirtd.enable = true;
