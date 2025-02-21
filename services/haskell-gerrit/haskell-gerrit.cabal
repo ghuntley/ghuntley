@@ -1,0 +1,80 @@
+cabal-version:      3.0
+name:               haskell-gerrit
+version:            0.1.0.0
+synopsis:           A Haskell implementation of Gerrit code review system
+description:        A modern implementation of a code review system similar to Gerrit, written in Haskell
+license:            MIT
+license-file:       LICENSE
+author:            Depot Authors
+maintainer:        support@depot.dev
+category:          Development
+build-type:        Simple
+
+common common-options
+    default-language: GHC2021
+    ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates
+                -Wincomplete-uni-patterns -Wmissing-export-lists
+                -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+    default-extensions:
+        OverloadedStrings
+        DeriveGeneric
+        DataKinds
+        TypeOperators
+        FlexibleContexts
+        GADTs
+        TypeFamilies
+        MultiParamTypeClasses
+        GeneralizedNewtypeDeriving
+
+library
+    import: common-options
+    exposed-modules:
+        Gerrit.Api
+        Gerrit.Core
+        Gerrit.Database
+        Gerrit.Git
+        Gerrit.Models
+        Gerrit.Web
+    hs-source-dirs: src
+    build-depends:
+        base >= 4.14 && < 5,
+        aeson,
+        servant,
+        servant-server,
+        wai,
+        warp,
+        persistent,
+        persistent-postgresql,
+        persistent-template,
+        git-simple,
+        text,
+        time,
+        jwt,
+        bcrypt,
+        bytestring,
+        containers,
+        mtl,
+        transformers,
+        uuid,
+        yesod-core,
+        http-types,
+        monad-logger
+
+executable haskell-gerrit
+    import: common-options
+    main-is: Main.hs
+    hs-source-dirs: app
+    build-depends:
+        base >= 4.14 && < 5,
+        haskell-gerrit
+
+test-suite haskell-gerrit-test
+    import: common-options
+    type: exitcode-stdio-1.0
+    main-is: Spec.hs
+    hs-source-dirs: test
+    build-depends:
+        base >= 4.14 && < 5,
+        haskell-gerrit,
+        hspec,
+        QuickCheck
