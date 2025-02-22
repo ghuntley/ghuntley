@@ -44,6 +44,8 @@ in
     (mod "geoipupdate.nix")
     (mod "goatcounter.nix")
 
+    (mod "thelounge.nix")
+
   ];
 
   boot.tmp.cleanOnBoot = true;
@@ -325,6 +327,12 @@ in
     domain = "stats.ghuntley.com";
     port = 8010;
     stateDir = "/var/lib/goatcounter/com-ghuntley";
+  };
+
+  services.depot.thelounge = {
+    enable = true;
+    domain = "irc.ponderoos.com";
+    port = 3000;
   };
 
   boot.kernelModules = [ "kvm-intel" ]; # Use kvm-amd for AMD CPUs

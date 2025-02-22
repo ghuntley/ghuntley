@@ -267,3 +267,12 @@ resource "cloudflare_record" "com_ponderoos_stats" {
   value   = var.com_ponderoos_ipv4
   proxied = false
 }
+
+# IRC web client
+resource "cloudflare_record" "com_ponderoos_irc" {
+  zone_id = var.com_ponderoos_cloudflare_zone_id
+  name    = "irc"
+  type    = "A"
+  value   = var.com_ponderoos_ipv4
+  proxied = false
+}
