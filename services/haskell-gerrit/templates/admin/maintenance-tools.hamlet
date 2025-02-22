@@ -1,0 +1,121 @@
+<div .maintenance-tools-widget>
+    <div .tools-grid>
+        <div .tool-section>
+            <h3>Database Maintenance
+            <div .tool-actions>
+                <button .btn .btn-primary onclick="runDatabaseMaintenance()">
+                    <i .fas .fa-database>
+                    Run Database Maintenance
+                <button .btn .btn-warning onclick="rebuildIndexes()">
+                    <i .fas .fa-sync>
+                    Rebuild Indexes
+                <button .btn .btn-info onclick="analyzeTables()">
+                    <i .fas .fa-chart-bar>
+                    Analyze Tables
+
+        <div .tool-section>
+            <h3>Cache Maintenance
+            <div .tool-actions>
+                <button .btn .btn-primary onclick="clearAllCaches()">
+                    <i .fas .fa-eraser>
+                    Clear All Caches
+                <button .btn .btn-warning onclick="warmupCaches()">
+                    <i .fas .fa-fire>
+                    Warmup Caches
+                <button .btn .btn-info onclick="analyzeCacheUsage()">
+                    <i .fas .fa-chart-line>
+                    Analyze Cache Usage
+
+        <div .tool-section>
+            <h3>Storage Cleanup
+            <div .tool-actions>
+                <button .btn .btn-primary onclick="cleanupStorage()">
+                    <i .fas .fa-trash>
+                    Clean Storage
+                <button .btn .btn-warning onclick="compressData()">
+                    <i .fas .fa-compress>
+                    Compress Data
+                <button .btn .btn-info onclick="analyzeStorage()">
+                    <i .fas .fa-search>
+                    Analyze Storage
+
+        <div .tool-section>
+            <h3>Log Management
+            <div .tool-actions>
+                <button .btn .btn-primary onclick="rotateLogs()">
+                    <i .fas .fa-sync>
+                    Rotate Logs
+                <button .btn .btn-warning onclick="archiveLogs()">
+                    <i .fas .fa-archive>
+                    Archive Logs
+                <button .btn .btn-info onclick="analyzeLogs()">
+                    <i .fas .fa-chart-bar>
+                    Analyze Logs
+
+        <div .tool-section>
+            <h3>Search Index
+            <div .tool-actions>
+                <button .btn .btn-primary onclick="rebuildSearchIndex()">
+                    <i .fas .fa-search>
+                    Rebuild Search Index
+                <button .btn .btn-warning onclick="optimizeIndex()">
+                    <i .fas .fa-bolt>
+                    Optimize Index
+                <button .btn .btn-info onclick="analyzeIndexHealth()">
+                    <i .fas .fa-heartbeat>
+                    Analyze Index Health
+
+        <div .tool-section>
+            <h3>Data Migration
+            <div .tool-actions>
+                <button .btn .btn-primary onclick="migrateData()">
+                    <i .fas .fa-exchange-alt>
+                    Migrate Data
+                <button .btn .btn-warning onclick="validateMigration()">
+                    <i .fas .fa-check>
+                    Validate Migration
+                <button .btn .btn-info onclick="analyzeMigration()">
+                    <i .fas .fa-chart-pie>
+                    Analyze Migration
+
+    <div .diagnostics-section>
+        <h3>System Diagnostics
+        <div .diagnostics-grid>
+            <div .diagnostic-item>
+                <h4>System Health
+                <div .health-status>#{systemHealth}
+                <button .btn .btn-primary onclick="runHealthCheck()">
+                    Run Health Check
+
+            <div .diagnostic-item>
+                <h4>Performance Metrics
+                <div .metrics-display>#{performanceMetrics}
+                <button .btn .btn-primary onclick="gatherMetrics()">
+                    Gather Metrics
+
+            <div .diagnostic-item>
+                <h4>Error Logs
+                <div .log-preview>#{errorLogs}
+                <button .btn .btn-primary onclick="viewFullLogs()">
+                    View Full Logs
+
+    <div .maintenance-history>
+        <h3>Maintenance History
+        <table .table>
+            <thead>
+                <tr>
+                    <th>Task
+                    <th>Status
+                    <th>Started
+                    <th>Completed
+                    <th>Duration
+            <tbody>
+                $forall task <- maintenanceTasks
+                    <tr>
+                        <td>#{taskName task}
+                        <td>
+                            <span .badge .#{taskStatusClass task}>
+                                #{taskStatus task}
+                        <td>#{formatTime $ taskStarted task}
+                        <td>#{maybe "In Progress" formatTime $ taskCompleted task}
+                        <td>#{formatDuration $ taskDuration task}

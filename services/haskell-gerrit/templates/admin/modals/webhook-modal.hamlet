@@ -1,0 +1,34 @@
+<div .modal .fade #webhookEditorModal tabindex="-1" aria-hidden="true">
+    <div .modal-dialog .modal-lg>
+        <div .modal-content>
+            <div .modal-header>
+                <h5 .modal-title>Edit Webhook
+                <button type="button" .btn-close data-bs-dismiss="modal" aria-label="Close">
+
+            <div .modal-body>
+                <form #webhookForm>
+                    <div .form-group>
+                        <label for="webhookUrl">Webhook URL:
+                        <input type="url" #webhookUrl .form-control required>
+
+                    <div .form-group .mt-3>
+                        <label for="webhookEvents">Events (one per line):
+                        <textarea #webhookEvents .form-control rows="5" required>
+
+                    <div .form-group .mt-3>
+                        <label for="webhookHeaders">Headers (JSON):
+                        <textarea #webhookHeaders .form-control rows="5">
+                            {"Content-Type": "application/json"}
+
+                    <div .alert .alert-info .mt-3>
+                        <i .fas .fa-info-circle>
+                        <ul>
+                            <li>Enter one event type per line (e.g., change.created, review.submitted)
+                            <li>Headers should be in valid JSON format
+                            <li>The webhook will receive POST requests with event data
+
+            <div .modal-footer>
+                <button type="button" .btn .btn-secondary data-bs-dismiss="modal">Cancel
+                <button type="submit" .btn .btn-primary>
+                    <i .fas .fa-save>
+                    Save Changes

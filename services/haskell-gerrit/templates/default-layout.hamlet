@@ -1,0 +1,44 @@
+$doctype 5
+<html>
+  <head>
+    <title>#{pageTitle pc}
+    ^{pageHead pc}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="@{StaticR css_main_css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="@{HomeR}">Gerrit Code Review
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+          <span class="navbar-toggler-icon">
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="@{ProjectsR}">Projects
+            <li class="nav-item">
+              <a class="nav-link" href="@{ChangesR}">Changes
+          <ul class="navbar-nav">
+            $maybe Entity userId user <- maybeAuth
+              <li class="nav-item">
+                <a class="nav-link" href="@{ProfileR}">#{userName user}
+              <li class="nav-item">
+                <form method="post" action="@{AuthR LogoutR}">
+                  <button class="btn btn-link nav-link" type="submit">Logout
+            $nothing
+              <li class="nav-item">
+                <a class="nav-link" href="@{AuthR LoginR}">Login
+
+    <div class="container mt-4">
+      $maybe msg <- getMessage
+        <div class="alert alert-info">#{msg}
+      ^{widget}
+
+    <footer class="footer mt-5">
+      <div class="container text-center">
+        <p class="text-muted">
+          Powered by Haskell Gerrit
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js">
+    <script src="@{StaticR js_main_js}">

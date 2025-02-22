@@ -1,0 +1,78 @@
+<div class="container">
+  <div class="row mb-4">
+    <div class="col">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="@{ProjectsR}">Projects</a>
+          <li class="breadcrumb-item"><a href="@{ProjectR projectName}">#{projectName}</a>
+          <li class="breadcrumb-item active">Browse
+
+  <div class="row">
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Repository
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" href="@{ProjectBrowseR projectName "refs/heads/master"}">
+              <div>
+                <i class="fas fa-code-branch mr-2"></i>master
+              <span class="badge badge-secondary">#{masterCommitHash}
+            $forall branch <- branches
+              <a class="list-group-item list-group-item-action" href="@{ProjectBrowseR projectName branch}">
+                <i class="fas fa-code-branch mr-2"></i>#{branch}
+
+    <div class="col-md-9">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <h5 class="mb-0">#{currentPath}</h5>
+            <span class="badge badge-info ml-2">#{currentRef}</span>
+          <div class="btn-group">
+            <button class="btn btn-sm btn-outline-secondary" onclick="history.back()">
+              <i class="fas fa-arrow-left"></i>
+            <a href="@{ProjectBrowseR projectName currentRef}" class="btn btn-sm btn-outline-secondary">
+              <i class="fas fa-home"></i>
+
+        <div class="card-body p-0">
+          $if null entries
+            <div class="text-center text-muted my-5">
+              <p>This directory is empty
+          $else
+            <div class="list-group list-group-flush">
+              $forall entry <- entries
+                $case entryType entry
+                  $of Directory
+                    <a href="@{ProjectBrowseR projectName currentRef}/#{entryPath entry}" class="list-group-item list-group-item-action">
+                      <i class="fas fa-folder text-warning mr-2"></i>#{entryName entry}
+                  $of File
+                    <a href="@{ProjectFileR projectName currentRef $ entryPath entry}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                      <div>
+                        <i class="fas fa-file text-secondary mr-2"></i>#{entryName entry}
+                      <div class="text-muted small">
+                        #{entrySize entry} bytes
+                        <span class="ml-2">#{entryLastModified entry}
+                  $of Symlink
+                    <a href="@{ProjectFileR projectName currentRef $ entryPath entry}" class="list-group-item list-group-item-action">
+                      <i class="fas fa-link text-info mr-2"></i>#{entryName entry} → #{entryTarget entry}
+
+<!-- File Content Modal -->
+<div class="modal fade" id="fileModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">#{fileName}
+        <div class="btn-group ml-2">
+          <a href="@{ProjectFileHistoryR projectName currentRef fileName}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-history"></i> History
+          <a href="@{ProjectFileRawR projectName currentRef fileName}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-download"></i> Raw
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;
+      <div class="modal-body">
+        <pre class="highlight"><code>#{fileContent}
+</pre>
+      </div>
+    </div>
+  </div>
+</div>

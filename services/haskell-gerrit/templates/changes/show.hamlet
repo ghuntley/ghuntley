@@ -1,0 +1,130 @@
+<div class="row">
+  <div class="col-md-8">
+    <h2>#{changeSubject change}
+    <p class="text-muted">
+      #{projectName $ changeProjectId change} - #{changeBranch change}
+
+    <div class="card mt-4">
+      <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#description" role="tab">Description
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#files" role="tab">Files
+          <li class="nav-item">
+            <a class="nav-link" href="@{ChangeDiffR $ keyToText changeId}">Diff
+
+      <div class="card-body">
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="description" role="tabpanel">
+            <pre class="border rounded p-3 bg-light">#{changeMessage change}
+
+          <div class="tab-pane fade" id="files" role="tabpanel">
+            $maybe Entity _ revision <- currentRevision
+              <ul class="list-group list-group-flush">
+                $forall file <- revisionFiles revision
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>#{file}
+                    <div>
+                      <a href="@{ChangeDiffR $ keyToText changeId}##{file}" class="btn btn-sm btn-outline-primary">View Diff
+                      <button class="btn btn-sm btn-outline-secondary ml-2" data-toggle="modal" data-target="#commentModal" data-file="#{file}">Comment
+
+    <div class="card mt-4">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Comments
+      <div class="card-body">
+        $if null comments
+          <p class="text-muted">No comments yet
+        $else
+          $forall Entity commentId comment <- comments
+            <div class="media mb-3">
+              <div class="media-body">
+                <h6 class="mt-0">
+                  #{userName $ commentAuthorId comment}
+                  <small class="text-muted ml-2">#{formatTime comment}
+                $maybe file <- commentFilePath comment
+                  <div class="text-muted small">
+                    #{file}
+                    $maybe line <- commentLineNumber comment
+                      :#{line}
+                <pre class="border rounded p-2 bg-light mt-2">#{commentMessage comment}
+
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Change Details
+      <div class="card-body">
+        <dl class="row">
+          <dt class="col-sm-4">Status
+          <dd class="col-sm-8">
+            <span class="badge badge-#{statusClass $ changeStatus change}">
+              #{show $ changeStatus change}
+
+          <dt class="col-sm-4">Author
+          <dd class="col-sm-8">#{userName $ changeAuthorId change}
+
+          <dt class="col-sm-4">Created
+          <dd class="col-sm-8">#{formatTime change}
+
+          <dt class="col-sm-4">Updated
+          <dd class="col-sm-8">#{formatTime change}
+
+    <div class="card mt-4">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Reviews
+      <div class="card-body">
+        $if null reviews
+          <p class="text-muted">No reviews yet
+        $else
+          $forall Entity reviewId review <- reviews
+            <div class="media mb-3">
+              <div class="media-body">
+                <h6 class="mt-0">
+                  #{userName $ reviewReviewerId review}
+                  <small class="text-muted ml-2">#{formatTime review}
+                <span class="badge badge-#{voteClass $ reviewVote review}">
+                  #{showVote $ reviewVote review}
+                $maybe msg <- reviewMessage review
+                  <pre class="border rounded p-2 bg-light mt-2">#{msg}
+
+    $if canReview
+      <div class="card mt-4">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Review Change
+        <div class="card-body">
+          <form method="post" action="@{ChangeR $ keyToText changeId}/review">
+            <div class="form-group">
+              <label for="vote">Vote
+              <select class="form-control" name="vote" id="vote">
+                <option value="MinusTwo">-2 (Do not submit)
+                <option value="MinusOne">-1 (Needs work)
+                <option value="Zero">0 (No score)
+                <option value="PlusOne">+1 (Looks good)
+                <option value="PlusTwo">+2 (Ready to submit)
+            <div class="form-group">
+              <label for="message">Comment
+              <textarea class="form-control" name="message" id="message" rows="3">
+            <button type="submit" class="btn btn-primary">Submit Review
+
+    $if canSubmit && changeStatus change == Approved
+      <form method="post" action="@{ChangeR $ keyToText changeId}/submit" class="mt-4">
+        <button type="submit" class="btn btn-success btn-block">Submit Change
+
+<!-- Comment Modal -->
+<div class="modal fade" id="commentModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Comment
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;
+      <div class="modal-body">
+        <form method="post" action="@{ChangeR $ keyToText changeId}/comment">
+          <input type="hidden" name="file" id="commentFile">
+          <div class="form-group">
+            <label for="line">Line Number (optional)
+            <input type="number" class="form-control" name="line" id="line">
+          <div class="form-group">
+            <label for="comment">Comment
+            <textarea class="form-control" name="comment" id="comment" rows="3" required>
+          <button type="submit" class="btn btn-primary">Add Comment

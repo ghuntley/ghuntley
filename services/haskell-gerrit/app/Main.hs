@@ -4,84 +4,45 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
-module Main where
+module Main (main) where
 
-import Control.Monad.Logger (runStderrLoggingT)
-import Control.Monad.Reader (ReaderT, runReaderT)
-import Database.Persist.Postgresql
-import Network.Wai.Handler.Warp (run)
-import Network.Wai.Middleware.Cors (simpleCors)
-import Servant
-import System.Environment (getEnv)
+import Control.Monad (when)
+import Control.Monad.IO.Class (liftIO)
+import Data.Text (Text)
+import System.Directory (createDirectoryIfMissing)
+import System.FilePath (takeDirectory)
+import qualified Data.Text.IO as Text
 
-import Gerrit.Api.Types
-import Gerrit.Models.Types
-import qualified Gerrit.Api.Handlers as H
-import qualified Gerrit.Database.Connection as DB
+import Gerrit.Api.Api (app)
+import Gerrit.Api.Config (Config(..), LogConfig(..), loadConfig)
+import Gerrit.Database.Connection (initializeDatabase)
 
--- | Application configuration
-data Config = Config
-    { configPool :: ConnectionPool
-    , configPort :: Int
-    , configGitBasePath :: FilePath
-    }
+-- | Initialize application
+initialize :: Config -> IO ()
+initialize config@Config{..} = do
+    -- Ensure log directory exists
+    let logDir = takeDirectory $ logPath configLogging
+    createDirectoryIfMissing True logDir
 
--- | Application monad
-type App = ReaderT Config Handler
+    -- Initialize database
+    initializeDatabase config
 
--- | Server implementation
-server :: ServerT GerritAPI App
-server = projectServer :<|> changeServer :<|> commentServer
-  where
-    projectServer = H.createProject
-                :<|> H.getProject
-                :<|> H.listProjects
+    -- Ensure Git base directory exists
+    createDirectoryIfMissing True configGitBasePath
 
-    changeServer = H.createChange
-                :<|> H.getChange
-                :<|> H.listChanges
-                :<|> H.listRevisions
-                :<|> H.reviewChange
-                :<|> H.submitChange
-
-    commentServer changeId revisionId =
-                H.createComment changeId revisionId
-                :<|> H.listComments changeId revisionId
-
--- | Convert our App monad to Handler
-nt :: Config -> App a -> Handler a
-nt cfg app = runReaderT app cfg
-
--- | Application API
-app :: Config -> Application
-app cfg = serve (Proxy :: Proxy GerritAPI)
-    $ hoistServer (Proxy :: Proxy GerritAPI) (nt cfg) server
+    -- Log startup information
+    when (configEnvironment /= Production) $ do
+        Text.putStrLn "Starting Gerrit Code Review System with configuration:"
+        print config
 
 -- | Main entry point
 main :: IO ()
 main = do
-    -- Get configuration from environment
-    dbHost <- getEnv "GERRIT_DB_HOST"
-    dbName <- getEnv "GERRIT_DB_NAME"
-    dbUser <- getEnv "GERRIT_DB_USER"
-    dbPass <- getEnv "GERRIT_DB_PASS"
-    port <- read <$> getEnv "GERRIT_PORT"
-    gitPath <- getEnv "GERRIT_GIT_PATH"
+    -- Load configuration
+    config <- loadConfig
 
-    -- Create database connection pool
-    let connStr = DB.createConnStr dbHost dbName dbUser dbPass
-    pool <- runStderrLoggingT $ createPostgresqlPool connStr 10
+    -- Initialize application
+    initialize config
 
-    -- Run migrations
-    runStderrLoggingT $ DB.runMigrations pool
-
-    -- Create config
-    let config = Config
-            { configPool = pool
-            , configPort = port
-            , configGitBasePath = gitPath
-            }
-
-    -- Start server
-    putStrLn $ "Starting server on port " ++ show port
-    run port $ simpleCors $ app config
+    -- Start the server
+    app (configPort config)

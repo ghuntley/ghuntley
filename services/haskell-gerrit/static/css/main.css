@@ -1,0 +1,170 @@
+/**
+ * Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+ * SPDX-License-Identifier: Proprietary
+ */
+
+/* General Styles */
+:root {
+    --primary-color: #2196F3;
+    --secondary-color: #607D8B;
+    --success-color: #4CAF50;
+    --danger-color: #F44336;
+    --warning-color: #FFC107;
+    --info-color: #00BCD4;
+    --light-color: #F5F5F5;
+    --dark-color: #212121;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--dark-color);
+    background-color: var(--light-color);
+}
+
+/* Navbar Styles */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+/* Card Styles */
+.card {
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+}
+
+.card:hover {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+/* Timeline Styles */
+.timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline-item {
+    padding: 15px 30px;
+    border-left: 2px solid var(--primary-color);
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -9px;
+    top: 20px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--primary-color);
+}
+
+/* Diff Styles */
+.diff-line {
+    transition: background-color 0.2s ease;
+}
+
+.diff-line:hover {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.diff-line.addition {
+    background-color: #E8F5E9;
+}
+
+.diff-line.deletion {
+    background-color: #FFEBEE;
+}
+
+.line-number {
+    user-select: none;
+    color: #999;
+    padding: 0 8px;
+    border-right: 1px solid #eee;
+    text-align: right;
+    min-width: 40px;
+}
+
+/* Comment Styles */
+.comment-marker {
+    border-left: 3px solid var(--primary-color);
+    margin: 8px 0;
+    padding: 8px 16px;
+    background-color: #E3F2FD;
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 4px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #1976D2;
+    border-color: #1976D2;
+    transform: translateY(-1px);
+}
+
+/* Badge Styles */
+.badge {
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 12px;
+}
+
+/* Form Styles */
+.form-control {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    transition: border-color 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
+}
+
+/* Animation Classes */
+.fade-enter {
+    opacity: 0;
+}
+
+.fade-enter-active {
+    opacity: 1;
+    transition: opacity 200ms ease-in;
+}
+
+.fade-exit {
+    opacity: 1;
+}
+
+.fade-exit-active {
+    opacity: 0;
+    transition: opacity 200ms ease-in;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .timeline-item {
+        padding: 10px 20px;
+    }
+
+    .card {
+        margin-bottom: 15px;
+    }
+}

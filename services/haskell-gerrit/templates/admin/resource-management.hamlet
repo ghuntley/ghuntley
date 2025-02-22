@@ -1,0 +1,65 @@
+<div .resource-management-widget>
+    <div .resource-grid>
+        <div .resource-item>
+            <h3>Storage
+            <div .usage-bar>
+                <div .bar-fill style="width: #{storageUsagePercent}%">
+            <div .details>
+                <span>Used: #{formatBytes storageUsage}
+                <span>Total: #{formatBytes storageTotal}
+
+        <div .resource-item>
+            <h3>Database
+            <div .usage-bar>
+                <div .bar-fill style="width: #{databaseUsagePercent}%">
+            <div .details>
+                <span>Size: #{formatBytes databaseSize}
+                <span>Connections: #{activeConnections}
+
+        <div .resource-item>
+            <h3>Cache
+            <div .usage-bar>
+                <div .bar-fill style="width: #{cacheUsagePercent}%">
+            <div .details>
+                <span>Size: #{formatBytes cacheSize}
+                <span>Hit Rate: #{cacheHitRate}%
+
+    <div .jobs-section>
+        <h3>Background Jobs
+        <div .jobs-grid>
+            <div .job-stat>
+                <span .label>Active Jobs:
+                <span .value>#{activeJobs}
+            <div .job-stat>
+                <span .label>Queued Jobs:
+                <span .value>#{queuedJobs}
+
+        <div .job-list>
+            <table .table>
+                <thead>
+                    <tr>
+                        <th>Job
+                        <th>Status
+                        <th>Progress
+                        <th>Actions
+                <tbody>
+                    $forall job <- activeJobsList
+                        <tr>
+                            <td>#{jobName job}
+                            <td>
+                                <span .badge .#{jobStatusClass job}>
+                                    #{jobStatus job}
+                            <td>
+                                <div .progress>
+                                    <div .progress-bar style="width: #{jobProgress job}%">
+                                        #{jobProgress job}%
+                            <td>
+                                <button .btn .btn-sm .btn-danger onclick="cancelJob('#{jobId job}')">
+                                    Cancel
+
+    <div .actions>
+        <button .btn .btn-primary onclick="clearCache()">
+            Clear Cache
+        <button .btn .btn-warning onclick="runCleanup()">
+            Run Cleanup
+</div .resource-management-widget>

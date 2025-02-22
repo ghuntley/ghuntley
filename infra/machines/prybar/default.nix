@@ -83,7 +83,7 @@ in
   #networking.useDHCP = true;
   networking.networkmanager.enable = true;
 
-  networking.firewall.enable = true;
+  networking.firewall.enable = false;
 
   networking.firewall.interfaces."tailscale".allowedTCPPorts = [ 22 ];
   networking.firewall.interfaces."tailscale".allowedUDPPorts = [ 22 60000 60001 60002 60003 60004 60005 60006 60007 60008 60009 60010 ];

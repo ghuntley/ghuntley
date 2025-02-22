@@ -1,0 +1,101 @@
+<div .configuration-management-widget>
+    <div .config-grid>
+        <div .config-section>
+            <h3>Feature Flags
+            <div .feature-list>
+                $forall flag <- featureFlags
+                    <div .feature-item>
+                        <div .feature-header>
+                            <span .name>#{flagName flag}
+                            <div .form-check .form-switch>
+                                <input .form-check-input .feature-toggle type="checkbox"
+                                    :isEnabled flag:checked
+                                    data-feature="#{flagName flag}"
+                                    id="feature-#{flagName flag}">
+                        <p .description>#{description flag}
+
+        <div .config-section>
+            <h3>Environment Variables
+            <div .env-list>
+                $forall var <- envVars
+                    <div .env-item>
+                        <div .env-header>
+                            <span .name>#{varName var}
+                            <div .input-group>
+                                <input type="text" .form-control .env-input
+                                    value="#{varValue var}"
+                                    data-name="#{varName var}"
+                                    id="env-#{varName var}">
+                                <button .btn .btn-outline-secondary onclick="updateEnvVar('#{varName var}')">
+                                    Update
+
+        <div .config-section>
+            <h3>Service Configuration
+            <div .service-list>
+                $forall service <- services
+                    <div .service-item>
+                        <div .service-header>
+                            <span .name>#{serviceName service}
+                            <span .version>v#{version service}
+                            <button .btn .btn-sm .btn-primary onclick="editService('#{serviceName service}')">
+                                Edit
+                        <div .service-type>Type: #{serviceType service}
+                        <div .service-config>
+                            <pre>#{renderJSON $ config service}
+
+        <div .config-section>
+            <h3>Email Templates
+            <div .template-list>
+                $forall template <- emailTemplates
+                    <div .template-item>
+                        <div .template-header>
+                            <span .name>#{templateName template}
+                            <button .btn .btn-sm .btn-primary onclick="editTemplate('#{templateName template}')">
+                                Edit
+                        <div .template-subject>Subject: #{subject template}
+                        <div .template-variables>
+                            <h4>Variables:
+                            <div .variable-list>
+                                $forall var <- variables template
+                                    <span .badge .bg-secondary>#{var}
+
+        <div .config-section>
+            <h3>Webhook Configuration
+            <div .webhook-list>
+                $forall webhook <- webhooks
+                    <div .webhook-item>
+                        <div .webhook-header>
+                            <span .name>#{webhookUrl webhook}
+                            <div .form-check .form-switch>
+                                <input .form-check-input type="checkbox"
+                                    :isActive webhook:checked
+                                    onchange="toggleWebhook('#{webhookUrl webhook}')">
+                        <div .webhook-events>
+                            <h4>Events:
+                            <div .event-list>
+                                $forall event <- events webhook
+                                    <span .badge .bg-primary>#{event}
+                        <div .webhook-headers>
+                            <h4>Headers:
+                            <div .header-list>
+                                $forall (key, value) <- headers webhook
+                                    <div .header-item>
+                                        <span .key>#{key}:
+                                        <span .value>#{value}
+                        <div .webhook-actions>
+                            <button .btn .btn-sm .btn-primary onclick="editWebhook('#{webhookUrl webhook}')">
+                                Edit
+                            <button .btn .btn-sm .btn-danger onclick="deleteWebhook('#{webhookUrl webhook}')">
+                                Delete
+
+    <div .config-actions>
+        <button .btn .btn-primary onclick="exportConfig()">
+            <i .fas .fa-download>
+            Export Configuration
+        <button .btn .btn-warning onclick="importConfig()">
+            <i .fas .fa-upload>
+            Import Configuration
+        <button .btn .btn-danger onclick="resetConfig()">
+            <i .fas .fa-undo>
+            Reset to Defaults
+</div .configuration-management-widget>

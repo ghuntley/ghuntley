@@ -1,0 +1,27 @@
+diff --git a/main.go b/main.go
+index 123456..789012 100644
+--- a/main.go
++++ b/main.go
+@@ -305,6 +305,8 @@ func licenseHeader(path string, tmpl *template.Template, data licenseData) ([]byte,
+        switch ext {
+        case ".html", ".xml", ".vue", ".wxi", ".wxl", ".wxs":
+                lic, err = executeTemplate(tmpl, data, "<!--", " ", "-->")
++       case ".mdc":
++               lic, err = executeTemplate(tmpl, data, "<!--", " ", "-->")
+        case ".php":
+                lic, err = executeTemplate(tmpl, data, "", "// ", "")
+        case ".j2":
+@@ -312,5 +314,13 @@ func licenseHeader(path string, tmpl *template.Template, data licenseData) ([]byte,
+        default:
+                return nil, fmt.Errorf("unknown file extension: %s", ext)
+        }
++
++       // For .mdc files, append the license at the bottom
++       if ext == ".mdc" {
++               content, err := os.ReadFile(path)
++               if err == nil && len(content) > 0 {
++                       return append(content, append([]byte("\n\n"), lic...)...), nil
++               }
++       }
+        return lic, err
+}

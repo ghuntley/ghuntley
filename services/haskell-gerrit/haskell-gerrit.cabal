@@ -1,12 +1,12 @@
 cabal-version:      3.0
 name:               haskell-gerrit
 version:            0.1.0.0
-synopsis:           A Haskell implementation of Gerrit code review system
-description:        A modern implementation of a code review system similar to Gerrit, written in Haskell
-license:            MIT
+synopsis:           A modern code review system implemented in Haskell
+description:        A modern code review system with support for Git, Mercurial, and jj version control systems.
+license:            Proprietary
 license-file:       LICENSE
-author:            Depot Authors
-maintainer:        support@depot.dev
+author:            Geoffrey Huntley
+maintainer:        ghuntley@ghuntley.com
 category:          Development
 build-type:        Simple
 
@@ -35,38 +35,77 @@ library
         Gerrit.Git
         Gerrit.Models
         Gerrit.Web
+        Gerrit.Web.Docs
+        Gerrit.Analytics
+        Gerrit.Auth
+        Gerrit.Auth.Types
+        Gerrit.Auth.LDAP
+        Gerrit.Auth.OAuth
+        Gerrit.VCS.Types
+        Gerrit.VCS.Git
+        Gerrit.VCS.Mercurial
+        Gerrit.VCS.JJ
+        Gerrit.VCS.MergeQueue
+        Gerrit.VCS.Storage
+        Gerrit.VCS.Notification
+        Gerrit.VCS.Validation
+        Gerrit.VCS.Webhook
     hs-source-dirs: src
     build-depends:
-        base >= 4.14 && < 5,
+        base >= 4.7 && < 5,
         aeson,
-        servant,
-        servant-server,
-        wai,
-        warp,
-        persistent,
-        persistent-postgresql,
-        persistent-template,
-        git-simple,
-        text,
-        time,
-        jwt,
-        bcrypt,
+        async,
+        base16-bytestring,
+        base64-bytestring,
         bytestring,
         containers,
-        mtl,
-        transformers,
-        uuid,
-        yesod-core,
+        cryptohash-sha256,
+        cryptonite,
+        http-client,
+        http-client-tls,
         http-types,
-        monad-logger
+        jwt,
+        ldap-client,
+        lens,
+        postgresql-simple,
+        random,
+        resource-pool,
+        servant,
+        servant-server,
+        servant-swagger,
+        servant-swagger-ui,
+        swagger2,
+        smtp-mail,
+        stm,
+        text,
+        time,
+        transformers,
+        wai,
+        warp,
+        yesod
+    other-modules:
+        Gerrit.Core.Types
+        Gerrit.Core.Utils
+        Gerrit.Models.User
+        Gerrit.Models.Project
+        Gerrit.Models.Change
+        Gerrit.Models.Review
+        Gerrit.Api.Routes
+        Gerrit.Api.Handlers
+        Gerrit.Auth.JWT
+        Gerrit.Database.Schema
+        Gerrit.Web.Templates
+        Gerrit.Analytics.Metrics
 
 executable haskell-gerrit
     import: common-options
     main-is: Main.hs
     hs-source-dirs: app
     build-depends:
-        base >= 4.14 && < 5,
+        base >= 4.7 && < 5,
         haskell-gerrit
+    default-language: Haskell2010
+    ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
 
 test-suite haskell-gerrit-test
     import: common-options
@@ -74,7 +113,14 @@ test-suite haskell-gerrit-test
     main-is: Spec.hs
     hs-source-dirs: test
     build-depends:
-        base >= 4.14 && < 5,
+        base >= 4.7 && < 5,
         haskell-gerrit,
         hspec,
-        QuickCheck
+        QuickCheck,
+        temporary
+    other-modules:
+        Gerrit.VCS.GitSpec
+        Gerrit.VCS.MercurialSpec
+        Gerrit.VCS.JJSpec
+    default-language: Haskell2010
+    ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N

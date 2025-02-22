@@ -1,0 +1,77 @@
+<div class="jumbotron">
+  <h1 class="display-4">Welcome to Gerrit Code Review
+  <p class="lead">A modern code review tool for Git repositories
+  <hr class="my-4">
+  <p>Start reviewing code, managing projects, and collaborating with your team.
+  <p class="lead">
+    <a class="btn btn-primary btn-lg" href="@{ProjectsR}" role="button">Browse Projects
+    <a class="btn btn-secondary btn-lg ml-2" href="@{ChangesR}" role="button">View Changes
+
+$maybe Entity userId user <- maybeAuth
+  <div class="row mt-5">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Your Recent Changes
+        <div class="card-body">
+          $if null userChanges
+            <p class="text-muted">No recent changes
+          $else
+            <ul class="list-group list-group-flush">
+              $forall Entity changeId change <- userChanges
+                <li class="list-group-item">
+                  <h6 class="mb-1">
+                    <a href="@{ChangeR $ keyToText changeId}">#{changeSubject change}
+                  <small class="text-muted">
+                    #{projectName $ changeProjectId change} - #{formatTime change}
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Your Recent Reviews
+        <div class="card-body">
+          $if null userReviews
+            <p class="text-muted">No recent reviews
+          $else
+            <ul class="list-group list-group-flush">
+              $forall Entity reviewId review <- userReviews
+                <li class="list-group-item">
+                  <h6 class="mb-1">
+                    <a href="@{ChangeR $ keyToText $ reviewChangeId review}">
+                      #{changeSubject $ reviewChangeId review}
+                  <small class="text-muted">
+                    Voted #{showVote $ reviewVote review} - #{formatTime review}
+
+$nothing
+  <div class="row mt-5">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Recent Changes
+        <div class="card-body">
+          $if null recentChanges
+            <p class="text-muted">No recent changes
+          $else
+            <ul class="list-group list-group-flush">
+              $forall Entity changeId change <- recentChanges
+                <li class="list-group-item">
+                  <h6 class="mb-1">
+                    <a href="@{ChangeR $ keyToText changeId}">#{changeSubject change}
+                  <small class="text-muted">
+                    #{projectName $ changeProjectId change} - #{formatTime change}
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Active Projects
+        <div class="card-body">
+          $if null activeProjects
+            <p class="text-muted">No active projects
+          $else
+            <ul class="list-group list-group-flush">
+              $forall Entity projectId project <- activeProjects
+                <li class="list-group-item">
+                  <h6 class="mb-1">
+                    <a href="@{ProjectR $ projectName project}">#{projectName project}
+                  <small class="text-muted">
+                    #{maybe "" id $ projectDescription project}

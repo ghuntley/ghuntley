@@ -1,0 +1,112 @@
+<div .security-management-widget>
+    <div .security-grid>
+        <div .security-section>
+            <h3>Security Policies
+            <div .policy-list>
+                <div .policy-item>
+                    <h4>Password Policy
+                    <div .policy-content>#{renderJSON $ passwordPolicy policies}
+                    <button .btn .btn-sm .btn-primary onclick="editPolicy('password')">
+                        Edit
+
+                <div .policy-item>
+                    <h4>Session Policy
+                    <div .policy-content>#{renderJSON $ sessionPolicy policies}
+                    <button .btn .btn-sm .btn-primary onclick="editPolicy('session')">
+                        Edit
+
+                <div .policy-item>
+                    <h4>MFA Policy
+                    <div .policy-content>#{renderJSON $ mfaPolicy policies}
+                    <button .btn .btn-sm .btn-primary onclick="editPolicy('mfa')">
+                        Edit
+
+                <div .policy-item>
+                    <h4>Access Policy
+                    <div .policy-content>#{renderJSON $ accessPolicy policies}
+                    <button .btn .btn-sm .btn-primary onclick="editPolicy('access')">
+                        Edit
+
+        <div .security-section>
+            <h3>API Keys
+            <div .api-keys>
+                <div .actions>
+                    <button .btn .btn-primary onclick="createApiKey()">
+                        Create API Key
+
+                <table .table>
+                    <thead>
+                        <tr>
+                            <th>Name
+                            <th>Created
+                            <th>Last Used
+                            <th>Actions
+                    <tbody>
+                        $forall key <- apiKeys
+                            <tr>
+                                <td>#{keyName key}
+                                <td>#{formatTime $ createdAt key}
+                                <td>#{maybe "Never" formatTime $ lastUsed key}
+                                <td>
+                                    <button .btn .btn-sm .btn-danger onclick="revokeKey('#{keyId key}')">
+                                        Revoke
+
+        <div .security-section>
+            <h3>Rate Limits
+            <div .rate-limits>
+                <div .limit-item>
+                    <span .label>Auth Endpoints:
+                    <span .value>#{authEndpoints limits} req/min
+                <div .limit-item>
+                    <span .label>Standard Endpoints:
+                    <span .value>#{standardEndpoints limits} req/min
+                <div .limit-item>
+                    <span .label>Webhook Endpoints:
+                    <span .value>#{webhookEndpoints limits} req/min
+                <button .btn .btn-primary onclick="editRateLimits()">
+                    Edit Limits
+
+        <div .security-section>
+            <h3>IP Allowlist
+            <div .ip-allowlist>
+                <div .list-section>
+                    <h4>Allowed IPs
+                    <ul .ip-list>
+                        $forall ip <- allowedIps allowlist
+                            <li>#{ip}
+                <div .list-section>
+                    <h4>Allowed Ranges
+                    <ul .ip-list>
+                        $forall range <- allowedRanges allowlist
+                            <li>#{range}
+                <div .list-section>
+                    <h4>Exceptions
+                    <ul .ip-list>
+                        $forall exception <- exceptions allowlist
+                            <li>#{exception}
+                <button .btn .btn-primary onclick="editAllowlist()">
+                    Edit Allowlist
+
+    <div .audit-section>
+        <h3>Security Audit Logs
+        <div .audit-filters>
+            <select .form-control onchange="filterLogs()">
+                <option value="all">All Events
+                <option value="auth">Authentication
+                <option value="policy">Policy Changes
+                <option value="api">API Usage
+        <div .audit-logs>
+            <table .table>
+                <thead>
+                    <tr>
+                        <th>Time
+                        <th>Event
+                        <th>User
+                        <th>Details
+                <tbody>
+                    $forall log <- auditLogs
+                        <tr>
+                            <td>#{formatTime $ logTime log}
+                            <td>#{logEvent log}
+                            <td>#{logUser log}
+                            <td>#{logDetails log}

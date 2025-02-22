@@ -1,0 +1,64 @@
+<div class="container">
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <h2>Projects
+    <div class="col-md-4 text-right">
+      <a href="@{ProjectsR}?new" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Create Project
+
+  <div class="card">
+    <div class="card-header">
+      <div class="row align-items-center">
+        <div class="col">
+          <div class="input-group">
+            <input type="text" class="form-control" id="projectSearch" placeholder="Search projects...">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+                Sort by
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="#" data-sort="name">Name</a>
+                <a class="dropdown-item" href="#" data-sort="updated">Last Updated</a>
+                <a class="dropdown-item" href="#" data-sort="changes">Active Changes</a>
+
+    <div class="card-body p-0">
+      <div class="list-group list-group-flush" id="projectList">
+        $if null projects
+          <div class="list-group-item text-center text-muted">
+            <p class="my-5">No projects found</p>
+        $else
+          $forall Entity projectId project <- projects
+            <div class="list-group-item project-item"
+                 data-name="#{projectName project}"
+                 data-updated="#{formatTime $ projectCreatedAt project}">
+              <div class="row align-items-center">
+                <div class="col-md-6">
+                  <h5 class="mb-1">
+                    <a href="@{ProjectR $ projectName project}">#{projectName project}
+                  $maybe desc <- projectDescription project
+                    <p class="mb-1 text-muted">#{desc}
+                <div class="col-md-3">
+                  <small class="text-muted">
+                    Owner: #{userName $ projectOwnerUserId project}
+                <div class="col-md-3 text-right">
+                  <span class="badge badge-primary" title="Active Changes">
+                    #{length $ projectChanges projectId}
+                  <span class="badge badge-secondary ml-2" title="Watching Users">
+                    #{length $ projectWatchers projectId}
+
+<div class="modal fade" id="createProjectModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Create New Project
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;
+      <div class="modal-body">
+        <form method="post" action="@{ProjectsR}">
+          <div class="form-group">
+            <label for="projectName">Project Name
+            <input type="text" class="form-control" id="projectName" name="name" required
+                   pattern="[a-zA-Z0-9_-]+" title="Only letters, numbers, underscore and hyphen allowed">
+          <div class="form-group">
+            <label for="projectDesc">Description
+            <textarea class="form-control" id="projectDesc" name="description" rows="3">
+          <button type="submit" class="btn btn-primary">Create Project

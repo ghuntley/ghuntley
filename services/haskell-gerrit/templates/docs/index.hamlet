@@ -1,0 +1,280 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3 col-xl-2 bd-sidebar">
+      <nav class="bd-links">
+        <div class="bd-toc-item">
+          <a class="bd-toc-link" href="#getting-started">Getting Started</a>
+          <ul class="nav bd-sidenav">
+            <li><a href="#installation">Installation</a>
+            <li><a href="#configuration">Configuration</a>
+            <li><a href="#first-steps">First Steps</a>
+
+        <div class="bd-toc-item">
+          <a class="bd-toc-link" href="#user-guide">User Guide</a>
+          <ul class="nav bd-sidenav">
+            <li><a href="#creating-changes">Creating Changes</a>
+            <li><a href="#reviewing-code">Reviewing Code</a>
+            <li><a href="#managing-projects">Managing Projects</a>
+            <li><a href="#working-with-git">Working with Git</a>
+
+        <div class="bd-toc-item">
+          <a class="bd-toc-link" href="#admin-guide">Admin Guide</a>
+          <ul class="nav bd-sidenav">
+            <li><a href="#user-management">User Management</a>
+            <li><a href="#project-management">Project Management</a>
+            <li><a href="#system-configuration">System Configuration</a>
+            <li><a href="#maintenance">Maintenance</a>
+
+        <div class="bd-toc-item">
+          <a class="bd-toc-link" href="#api-reference">API Reference</a>
+          <ul class="nav bd-sidenav">
+            <li><a href="#authentication">Authentication</a>
+            <li><a href="#changes-api">Changes API</a>
+            <li><a href="#projects-api">Projects API</a>
+            <li><a href="#users-api">Users API</a>
+
+    <main class="col-md-9 col-xl-10 py-md-3 pl-md-5 bd-content">
+      <div class="docs-section" id="getting-started">
+        <h1>Getting Started
+        <p class="lead">Learn how to install, configure, and start using Haskell Gerrit.
+
+        <h2 id="installation">Installation</h2>
+        <p>Follow these steps to install Haskell Gerrit:
+
+        <div class="docs-code">
+          <pre><code class="language-bash">
+# Clone the repository
+git clone https://github.com/your-org/haskell-gerrit.git
+
+# Install dependencies
+cabal update
+cabal build
+
+# Set up the database
+createdb haskell-gerrit
+cabal run migrate
+
+# Start the server
+cabal run haskell-gerrit
+          </code></pre>
+
+        <h2 id="configuration">Configuration</h2>
+        <p>Configure your instance by editing the following files:
+
+        <div class="card mb-4">
+          <div class="card-header">
+            <code>config/development.env</code>
+          <div class="card-body">
+            <pre><code class="language-ini">
+# Database configuration
+GERRIT_DB_HOST=localhost
+GERRIT_DB_NAME=gerrit
+GERRIT_DB_USER=gerrit
+GERRIT_DB_PASS=gerrit_password
+
+# Server configuration
+GERRIT_PORT=8080
+GERRIT_GIT_PATH=/var/lib/gerrit/git
+            </code></pre>
+
+        <h2 id="first-steps">First Steps</h2>
+        <p>After installation, follow these steps to get started:
+        <ol>
+          <li>Create an administrator account
+          <li>Set up your first project
+          <li>Configure user access
+          <li>Create your first change
+
+      <div class="docs-section" id="user-guide">
+        <h1>User Guide
+        <p class="lead">Learn how to use Haskell Gerrit effectively.
+
+        <h2 id="creating-changes">Creating Changes</h2>
+        <p>To create a new change:
+        <ol>
+          <li>Clone the project repository
+          <li>Create a new branch
+          <li>Make your changes
+          <li>Push to Gerrit for review
+
+        <div class="docs-code">
+          <pre><code class="language-bash">
+git clone http://gerrit.example.com/project
+git checkout -b feature-branch
+# Make changes
+git add .
+git commit -m "feat: add new feature"
+git push origin HEAD:refs/for/master
+          </code></pre>
+
+        <h2 id="reviewing-code">Reviewing Code</h2>
+        <p>Code review best practices:
+        <ul>
+          <li>Review changes thoroughly
+          <li>Use inline comments for specific feedback
+          <li>Test changes locally when necessary
+          <li>Provide constructive feedback
+
+        <h2 id="managing-projects">Managing Projects</h2>
+        <p>Project management guidelines:
+        <ul>
+          <li>Set up proper access rights
+          <li>Configure submit requirements
+          <li>Manage project branches
+          <li>Monitor project activity
+
+      <div class="docs-section" id="api-reference">
+        <h1>API Reference
+        <p class="lead">Complete reference for the Haskell Gerrit REST API.
+
+        <h2 id="authentication">Authentication</h2>
+        <p>All API requests require authentication using JWT tokens.
+
+        <div class="docs-code">
+          <pre><code class="language-bash">
+curl -H "Authorization: Bearer $TOKEN" \
+     https://gerrit.example.com/api/changes
+          </code></pre>
+
+        <h2 id="changes-api">Changes API</h2>
+        <div class="api-endpoint">
+          <h4>GET /changes</h4>
+          <p>List all changes
+          <h5>Parameters</h5>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
+            <tbody>
+              <tr>
+                <td>q</td>
+                <td>string</td>
+                <td>Search query</td>
+              <tr>
+                <td>n</td>
+                <td>integer</td>
+                <td>Number of changes to return</td>
+
+        <h2 id="projects-api">Projects API</h2>
+        <div class="api-endpoint">
+          <h4>GET /projects</h4>
+          <p>List all projects
+          <h5>Parameters</h5>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
+            <tbody>
+              <tr>
+                <td>prefix</td>
+                <td>string</td>
+                <td>Filter projects by name prefix</td>
+              <tr>
+                <td>limit</td>
+                <td>integer</td>
+                <td>Maximum number of projects to return</td>
+
+<style>
+.bd-sidebar {
+    position: sticky;
+    top: 4rem;
+    height: calc(100vh - 4rem);
+    border-right: 1px solid #eee;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    overflow-y: auto;
+}
+
+.bd-links {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.bd-toc-item {
+    padding: .25rem 1.5rem;
+}
+
+.bd-toc-link {
+    display: block;
+    padding: .25rem 1.5rem;
+    font-weight: 600;
+    color: rgba(0,0,0,.65);
+}
+
+.bd-sidenav {
+    display: none;
+}
+
+.bd-toc-item.active > .bd-sidenav {
+    display: block;
+}
+
+.bd-sidenav {
+    padding-left: 1rem;
+    margin-bottom: 0;
+    list-style-type: none;
+}
+
+.docs-section {
+    padding-top: 3rem;
+    margin-bottom: 3rem;
+}
+
+.docs-code {
+    margin: 2rem 0;
+    background: #f8f9fa;
+    border-radius: .3rem;
+    padding: 1.5rem;
+}
+
+.api-endpoint {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    border: 1px solid #eee;
+    border-radius: .3rem;
+}
+
+.api-endpoint h4 {
+    color: #2196F3;
+    margin-bottom: 1rem;
+}
+
+.api-endpoint .table {
+    margin-top: 1rem;
+}
+</style>
+
+<script>
+$(document).ready(function() {
+    // Activate sidebar nav
+    var hash = window.location.hash;
+    if (hash) {
+        $(`.bd-toc-item:has(a[href="${hash}"])`).addClass('active');
+    }
+
+    // Handle navigation
+    $('.bd-toc-link').click(function(e) {
+        e.preventDefault();
+        $('.bd-toc-item').removeClass('active');
+        $(this).closest('.bd-toc-item').addClass('active');
+    });
+
+    // Syntax highlighting
+    hljs.highlightAll();
+
+    // Smooth scrolling
+    $('a[href^="#"]').click(function(e) {
+        e.preventDefault();
+        var target = $(this).attr('href');
+        $('html, body').animate({
+            scrollTop: $(target).offset().top - 20
+        }, 500);
+    });
+});
+</script>

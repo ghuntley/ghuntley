@@ -1,0 +1,124 @@
+<div .modal .fade #webhookNewModal tabindex="-1" aria-hidden="true">
+    <div .modal-dialog .modal-lg>
+        <div .modal-content>
+            <div .modal-header>
+                <h5 .modal-title>Create New Webhook
+                <button type="button" .btn-close data-bs-dismiss="modal" aria-label="Close">
+
+            <div .modal-body>
+                <form #webhookNewForm>
+                    <div .form-group>
+                        <label for="newWebhookUrl">Webhook URL:
+                        <div .input-group>
+                            <span .input-group-text>
+                                <i .fas .fa-link>
+                            <input type="url" #newWebhookUrl .form-control required
+                                placeholder="https://your-server.com/webhook">
+
+                    <div .form-group .mt-3>
+                        <label>Event Types:
+                        <div .event-selector>
+                            <div .event-category>
+                                <h6>Change Events
+                                <div .event-options>
+                                    <div .form-check>
+                                        <input type="checkbox" .form-check-input #eventChangeCreated>
+                                        <label .form-check-label for="eventChangeCreated">change.created
+                                    <div .form-check>
+                                        <input type="checkbox" .form-check-input #eventChangeUpdated>
+                                        <label .form-check-label for="eventChangeUpdated">change.updated
+                                    <div .form-check>
+                                        <input type="checkbox" .form-check-input #eventChangeMerged>
+                                        <label .form-check-label for="eventChangeMerged">change.merged
+                                    <div .form-check>
+                                        <input type="checkbox" .form-check-input #eventChangeAbandoned>
+                                        <label .form-check-label for="eventChangeAbandoned">change.abandoned
+
+                            <div .event-category>
+                                <h6>Review Events
+                                <div .event-options>
+                                    <div .form-check>
+                                        <input type="checkbox" .form-check-input #eventReviewSubmitted>
+                                        <label .form-check-label for="eventReviewSubmitted">review.submitted
+                                    <div .form-check>
+                                        <input type="checkbox" .form-check-input #eventReviewScored>
+                                        <label .form-check-label for="eventReviewScored">review.scored
+                                    <div .form-check>
+                                        <input type="checkbox" .form-check-input #eventReviewCommented>
+                                        <label .form-check-label for="eventReviewCommented">review.commented
+
+                            <div .event-category>
+                                <h6>Project Events
+                                <div .event-options>
+                                    <div .form-check>
+                                        <input type="checkbox" .form-check-input #eventProjectCreated>
+                                        <label .form-check-label for="eventProjectCreated">project.created
+                                    <div .form-check>
+                                        <input type="checkbox" .form-check-input #eventProjectUpdated>
+                                        <label .form-check-label for="eventProjectUpdated">project.updated
+
+                    <div .form-group .mt-3>
+                        <label for="newWebhookHeaders">Headers:
+                        <div .header-editor>
+                            <div .header-row>
+                                <input type="text" .form-control .header-key
+                                    placeholder="Header Name"
+                                    value="Content-Type">
+                                <input type="text" .form-control .header-value
+                                    placeholder="Header Value"
+                                    value="application/json">
+                                <button type="button" .btn .btn-outline-danger onclick="removeHeader(this)">
+                                    <i .fas .fa-times>
+                            <div .header-row>
+                                <input type="text" .form-control .header-key placeholder="Header Name">
+                                <input type="text" .form-control .header-value placeholder="Header Value">
+                                <button type="button" .btn .btn-outline-danger onclick="removeHeader(this)">
+                                    <i .fas .fa-times>
+                        <button type="button" .btn .btn-outline-secondary .mt-2 onclick="addHeader()">
+                            <i .fas .fa-plus>
+                            Add Header
+
+                    <div .form-group .mt-3>
+                        <label>Security:
+                        <div .security-options>
+                            <div .form-check>
+                                <input type="checkbox" .form-check-input #webhookSecureSSL checked>
+                                <label .form-check-label for="webhookSecureSSL">
+                                    Verify SSL certificate
+                            <div .form-check>
+                                <input type="checkbox" .form-check-input #webhookRetryEnabled checked>
+                                <label .form-check-label for="webhookRetryEnabled">
+                                    Enable automatic retries
+                            <div .input-group .mt-2>
+                                <span .input-group-text>Secret Token
+                                <input type="text" .form-control #webhookSecret
+                                    placeholder="Optional: Enter a secret token">
+                                <button type="button" .btn .btn-outline-secondary onclick="generateSecret()">
+                                    Generate
+
+                    <div .form-group .mt-3>
+                        <label>Advanced Options:
+                        <div .advanced-options>
+                            <div .input-group .mb-2>
+                                <span .input-group-text>Timeout
+                                <input type="number" .form-control #webhookTimeout
+                                    value="30" min="1" max="300">
+                                <span .input-group-text>seconds
+                            <div .input-group>
+                                <span .input-group-text>Max Retries
+                                <input type="number" .form-control #webhookMaxRetries
+                                    value="3" min="0" max="10">
+
+                    <div .alert .alert-info .mt-3>
+                        <i .fas .fa-info-circle>
+                        <ul>
+                            <li>Webhook URLs must be HTTPS (unless localhost)
+                            <li>Events will be delivered as POST requests with JSON payload
+                            <li>If a secret is provided, requests will include a X-Gerrit-Signature header
+                            <li>Failed deliveries will be retried with exponential backoff
+
+            <div .modal-footer>
+                <button type="button" .btn .btn-secondary data-bs-dismiss="modal">Cancel
+                <button type="submit" .btn .btn-primary>
+                    <i .fas .fa-plus>
+                    Create Webhook
