@@ -4,7 +4,7 @@
 { depot, ... }:
 
 (with depot.infra.machines; [
-  overalls
+  workbench
   crowbar
   prybar
 ])
