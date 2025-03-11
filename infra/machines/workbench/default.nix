@@ -473,29 +473,13 @@ in
       # Load the kernel and initrd from the ${name} directory
       echo Loading kernel and initrd...
 
-      # Check if we can find a Linux kernel
-      :try_kernel
-      kernel ${name}/bzImage || kernel ${name}/vmlinuz || goto no_kernel
-      initrd ${name}/initrd || goto no_initrd
-
-      # Boot parameters - adjust as needed
-      imgargs initrd console=ttyS0,115200n8 console=tty1
+      # Standard NixOS-style boot command
+      kernel ${name}/bzImage init=${machine.toplevel}/init initrd=initrd console=ttyS0,115200n8 console=tty1
+      initrd ${name}/initrd
 
       # Boot the system
       echo Booting ${name}...
       boot || goto boot_failed
-
-      :no_kernel
-      echo ERROR: Cannot find kernel (bzImage or vmlinuz)
-      echo Trying to boot with initrd only...
-      kernel ${name}/initrd || goto boot_failed
-      initrd
-      imgargs initrd console=ttyS0,115200n8 console=tty1
-      boot || goto boot_failed
-
-      :no_initrd
-      echo ERROR: Cannot find initrd
-      goto boot_failed
 
       :boot_failed
       echo ===================================
@@ -512,6 +496,7 @@ in
                 # Inject the correct machine values
                 sed -i "s/\${name}/${name}/g" /srv/tftp/${name}.ipxe
                 sed -i "s/\${machine.description}/${machine.description}/g" /srv/tftp/${name}.ipxe
+                sed -i "s|\${machine.toplevel}|${machine.toplevel}|g" /srv/tftp/${name}.ipxe
               fi
 
               # Create MAC-specific script for direct boot
