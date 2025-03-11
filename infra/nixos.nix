@@ -122,11 +122,9 @@ in rec {
   # Systems that should be built in CI
   prybarSystem = (nixosFor depot.infra.machines.prybar).system;
   crowbarSystem = (nixosFor depot.infra.machines.crowbar).system;
-  mediaSystem = depot.services.ghuntley.machines.com-ghuntley-media.vm;
 
   meta.ci.targets = [
     "prybarSystem"
     "crowbarSystem"
-    "mediaSystem"
   ];
 }

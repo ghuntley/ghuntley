@@ -21,11 +21,21 @@ in
   iso = machine.iso;
   url = getIsoUrl machine.iso;
 
+  # PXE boot components
+  netboot = machine.netboot;
+  netbootIpxe = machine.netbootIpxe;
+  netbootUrl = getUrl machine.netboot "netboot.tar.gz";
+  netbootIpxeUrl = getUrl machine.netbootIpxe "netboot.ipxe";
+
   tests = import ./test.nix { inherit depot pkgs; };
 
   meta.ci.targets = [
     "vm"
     "iso"
     "url"
+    "netboot"
+    "netbootIpxe"
+    "netbootUrl"
+    "netbootIpxeUrl"
   ];
 }

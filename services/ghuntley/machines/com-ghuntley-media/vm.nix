@@ -13,6 +13,7 @@ let
         imports = [
           (modulesPath + "/virtualisation/qemu-vm.nix")
           (modulesPath + "/installer/cd-dvd/iso-image.nix")
+          (modulesPath + "/installer/netboot/netboot.nix")
           (depot.path + "/infra/nixos-modules/defaults-qemu-service.nix")
         ];
 
@@ -21,6 +22,24 @@ let
         networking.hostName = "com-ghuntley-media";
         networking.domain = "ghuntley";
 
+        # PXE boot configuration
+        # Include necessary packages in the netboot image
+        netboot.storeContents = with pkgs; [
+          stdenv
+          busybox
+          nix
+          nixos-install-tools
+        ];
+
+        # Network configuration for proper PXE functionality
+        networking = {
+          useDHCP = true;
+          dhcpcd.enable = true;
+          firewall = {
+            allowedTCPPorts = [ 32400 67 69 4011 5001 ]; # DHCP, TFTP, Plex, Ombi ports
+            allowedUDPPorts = [ 67 68 69 4011 ]; # DHCP and TFTP ports
+          };
+        };
 
         # Run nginx
         security.acme.acceptTerms = true;
@@ -92,7 +111,6 @@ let
         };
 
         services.plex.enable = true;
-        networking.firewall.allowedTCPPorts = [ 32400 ];
 
         services.ombi.enable = true;
         services.ombi.port = 5001;
@@ -128,4 +146,6 @@ in
 {
   vm = nixosSystem.config.system.build.vm;
   iso = nixosSystem.config.system.build.isoImage;
+  netboot = nixosSystem.config.system.build.netbootRamdisk;
+  netbootIpxe = nixosSystem.config.system.build.netbootIpxeScript;
 }

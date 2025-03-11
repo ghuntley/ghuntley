@@ -41,6 +41,7 @@ let
       # TODO(tazjin): Can this one be removed somehow?
       [ "infra" "nixos" ]
       [ "infra" "machines" "all-systems" ]
+      [ "infra" "machines" "workbench" ]
 
       [ "services" "ghuntley" "machines" "com-ghuntley" ]
       [ "services" "ghuntley" "machines" "com-ghuntley-media" ]

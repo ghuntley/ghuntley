@@ -8,8 +8,3 @@
   crowbar
   prybar
 ])
-
-  (with depot.services.ghuntley.machines; [
-    com-ghuntley
-    com-ghuntley-media
-  ])

@@ -5,13 +5,167 @@
 { config, ... }: # passed by module system
 
 let
-  inherit (builtins) listToAttrs;
-  inherit (lib) range;
+  inherit (builtins) listToAttrs concatStringsSep;
+  inherit (lib) range mapAttrs' nameValuePair optionalAttrs;
 
   auth = name: depot.path.origSrc + ("/infra/auth/" + name);
   mod = name: depot.path.origSrc + ("/infra/nixos-modules/" + name);
   nix-cache = name: depot.path.origSrc + ("/infra/nix-cache/nixos-modules/" + name);
   scm = name: depot.path.origSrc + ("/infra/scm/nixos-modules/" + name);
+
+  # Import machine configurations
+  mediaMachine = import (depot.path.origSrc + "/services/ghuntley/machines/com-ghuntley-media/default.nix") {
+    inherit depot pkgs;
+  };
+
+  ghuntleyMachine = import (depot.path.origSrc + "/services/ghuntley/machines/com-ghuntley/default.nix") {
+    inherit depot pkgs;
+  };
+
+  # Machine configurations for PXE boot
+  machines = {
+    # Media server with actual configuration
+    "media" = {
+      macAddress = "bc:24:11:61:77:72";
+      netboot = mediaMachine.netboot;
+      netbootIpxe = mediaMachine.netbootIpxe;
+      description = "Media Server";
+    };
+
+    # ghuntley.com machine with actual configuration
+    "ghuntley" = {
+      macAddress = "bc:24:11:97:45:4b";
+      netboot = ghuntleyMachine.netboot;
+      netbootIpxe = ghuntleyMachine.netbootIpxe;
+      description = "ghuntley.com Website";
+    };
+  };
+
+  # Helper functions for PXE/iPXE configuration
+  helpers = {
+    # Normalize MAC address for PXELinux (01-mac-with-dashes)
+    normalizeMac = mac: "01-" + builtins.replaceStrings [ ":" ] [ "-" ] (lib.toLower mac);
+
+    # Create a machine-specific iPXE script
+    makeIpxeScript = name: machine: ''
+      #!ipxe
+      # ${machine.description} (MAC: ${machine.macAddress})
+
+      # Set console for debugging
+      console --x 1024 --y 768
+      set timeout 5000
+
+      # Network retry settings
+      set retry:1
+      set net-retry:3
+
+      :retry_start
+      echo Booting ${name} (${machine.description})...
+
+      # Try local path first
+      echo Trying local boot image...
+      chain --timeout 5000 ${name}.ipxe && goto boot_success
+
+      # If that fails, try remote URL (if we have network)
+      echo Local boot failed, trying HTTPS boot...
+      isset $${net0/ip} || goto net_error
+
+      # Boot using HTTPS only
+      chain --timeout 10000 https://pxe.ponderoos.com/${name}.ipxe || goto boot_failed
+
+      goto boot_success
+
+      :net_error
+      echo Network error! No IP address.
+      echo Retrying network in 5 seconds... (Attempt $${retry})
+      iseq $${retry} 3 && goto boot_failed
+      inc retry
+      sleep 5
+      goto retry_start
+
+      :boot_failed
+      echo ===========================================
+      echo BOOT FAILED for ${name} (${machine.description})
+      echo ===========================================
+      echo
+      echo Options:
+      echo 1. Return to menu (default)
+      echo 2. Retry this boot
+      echo 3. Drop to iPXE shell
+      echo
+      echo Returning to menu in 10 seconds...
+      choose --timeout 10000 --default 1 selected || set selected 1
+      iseq $${selected} 1 && chain menu.ipxe
+      iseq $${selected} 2 && goto retry_start
+      iseq $${selected} 3 && shell
+      chain menu.ipxe
+
+      :boot_success
+      exit
+    '';
+
+    # Create a main menu iPXE script (simplified without groups)
+    makeMenuScript = machines:
+      let
+        # Generate menu items for all machines
+        menuItems = concatStringsSep "\n" (lib.mapAttrsToList
+          (name: machine:
+            "item ${name} ${machine.description} (MAC: ${machine.macAddress})"
+          )
+          machines);
+
+        # Generate goto handlers for all machines
+        gotoHandlers = concatStringsSep "\n" (lib.mapAttrsToList
+          (name: _:
+            ":${name}\nchain ${name}.ipxe || goto boot_error"
+          )
+          machines);
+      in
+      ''
+        #!ipxe
+        # iPXE Boot Menu for Workbench Services
+
+        # Configure console
+        console --x 1024 --y 768
+        set timeout 60000
+
+        # Set defaults
+        set menu-default media
+        set menu-timeout 10000
+
+        :start
+        menu iPXE Boot Menu - Workbench Services
+        item --gap -- ------------------------- Available Systems -------------------------
+        ${menuItems}
+        item --gap
+        item shell Drop to iPXE shell
+        item reboot Reboot machine
+        item exit Exit to BIOS/firmware
+        item --gap
+        item --gap -- Press Ctrl+B for iPXE command line...
+        choose --timeout $${menu-timeout} --default $${menu-default} selected || goto shell
+
+        goto $${selected}
+
+        ${gotoHandlers}
+
+        :shell
+        echo Type 'exit' to return to the menu
+        shell
+        goto start
+
+        :reboot
+        reboot
+
+        :exit
+        exit
+
+        :boot_error
+        echo Boot failed! Returning to menu in 5 seconds...
+        sleep 5
+        goto start
+      '';
+  };
 
 in
 {
@@ -21,30 +175,12 @@ in
     (mod "keycloak.nix")
     (mod "podman.nix")
     (mod "restic.nix")
-    (mod "geesefs.nix")
-    (mod "plex.nix")
 
-    # (mod "nixos-mailserver.nix")
-
-    (auth "ponderoos/slapd")
-
-    (scm "cgit.nix")
-    (scm "gerrit.nix")
-    (scm "josh.nix")
     (scm "buildkite.nix")
-    (scm "livegrep.nix")
-    (scm "wastebin.nix")
-    (scm "upterm.nix")
-
     (mod "vaultwarden.nix")
-    (mod "healthchecks.nix")
-    (mod "archivebox.nix")
-    (mod "open-webui.nix")
 
     (mod "geoipupdate.nix")
     (mod "goatcounter.nix")
-
-    (mod "thelounge.nix")
 
   ];
 
@@ -71,10 +207,10 @@ in
 
   networking.firewall.enable = true;
   networking.firewall.interfaces."ens18".allowedTCPPorts = [ 22 80 443 29418 ];
-  networking.firewall.interfaces."ens18".allowedUDPPorts = [ 22 60000 60001 60002 60003 60004 60005 60006 60007 60008 60009 60010 ];
+  networking.firewall.interfaces."ens18".allowedUDPPorts = [ 22 69 60000 60001 60002 60003 60004 60005 60006 60007 60008 60009 60010 ];
 
   networking.firewall.interfaces."tailscale".allowedTCPPorts = [ 22 80 443 29418 ];
-  networking.firewall.interfaces."tailscale".allowedUDPPorts = [ 22 60000 60001 60002 60003 60004 60005 60006 60007 60008 60009 60010 ];
+  networking.firewall.interfaces."tailscale".allowedUDPPorts = [ 22 69 60000 60001 60002 60003 60004 60005 60006 60007 60008 60009 60010 ];
 
   networking.defaultGateway.address = "51.161.213.254";
   networking.nameservers = [ "1.1.1.1" ];
@@ -105,78 +241,10 @@ in
     "/var/lib/acme"
   ];
 
-  # Local databases
-  services.postgresql = {
-    enable = true;
-    enableTCPIP = true;
-    package = pkgs.postgresql_16;
-
-    authentication = lib.mkForce ''
-      local all all trust
-      host all all 127.0.0.1/32 password
-      host all all ::1/128 password
-      hostnossl all all 127.0.0.1/32 password
-      hostnossl all all ::1/128  password
-    '';
-  };
-
-  services.postgresqlBackup = {
-    enable = true;
-  };
-
-  # Run a mailserver
-  # services.depot.mail = {
-  #   enable = true;
-  #   fqdn = "mail.ponderoos.com";
-  #   domains = [ "ponderoos.com" ];
-  #   certificateDomains = [ "imap.ponderoos.com" "pop3.ponderoos.com" ];
-  #   sendingFqdn = "ponderoos.com";
-
-  #   loginAccounts = {
-  #       "hello@ponderoos.com" = {
-  #         hashedPasswordFile = config.age.secrets.inbox-hello-credentials.path;
-  #         aliases = [
-  #           "invoices@ponderoos.com"
-  #           "postmaster@ponderoos.com"
-  #           "security@ponderoos.com"
-  #           "services@ponderoos.com"
-  #           "support@ponderoos.com"
-  #         ];
-  #       };
-  #     };
-  # };
-
   services.nginx.enable = true;
   security.acme.acceptTerms = true;
   security.acme.defaults.email = "security@ponderoos.com";
 
-  # Run keycloak
-  services.depot.keycloak = {
-    enable = true;
-    hostname = "auth.ponderoos.com";
-    database.passwordFile = config.age.secrets.postgres-keycloak-credentials.path;
-  };
-
-  # Run cgit & josh to serve git
-  services.depot = {
-    cgit = {
-      enable = true;
-      user = "git"; # run as the same user as gerrit
-    };
-    josh.enable = true;
-  };
-
-  # Run a handful of Buildkite agents to support parallel builds.
-  services.depot.buildkite = {
-    enable = true;
-    agentCount = 32;
-  };
-
-  # Run a livegrep code search instance
-  services.depot.livegrep.enable = true;
-
-  # Run a wastebin instance
-  services.depot.wastebin.enable = true;
 
   # Run Harmonia to serve public nix-cache
   services.depot.harmonia = {
@@ -185,35 +253,12 @@ in
     signKeyPath = config.age.secrets.nix-cache-signkey.path;
   };
 
-  services.depot.archivebox = {
-    enable = true;
-    enableBackups = false;
-    domain = "archive.ponderoos.com";
-    port = 8000;
-    adminUsername = "ghuntley";
-    adminPasswordFile = config.age.secrets.archivebox-admin-password.path;
-  };
-
-  services.depot.open-webui = {
-    enable = false;
-    domain = "chat.ponderoos.com";
-    port = 8005;
-    stateDir = "/var/lib/open-webui";
-  };
-
   # Configure secrets for services that need them.
   age.secrets =
     let
       secretFile = name: depot.infra.secrets.ponderoos."${name}.age";
     in
     {
-
-      archivebox-admin-password = {
-        file = secretFile "archivebox-admin-password";
-        mode = "0440";
-        group = "archivebox";
-        symlink = false;
-      };
 
       geoipupdate-license-key = {
         file = secretFile "geoipupdate-license-key";
@@ -246,12 +291,6 @@ in
 
       nix-cache-signkey.file = secretFile "nix-cache-signkey";
       nix-cache-signkey.symlink = false;
-
-      postgres-keycloak-credentials.file = secretFile "postgres-keycloak-credentials";
-      postgres-keycloak-credentials.symlink = false;
-
-      inbox-hello-credentials.file = secretFile "inbox-hello-credentials";
-      inbox-hello-credentials.symlink = false;
 
       wastebin-secret-file.file = secretFile "wastebin-secret-file";
       wastebin-secret-file.symlink = false;
@@ -309,31 +348,18 @@ in
 
   services.depot.nix-cache.enable = false;
 
-  # Run a healthchecks instance
-  services.depot.healthchecks = {
-    enable = true;
-    domain = "healthchecks.ponderoos.com";
-    port = 8001;
-  };
-
   services.depot.geoipupdate = {
     enable = true;
     accountId = 1125904;
     licenseKey = config.age.secrets.geoipupdate-license-key.path;
   };
 
-  services.depot.goatcounter = {
-    enable = true;
-    domain = "stats.ghuntley.com";
-    port = 8010;
-    stateDir = "/var/lib/goatcounter/com-ghuntley";
-  };
-
-  services.depot.thelounge = {
-    enable = true;
-    domain = "irc.ponderoos.com";
-    port = 3000;
-  };
+  # services.depot.goatcounter = {
+  #   enable = true;
+  #   domain = "stats.ghuntley.com";
+  #   port = 8010;
+  #   stateDir = "/var/lib/goatcounter/com-ghuntley";
+  # };
 
   boot.kernelModules = [ "kvm-intel" ]; # Use kvm-amd for AMD CPUs
   virtualisation.libvirtd.enable = true;
@@ -346,4 +372,138 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05";
+
+  # TFTP server for iPXE booting - using atftpd instead of netkitftp (tftpd)
+  services.atftpd = {
+    enable = true;
+    root = "/srv/tftp";
+    extraOptions = [
+      "--daemon" # Run as daemon
+      "--no-multicast" # Disable multicast support
+      "--logfile /var/log/atftpd.log" # Log to file
+      "--port 69" # Standard TFTP port
+      "--verbose=6" # Verbose logging for debugging
+    ];
+  };
+
+  # Set up TFTP directory with symlinks to the Nix store and enhanced iPXE scripts
+  system.activationScripts.tftpSetup = ''
+    # Create base TFTP directory
+    mkdir -p /srv/tftp
+    chmod 755 /srv/tftp
+
+    # Create enhanced iPXE scripts for each machine
+    ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
+      # Create symlinks for ${name} iPXE files from the Nix store
+      ln -sf ${machine.netbootIpxe} /srv/tftp/${name}.ipxe
+      ln -sf ${machine.netboot} /srv/tftp/${name}.tar.gz
+
+      # Create MAC-specific iPXE script
+      cat > /srv/tftp/${lib.toLower machine.macAddress}.ipxe << EOF
+      ${helpers.makeIpxeScript name machine}
+      EOF
+
+      # Create MAC-specific PXE configuration file
+      mkdir -p /srv/tftp/pxelinux.cfg
+      cat > /srv/tftp/pxelinux.cfg/${helpers.normalizeMac machine.macAddress} << EOF
+      DEFAULT ${name}
+      LABEL ${name}
+        KERNEL ipxe.lkrn
+        APPEND dhcp && chain ${lib.toLower machine.macAddress}.ipxe
+      EOF
+    '') machines)}
+
+    # Create main menu iPXE script
+    cat > /srv/tftp/menu.ipxe << EOF
+    ${helpers.makeMenuScript machines}
+    EOF
+
+    # Create default iPXE entry that shows the menu
+    cat > /srv/tftp/default.ipxe << EOF
+    #!ipxe
+    chain menu.ipxe
+    EOF
+
+    # Create a boot.ipxe script for direct boot requests
+    cat > /srv/tftp/boot.ipxe << EOF
+    #!ipxe
+    echo Checking MAC address: $${net0/mac}
+
+    # Try MAC-specific boot
+    chain --timeout 3000 $${mac:hexhyp}.ipxe && exit
+
+    # If no MAC-specific boot found, go to menu
+    chain menu.ipxe
+    EOF
+
+    # Create default PXE configuration
+    cat > /srv/tftp/pxelinux.cfg/default << EOF
+    DEFAULT menu
+    TIMEOUT 50
+    PROMPT 0
+
+    LABEL menu
+      KERNEL ipxe.lkrn
+      APPEND dhcp && chain boot.ipxe
+    EOF
+
+    # Add iPXE kernel for legacy PXE
+    if [ ! -f /srv/tftp/ipxe.lkrn ]; then
+      cp ${pkgs.ipxe}/ipxe.lkrn /srv/tftp/ipxe.lkrn || curl -L "https://boot.ipxe.org/ipxe.lkrn" -o /srv/tftp/ipxe.lkrn
+    fi
+
+    # Add additional iPXE utility files
+    if [ ! -f /srv/tftp/undionly.kpxe ]; then
+      cp ${pkgs.ipxe}/undionly.kpxe /srv/tftp/undionly.kpxe || curl -L "https://boot.ipxe.org/undionly.kpxe" -o /srv/tftp/undionly.kpxe
+    fi
+
+    if [ ! -f /srv/tftp/ipxe.efi ]; then
+      cp ${pkgs.ipxe}/ipxe.efi /srv/tftp/ipxe.efi || curl -L "https://boot.ipxe.org/ipxe.efi" -o /srv/tftp/ipxe.efi
+    fi
+
+    # Ensure proper permissions for atftpd
+    chmod -R 755 /srv/tftp
+    chown -R nobody:nogroup /srv/tftp
+  '';
+
+  # Create a HTTP/HTTPS server to serve iPXE files as backup
+  services.nginx.virtualHosts."pxe.ponderoos.com" = {
+    # Enable HTTPS with Let's Encrypt
+    forceSSL = true;
+    enableACME = true;
+
+    # Recommended settings for security
+    http2 = true;
+
+    # Serve files from the TFTP directory
+    locations."/" = {
+      root = "/srv/tftp";
+      extraConfig = ''
+        autoindex on;
+
+        # Add appropriate MIME types for iPXE scripts
+        types {
+          application/octet-stream ipxe;
+          application/octet-stream kpxe;
+          application/octet-stream efi;
+          application/octet-stream lkrn;
+        }
+
+        # Increase timeout for large files
+        proxy_read_timeout 300;
+        proxy_connect_timeout 300;
+        proxy_send_timeout 300;
+      '';
+    };
+  };
+
+  # Ensure the machine netboot artifacts are built
+  system.extraDependencies = lib.flatten (
+    lib.mapAttrsToList
+      (name: machine: [
+        machine.netboot
+        machine.netbootIpxe
+      ])
+      machines
+  );
 }

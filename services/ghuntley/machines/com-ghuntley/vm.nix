@@ -13,6 +13,7 @@ let
         imports = [
           (modulesPath + "/virtualisation/qemu-vm.nix")
           (modulesPath + "/installer/cd-dvd/iso-image.nix")
+          (modulesPath + "/installer/netboot/netboot.nix")
           (depot.path + "/infra/nixos-modules/defaults-qemu-service.nix")
           (depot.path + "/infra/nixos-modules/goatcounter.nix")
         ];
@@ -21,6 +22,22 @@ let
 
         networking.hostName = "ghuntley-com";
         networking.domain = "ghuntley";
+
+        # PXE boot configuration
+        # Include necessary packages in the netboot image
+        netboot.storeContents = with pkgs; [
+          stdenv
+          busybox
+          nix
+          nixos-install-tools
+        ];
+
+        # Network configuration for proper PXE functionality
+        networking = {
+          useDHCP = true;
+          dhcpcd.enable = true;
+          firewall.allowedUDPPorts = [ 67 68 69 4011 ]; # DHCP and TFTP ports
+        };
 
         system.activationScripts.createCustomDirs = ''
           mkdir -p /srv/ghost
@@ -219,4 +236,6 @@ in
 {
   vm = nixosSystem.config.system.build.vm;
   iso = nixosSystem.config.system.build.isoImage;
+  netboot = nixosSystem.config.system.build.netbootRamdisk;
+  netbootIpxe = nixosSystem.config.system.build.netbootIpxeScript;
 }
