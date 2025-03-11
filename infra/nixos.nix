@@ -5,7 +5,7 @@
 # Helper functions for instantiating depot-compatible NixOS machines.
 { depot, lib, pkgs, ... }@args:
 
-let inherit (lib) findFirst isAttrs;
+let inherit (lib) findFirst isAttrs hasAttr;
 in rec {
   # This provides our standard set of arguments to all NixOS modules.
   baseModule = { ... }: {
@@ -38,11 +38,59 @@ in rec {
     };
   });
 
+  # List of pre-processed configurations to check in addition to regular NixOS modules
+  preProcessedSystems = [
+    {
+      # Add an attribute to identify this as a pre-processed system
+      isPreProcessed = true;
+
+      # The host name to match against
+      hostName = "com-ghuntley-media";
+
+      # Path to the pre-processed configuration
+      path = depot.services.ghuntley.machines.com-ghuntley-media;
+
+      # The attribute to use for the system
+      systemAttr = "vm";
+    }
+    # Add more pre-processed systems here as needed
+  ];
+
   findSystem = hostname:
-    (findFirst
-      (system: system.config.networking.hostName == hostname)
-      (throw "${hostname} is not a known NixOS host")
-      (map nixosFor depot.infra.machines.all-systems));
+    let
+      # First check if there's a direct match in pre-processed systems
+      preProcessedMatch = findFirst
+        (system: system.hostName == hostname)
+        null
+        preProcessedSystems;
+
+      # If we found a pre-processed match, return the appropriate system
+      preProcessedResult =
+        if preProcessedMatch != null
+        then
+          if hasAttr preProcessedMatch.systemAttr preProcessedMatch.path
+          then preProcessedMatch.path.${preProcessedMatch.systemAttr}
+          else throw "Pre-processed system ${hostname} does not have attribute ${preProcessedMatch.systemAttr}"
+        else null;
+
+      # Traditional search through all-systems
+      traditionalResult =
+        findFirst
+          (system: system.config.networking.hostName == hostname)
+          null
+          (map nixosFor depot.infra.machines.all-systems);
+    in
+    # Return the first match, or throw an error if neither approach found a match
+    if preProcessedResult != null
+    then {
+      # Create a compatible system structure
+      system = preProcessedResult;
+      # Add an indicator this is a pre-processed system
+      isPreProcessed = true;
+    }
+    else if traditionalResult != null
+    then traditionalResult
+    else throw "${hostname} is not a known NixOS host";
 
   rebuild-system = rebuildSystemWith (
     # HACK: use the string of the original source to avoid copying the whole
@@ -57,7 +105,15 @@ in rec {
     fi
 
     echo "Rebuilding NixOS for $HOSTNAME"
-    system=$(${pkgs.nix}/bin/nix-build -E "((import ${depotPath} {}).infra.nixos.findSystem \"$HOSTNAME\").system" --no-out-link --show-trace)
+    system=$(${pkgs.nix}/bin/nix-build -E "
+      let
+        depot = import ${depotPath} {};
+        result = depot.infra.nixos.findSystem \"$HOSTNAME\";
+      in
+        if result ? isPreProcessed && result.isPreProcessed
+        then result.system
+        else result.system
+    " --no-out-link --show-trace)
 
     ${pkgs.nix}/bin/nix-env -p /nix/var/nix/profiles/system --set $system
     $system/bin/switch-to-configuration switch
