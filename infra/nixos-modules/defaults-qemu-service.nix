@@ -45,14 +45,14 @@ in
   # Force boot loader timeout to resolve conflict
   boot.loader.timeout = lib.mkForce 16;
 
-  # Configure root filesystem size
-  fileSystems."/" = {
-    device = "/dev/disk/by-label/nixos";
-    fsType = "ext4";
-    autoResize = true;
-  };
+  # # Configure root filesystem size
+  # fileSystems."/" = {
+  #   device = "/dev/disk/by-label/nixos";
+  #   fsType = "ext4";
+  #   autoResize = true;
+  # };
 
-  boot.growPartition = true;
+  # boot.growPartition = true;
 
 
   # Enable the QEMU guest agent

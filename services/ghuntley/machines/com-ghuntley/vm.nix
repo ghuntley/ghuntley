@@ -46,6 +46,27 @@ let
           "squashfs"
         ];
 
+        # Force inclusion of these modules
+        boot.initrd.kernelModules = [
+          "squashfs"
+          "overlay"
+          "9p"
+          "9pnet"
+          "9pnet_virtio"
+        ];
+
+        # Make sure all modules are included in the netboot
+        # netboot.includeSystemBuildDependencies = true;  # This option no longer exists
+
+        # Add additional debugging options for netboot
+        boot.kernelParams = [
+          "console=ttyS0"
+          "console=tty1"
+          "loglevel=7" # Maximum log level
+          "debug"
+          "boot.shell_on_fail" # Drop to shell on failure
+        ];
+
         # Network configuration for proper PXE functionality
         networking = {
           useDHCP = true;

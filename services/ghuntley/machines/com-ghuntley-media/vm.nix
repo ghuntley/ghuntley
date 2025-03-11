@@ -14,6 +14,7 @@ let
           (modulesPath + "/virtualisation/qemu-vm.nix")
           (modulesPath + "/installer/cd-dvd/iso-image.nix")
           (modulesPath + "/installer/netboot/netboot.nix")
+          # We're overriding the problematic settings from this module directly
           (depot.path + "/infra/nixos-modules/defaults-qemu-service.nix")
         ];
 
@@ -44,6 +45,91 @@ let
           "overlay"
           "squashfs"
         ];
+
+        # Force inclusion of these modules
+        boot.initrd.kernelModules = [
+          "squashfs"
+          "overlay"
+          "9p"
+          "9pnet"
+          "9pnet_virtio"
+        ];
+
+        # Override any postDeviceCommands from other modules since we're using systemd in initrd
+        boot.initrd.postDeviceCommands = lib.mkForce "";
+
+        # Override problematic defaults in defaults-qemu-service.nix
+        boot.initrd.systemd = {
+          enable = true;
+          # Make sure systemd handles the mounting of /dev
+          services."dev-mount" = lib.mkForce {
+            description = "Mount devtmpfs at /dev";
+            wantedBy = [ "initrd-fs.target" ];
+            before = [ "initrd-fs.target" ];
+            unitConfig.DefaultDependencies = "no";
+            serviceConfig = {
+              Type = "oneshot";
+              RemainAfterExit = true;
+            };
+            script = ''
+              if ! mountpoint -q /dev; then
+                mkdir -p /dev
+                mount -t devtmpfs none /dev
+              fi
+            '';
+          };
+        };
+
+        # Add additional debugging options for netboot
+        boot.kernelParams = [
+          "console=ttyS0"
+          "console=tty1"
+          "loglevel=7" # Maximum log level
+          "debug"
+          "boot.shell_on_fail" # Drop to shell on failure
+          "ip=dhcp" # Use DHCP for IP configuration
+          "netboot.timeout=10" # Reduce timeout for faster boot
+          "netboot.9p.windowsize=512" # Larger 9p window size for better performance
+          "netboot.9p.msize=16384" # Larger message size for 9p protocol
+          "netboot.9p.trans=virtio" # Use virtio transport for 9p
+          "netboot.disable_ipv6=1" # Disable IPv6 to speed up boot
+        ];
+
+        # Ensure udev is enabled for device management
+        services.udev.enable = true;
+
+        # Filesystem configuration for netboot
+        # Use an in-memory filesystem for root during PXE boot
+        fileSystems."/" = lib.mkForce {
+          device = "none";
+          fsType = "tmpfs";
+          options = [ "defaults" "mode=755" "size=50%" ];
+        };
+
+        # Define persistent storage for media data
+        # This will be mounted after boot
+        fileSystems."/var/lib/media" = lib.mkIf (config.virtualisation.useNixStoreImage or false) {
+          device = "/dev/disk/by-label/media";
+          fsType = "ext4";
+          options = [ "defaults" "nofail" ];
+          neededForBoot = false;
+        };
+
+        # Create symlinks for media service data directories to point to persistent storage
+        system.activationScripts.mediaLinks = ''
+          mkdir -p /var/lib/media/{plex,ombi,sonarr,radarr,lidarr,sabnzbd}
+
+          # Create symlinks if they don't exist
+          for svc in plex ombi sonarr radarr lidarr sabnzbd; do
+            if [ ! -L /var/lib/$svc ]; then
+              # Ensure target directory exists
+              mkdir -p /var/lib/media/$svc
+
+              # Create symlink
+              ln -sfn /var/lib/media/$svc /var/lib/$svc
+            fi
+          done
+        '';
 
         # Network configuration for proper PXE functionality
         networking = {

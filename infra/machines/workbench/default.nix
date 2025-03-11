@@ -54,48 +54,6 @@ let
   # Helper for literal iPXE variables (no Nix interpolation)
   ipxeLiteral = name: "''${" + name + "}";
 
-  # Helper functions for PXE/iPXE configuration
-  helpers = {
-    # Normalize MAC address for PXELinux (01-mac-with-dashes)
-    normalizeMac = mac: "01-" + builtins.replaceStrings [ ":" ] [ "-" ] (lib.toLower mac);
-
-    # Create a simple direct boot script for a machine with enhanced debug
-    makeSimpleBootScript = name: machine: ''
-      #!ipxe
-      # Direct boot script for ${machine.description} (MAC: ${machine.macAddress})
-
-      # Network and TFTP optimization settings
-      set retry 3
-      set keep-san 0
-      set blksize 512
-
-      echo ===== BOOT SCRIPT FOR ${name} =====
-      echo MAC: ${machine.macAddress}
-      echo
-
-      # Direct boot from netboot iPXE script
-      echo Loading ${name}.ipxe...
-      chain --replace ${name}.ipxe || goto boot_failed
-
-      :boot_failed
-      echo ======================================
-      echo ERROR: Failed to load ${name}.ipxe
-      echo ======================================
-      echo Network information:
-      ifstat
-      route
-      echo
-      echo Press any key to retry...
-      prompt
-      goto retry_boot
-
-      :retry_boot
-      echo Retrying...
-      chain ${name}.ipxe || reboot
-    '';
-
-  };
-
 in
 {
   imports = [
@@ -348,6 +306,9 @@ in
             rm -rf /srv/tftp/*
             chmod 755 /srv/tftp
 
+            # Define sed command with full path
+            SED="${pkgs.gnused}/bin/sed"
+
             echo "Setting up TFTP boot environment..."
 
             # Create a simple test file to verify TFTP access
@@ -453,7 +414,14 @@ in
               # Copy iPXE script
               if [ -f "${machine.netbootIpxe}" ]; then
                 echo "Copying iPXE script for ${name}..."
-                cp -f ${machine.netbootIpxe} /srv/tftp/${name}.ipxe || echo "Warning: Failed to copy iPXE script"
+                # Instead of simply copying the file, customize it to use our own paths
+                cat ${machine.netbootIpxe} | sed "s|initrd|${name}/initrd|g" > /srv/tftp/${name}.ipxe || echo "Warning: Failed to copy iPXE script"
+                # Ensure the proper toplevel path is in the script
+                if ! grep -q "${machine.toplevel}" /srv/tftp/${name}.ipxe; then
+                  $SED -i "s|init=|init=${machine.toplevel}/init |g" /srv/tftp/${name}.ipxe
+                fi
+                # Make sure the path to the kernel is correct
+                $SED -i "s|kernel .*linux-.*|kernel ${name}/bzImage|g" /srv/tftp/${name}.ipxe
               else
                 echo "Creating fallback script for ${name}..."
                 cat > /srv/tftp/${name}.ipxe << 'INNER'
@@ -473,8 +441,8 @@ in
       # Load the kernel and initrd from the ${name} directory
       echo Loading kernel and initrd...
 
-      # Standard NixOS-style boot command
-      kernel ${name}/bzImage init=${machine.toplevel}/init initrd=initrd console=ttyS0,115200n8 console=tty1
+      # Standard NixOS-style boot command with required netboot parameters
+      kernel ${name}/bzImage init=${machine.toplevel}/init initrd=${name}/initrd root=/dev/ram0 console=ttyS0,115200n8 console=tty1 loglevel=7 debug
       initrd ${name}/initrd
 
       # Boot the system
@@ -494,9 +462,9 @@ in
       chain default.ipxe
       INNER
                 # Inject the correct machine values
-                sed -i "s/\${name}/${name}/g" /srv/tftp/${name}.ipxe
-                sed -i "s/\${machine.description}/${machine.description}/g" /srv/tftp/${name}.ipxe
-                sed -i "s|\${machine.toplevel}|${machine.toplevel}|g" /srv/tftp/${name}.ipxe
+                $SED -i "s/\${name}/${name}/g" /srv/tftp/${name}.ipxe
+                $SED -i "s/\${machine.description}/${machine.description}/g" /srv/tftp/${name}.ipxe
+                $SED -i "s|\${machine.toplevel}|${machine.toplevel}|g" /srv/tftp/${name}.ipxe
               fi
 
               # Create MAC-specific script for direct boot
@@ -527,7 +495,7 @@ in
       chain boot.ipxe || reboot
       INNER
               # Inject the correct machine name - make sure to properly handle the replacement
-              sed -i "s/MACHINE_NAME/${name}/g" /srv/tftp/$MAC_LOWER.ipxe
+              $SED -i "s/MACHINE_NAME/${name}/g" /srv/tftp/$MAC_LOWER.ipxe
 
               # Create PXE boot configuration for this MAC
               mkdir -p /srv/tftp/pxelinux.cfg
@@ -712,6 +680,68 @@ in
 
             echo "TFTP setup complete. Contents of /srv/tftp:"
             ls -la /srv/tftp/
+
+            # Create a diagnostic script for 9p filesystem issues
+            cat > /srv/tftp/9p-debug.ipxe << 'EOF'
+      #!ipxe
+      # 9P Filesystem Debug Script
+
+      :start
+      echo ========================================
+      echo 9P FILESYSTEM DEBUG SCRIPT
+      echo ========================================
+      echo This script will boot with extra debug options
+      echo for diagnosing 9P filesystem issues
+      echo
+
+      menu Select a machine to boot in debug mode:
+      EOF
+
+            # Add menu items for each machine
+            ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
+              echo "item ${name} Boot ${name} with 9P debug" >> /srv/tftp/9p-debug.ipxe
+            '') machines)}
+
+            # Add options
+            cat >> /srv/tftp/9p-debug.ipxe << 'EOF'
+      item shell Drop to iPXE shell
+      item reboot Reboot system
+
+      choose --timeout 30000 target && goto ''${target} || goto start
+      EOF
+
+            # Add machine-specific sections
+            ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
+              cat >> /srv/tftp/9p-debug.ipxe << INNER
+      :${name}
+      echo Loading kernel and initrd for ${name} with 9P debug...
+      kernel ${name}/bzImage init=${machine.toplevel}/init initrd=${name}/initrd console=ttyS0,115200n8 console=tty1 loglevel=7 boot.debug9p boot.shell_on_fail debug ignore_loglevel earlyprintk=serial,ttyS0,115200
+      initrd ${name}/initrd
+      echo Booting ${name} with 9P debugging...
+      boot || goto boot_failed
+
+      INNER
+            '') machines)}
+
+            # Add fallback sections
+            cat >> /srv/tftp/9p-debug.ipxe << 'EOF'
+      :shell
+      echo Type 'exit' to return to the menu
+      shell
+      goto start
+
+      :reboot
+      reboot
+
+      :boot_failed
+      echo Boot failed! Press any key to return to menu...
+      prompt
+      goto start
+      EOF
+
+            # Set permissions
+            chmod -R 755 /srv/tftp
+            chown -R nobody:nogroup /srv/tftp
     '';
   };
 
