@@ -442,7 +442,18 @@ in
       echo Loading kernel and initrd...
 
       # Standard NixOS-style boot command with required netboot parameters
-      kernel ${name}/bzImage init=${machine.toplevel}/init initrd=${name}/initrd root=/dev/ram0 console=ttyS0,115200n8 console=tty1 loglevel=7 debug
+      kernel ${name}/bzImage \
+        init=${machine.toplevel}/init \
+        initrd=${name}/initrd \
+        root=/dev/ram0 \
+        console=ttyS0,115200n8 console=tty1 \
+        loglevel=7 \
+        boot.shell_on_fail \
+        boot.debug1 \
+        systemd.log_level=debug \
+        systemd.log_target=console \
+        rd.debug=1
+
       initrd ${name}/initrd
 
       # Boot the system
@@ -559,86 +570,6 @@ in
       reboot
       EOF
 
-            # Create a debug script
-            cat > /srv/tftp/debug.ipxe << 'EOF'
-      #!ipxe
-      # Debug iPXE Script
-
-      :start
-      echo =========================================
-      echo iPXE DEBUG INFORMATION
-      echo =========================================
-      echo Network settings:
-      echo MAC:     ''${net0/mac}
-      echo IP:      ''${net0/ip}
-      echo Netmask: ''${net0/netmask}
-      echo Gateway: ''${net0/gateway}
-      echo DNS:     ''${dns}
-      echo
-      echo Network interface status:
-      ifstat
-      echo
-      echo Routing table:
-      route
-      echo
-
-      menu Debug options:
-      EOF
-
-            # Add debug menu items
-            ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
-              echo "item ${name} Force boot ${name}" >> /srv/tftp/debug.ipxe
-            '') machines)}
-
-            # Finish debug menu
-            cat >> /srv/tftp/debug.ipxe << 'EOF'
-      item imgstat Test file access
-      item menu    Back to main menu
-      item reboot  Reboot system
-
-      choose --timeout 120000 target && goto ''${target} || goto start
-
-      EOF
-
-            # Add machine sections to debug menu
-            ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
-              cat >> /srv/tftp/debug.ipxe << INNER
-      :${name}
-      echo Forcing boot of ${name}...
-      chain ${name}.ipxe || goto fail
-      goto start
-
-      INNER
-            '') machines)}
-
-            # Finish debug script
-            cat >> /srv/tftp/debug.ipxe << 'EOF'
-      :imgstat
-      echo Testing file access...
-      echo Checking if test.txt exists...
-      imgstat test.txt || echo "ERROR: Cannot access test.txt"
-      echo Checking if default.ipxe exists...
-      imgstat default.ipxe || echo "ERROR: Cannot access default.ipxe"
-      echo Press any key to continue...
-      prompt
-      goto start
-
-      :menu
-      chain default.ipxe || goto fail
-      goto start
-
-      :fail
-      echo =========================================
-      echo ERROR: Boot failed
-      echo =========================================
-      echo Press any key to return to menu...
-      prompt
-      goto start
-
-      :reboot
-      reboot
-      EOF
-
             # Set up PXE configuration
             cat > /srv/tftp/pxelinux.cfg/default << EOF
       DEFAULT ipxe
@@ -652,11 +583,6 @@ in
       LABEL menu
         KERNEL ipxe.lkrn
         APPEND dhcp && chain default.ipxe
-
-      LABEL debug
-        MENU LABEL Debug Mode
-        KERNEL ipxe.lkrn
-        APPEND dhcp && chain debug.ipxe
 
       LABEL shell
         KERNEL ipxe.lkrn
@@ -680,68 +606,6 @@ in
 
             echo "TFTP setup complete. Contents of /srv/tftp:"
             ls -la /srv/tftp/
-
-            # Create a diagnostic script for 9p filesystem issues
-            cat > /srv/tftp/9p-debug.ipxe << 'EOF'
-      #!ipxe
-      # 9P Filesystem Debug Script
-
-      :start
-      echo ========================================
-      echo 9P FILESYSTEM DEBUG SCRIPT
-      echo ========================================
-      echo This script will boot with extra debug options
-      echo for diagnosing 9P filesystem issues
-      echo
-
-      menu Select a machine to boot in debug mode:
-      EOF
-
-            # Add menu items for each machine
-            ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
-              echo "item ${name} Boot ${name} with 9P debug" >> /srv/tftp/9p-debug.ipxe
-            '') machines)}
-
-            # Add options
-            cat >> /srv/tftp/9p-debug.ipxe << 'EOF'
-      item shell Drop to iPXE shell
-      item reboot Reboot system
-
-      choose --timeout 30000 target && goto ''${target} || goto start
-      EOF
-
-            # Add machine-specific sections
-            ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
-              cat >> /srv/tftp/9p-debug.ipxe << INNER
-      :${name}
-      echo Loading kernel and initrd for ${name} with 9P debug...
-      kernel ${name}/bzImage init=${machine.toplevel}/init initrd=${name}/initrd console=ttyS0,115200n8 console=tty1 loglevel=7 boot.debug9p boot.shell_on_fail debug ignore_loglevel earlyprintk=serial,ttyS0,115200
-      initrd ${name}/initrd
-      echo Booting ${name} with 9P debugging...
-      boot || goto boot_failed
-
-      INNER
-            '') machines)}
-
-            # Add fallback sections
-            cat >> /srv/tftp/9p-debug.ipxe << 'EOF'
-      :shell
-      echo Type 'exit' to return to the menu
-      shell
-      goto start
-
-      :reboot
-      reboot
-
-      :boot_failed
-      echo Boot failed! Press any key to return to menu...
-      prompt
-      goto start
-      EOF
-
-            # Set permissions
-            chmod -R 755 /srv/tftp
-            chown -R nobody:nogroup /srv/tftp
     '';
   };
 
