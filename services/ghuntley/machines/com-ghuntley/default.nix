@@ -26,6 +26,8 @@ in
   netbootIpxe = machine.netbootIpxe;
   netbootUrl = getUrl machine.netboot "netboot.tar.gz";
   netbootIpxeUrl = getUrl machine.netbootIpxe "netboot.ipxe";
+  kernel = machine.kernel;
+  toplevel = machine.toplevel;
 
   tests = import ./test.nix { inherit depot pkgs; };
 
@@ -37,5 +39,7 @@ in
     "netbootIpxe"
     "netbootUrl"
     "netbootIpxeUrl"
+    "kernel"
+    "toplevel"
   ];
 }

@@ -30,6 +30,9 @@ let
       netboot = mediaMachine.netboot;
       netbootIpxe = mediaMachine.netbootIpxe;
       description = "Media Server";
+      kernel = mediaMachine.kernel;
+      kernelFile = "bzImage";
+      toplevel = mediaMachine.toplevel;
     };
 
     # ghuntley.com machine with actual configuration
@@ -38,12 +41,18 @@ let
       netboot = ghuntleyMachine.netboot;
       netbootIpxe = ghuntleyMachine.netbootIpxe;
       description = "ghuntley.com Website";
+      kernel = ghuntleyMachine.kernel;
+      kernelFile = "bzImage";
+      toplevel = ghuntleyMachine.toplevel;
     };
   };
 
   # Helper for properly escaping iPXE variables in Nix strings
   dollar = "$";
   ipxeVar = name: "${dollar}{${name}}";
+
+  # Helper for literal iPXE variables (no Nix interpolation)
+  ipxeLiteral = name: "''${" + name + "}";
 
   # Helper functions for PXE/iPXE configuration
   helpers = {
@@ -334,121 +343,60 @@ in
   system.activationScripts.tftpSetup = {
     deps = [ "specialfs" "var" "binsh" ];
     text = ''
-      # Create base TFTP directory and remove any existing files
-      mkdir -p /srv/tftp
-      rm -rf /srv/tftp/*
-      chmod 755 /srv/tftp
+            # Create base TFTP directory and remove any existing files
+            mkdir -p /srv/tftp
+            rm -rf /srv/tftp/*
+            chmod 755 /srv/tftp
 
-      echo "Setting up TFTP boot environment..."
+            echo "Setting up TFTP boot environment..."
 
-      # Create a simple test file to verify TFTP access
-      echo "TFTP test file - $(date)" > /srv/tftp/test.txt
+            # Create a simple test file to verify TFTP access
+            echo "TFTP test file - $(date)" > /srv/tftp/test.txt
 
-      # Helper function to normalize MAC address for PXELinux config
-      normalize_mac() {
-        echo "01-$(echo "$1" | tr '[:upper:]' '[:lower:]' | tr ':' '-')"
-      }
+            # Helper function to normalize MAC address for PXELinux config
+            normalize_mac() {
+              echo "01-$(echo "$1" | tr '[:upper:]' '[:lower:]' | tr ':' '-')"
+            }
 
-      ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
-        echo "Setting up boot files for ${name} (${machine.description})..."
-
-        # Create directory for this machine's boot files
-        mkdir -p /srv/tftp/${name}
-
-        # Copy netboot files - explicitly copy, not symlink
-        if [ -d "${machine.netboot}" ]; then
-          echo "Copying netboot files from ${machine.netboot} to /srv/tftp/${name}/"
-          cp -rf ${machine.netboot}/* /srv/tftp/${name}/ || echo "Warning: Some files might not have copied"
-        else
-          echo "Warning: Netboot directory for ${name} not found at ${machine.netboot}"
-        fi
-
-        # Copy iPXE boot script - explicitly copy, not symlink
-        if [ -f "${machine.netbootIpxe}" ]; then
-          echo "Copying iPXE boot script from ${machine.netbootIpxe} to /srv/tftp/${name}.ipxe"
-          cp -f ${machine.netbootIpxe} /srv/tftp/${name}.ipxe || echo "Warning: Failed to copy iPXE script"
-        else
-          echo "Warning: iPXE script for ${name} not found at ${machine.netbootIpxe}"
-          # Create a fallback script
-          cat > /srv/tftp/${name}.ipxe << EOF
-      #!ipxe
-      # Fallback boot script (original not found)
-      echo ERROR: No netboot script found for ${name}
-      echo Machine: ${machine.description}
-      echo MAC: ${machine.macAddress}
-      echo
-      echo Press any key to reboot...
-      prompt
-      reboot
-      EOF
-        fi
-
-        # Create MAC-specific iPXE script that directly boots this machine
-        cat > /srv/tftp/$(echo ${machine.macAddress} | tr '[:upper:]' '[:lower:]').ipxe << EOF
-      #!ipxe
-      # Direct boot script for ${machine.description} (MAC: ${machine.macAddress})
-
-      echo ===== BOOTING ${name} (${machine.description}) =====
-      echo MAC: ${machine.macAddress}
-      echo Time: ${ipxeVar "time"}
-      echo
-
-      # Boot from the machine's iPXE script
-      chain ${name}.ipxe || goto boot_failed
-      exit
-
-      :boot_failed
-      echo ======================================
-      echo ERROR: Failed to load ${name}.ipxe
-      echo ======================================
-      echo Network information:
-      ifstat
-      route
-      echo
-      echo Press any key to retry...
-      prompt
-      chain ${name}.ipxe || reboot
-      EOF
-
-        # Create PXE boot configuration for this MAC address
-        mkdir -p /srv/tftp/pxelinux.cfg
-        MAC_FILE=$(normalize_mac "${machine.macAddress}")
-        cat > /srv/tftp/pxelinux.cfg/$MAC_FILE << EOF
-      DEFAULT ${name}
-      LABEL ${name}
-        KERNEL ipxe.lkrn
-        APPEND dhcp && chain $(echo ${machine.macAddress} | tr '[:upper:]' '[:lower:]').ipxe
-      EOF
-
-        echo "Setup complete for ${name}"
-      '') machines)}
-
-      # Create fallback/default iPXE script
-      cat > /srv/tftp/default.ipxe << EOF
+            # Create a simple default iPXE script
+            cat > /srv/tftp/default.ipxe << 'EOF'
       #!ipxe
       # Default boot menu
 
+      :start
       echo =======================================
       echo PXE BOOT MENU
       echo =======================================
-      echo MAC address: ${ipxeVar "net0/mac"}
+      echo MAC address: ''${net0/mac}
       echo
 
       menu Select a machine to boot:
-      ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
-      item ${name} Boot ${name} (${machine.description})
-      '') machines)}
+      EOF
+
+            # Add menu items for each machine
+            ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
+              echo "item ${name} Boot ${name} (${machine.description})" >> /srv/tftp/default.ipxe
+            '') machines)}
+
+            # Add shell and reboot options
+            cat >> /srv/tftp/default.ipxe << 'EOF'
       item shell Drop to iPXE shell
       item reboot Reboot system
 
-      choose --timeout 30000 target && goto ${ipxeVar "target"} || goto timeout
+      choose --timeout 30000 target && goto ''${target} || goto timeout
 
-      ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
-      :${name}
-      chain ${name}.ipxe || goto boot_failed
-      exit
-      '') machines)}
+      EOF
 
+            # Add machine-specific sections
+            ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
+              echo ":${name}" >> /srv/tftp/default.ipxe
+              echo "chain ${name}.ipxe || goto boot_failed" >> /srv/tftp/default.ipxe
+              echo "exit" >> /srv/tftp/default.ipxe
+              echo "" >> /srv/tftp/default.ipxe
+            '') machines)}
+
+            # Add shell, reboot, and boot_failed sections
+            cat >> /srv/tftp/default.ipxe << 'EOF'
       :shell
       echo Type 'exit' to return to the menu
       shell
@@ -465,27 +413,125 @@ in
       :timeout
       echo Boot menu timed out.
       echo Attempting to determine machine from MAC address...
-
-      ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
-      iseq ${ipxeVar "mac"} ${machine.macAddress} && chain ${name}.ipxe ||
-      '') machines)}
-
-      echo Unknown MAC address, booting to menu...
-      goto start
       EOF
 
-      # Create a boot.ipxe script to handle clients that look for this default name
-      cat > /srv/tftp/boot.ipxe << EOF
-      #!ipxe
-      # Redirect script for clients that look for boot.ipxe by default
+            # Generate MAC-specific boot scripts for each machine
+            ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
+              # Create directory for ${name}'s boot files
+              mkdir -p /srv/tftp/${name}
 
-      echo Redirecting to default boot menu...
-      chain default.ipxe || goto fallback
+              # Copy netboot files
+              if [ -d "${machine.netboot}" ]; then
+                echo "Copying netboot files for ${name}..."
+                cp -rf ${machine.netboot}/* /srv/tftp/${name}/ || echo "Warning: Some files might not have copied"
+              else
+                echo "Warning: Netboot directory for ${name} not found"
+              fi
+
+              # Copy kernel files
+              if [ -d "${machine.kernel}" ]; then
+                echo "Copying kernel files for ${name}..."
+                cp -f ${machine.kernel}/${machine.kernelFile} /srv/tftp/${name}/bzImage || echo "Warning: Failed to copy kernel file"
+                ln -sf bzImage /srv/tftp/${name}/vmlinuz
+              else
+                echo "Warning: Kernel directory for ${name} not found, trying fallback method"
+                # Fallback method - try to find the kernel in the toplevel output
+                if [ -d "${machine.toplevel}" ]; then
+                  KERNEL_PATH=$(find ${machine.toplevel} -name bzImage -o -name vmlinuz | head -n 1)
+                  if [ -n "$KERNEL_PATH" ]; then
+                    echo "Found kernel at $KERNEL_PATH"
+                    cp -f "$KERNEL_PATH" /srv/tftp/${name}/bzImage || echo "Warning: Failed to copy kernel file"
+                    ln -sf bzImage /srv/tftp/${name}/vmlinuz
+                  else
+                    echo "ERROR: Could not find kernel file for ${name}"
+                  fi
+                else
+                  echo "ERROR: Could not find toplevel directory for ${name}"
+                fi
+              fi
+
+              # Copy iPXE script
+              if [ -f "${machine.netbootIpxe}" ]; then
+                echo "Copying iPXE script for ${name}..."
+                cp -f ${machine.netbootIpxe} /srv/tftp/${name}.ipxe || echo "Warning: Failed to copy iPXE script"
+              else
+                echo "Creating fallback script for ${name}..."
+                cat > /srv/tftp/${name}.ipxe << 'INNER'
+      #!ipxe
+      # Netboot script for ${name} machine
+
+      echo ===================================
+      echo Booting ${name} (${machine.description})
+      echo MAC Address: ''${net0/mac}
+      echo ===================================
+
+      # Set some network options for better performance
+      set retry:int32 5
+      set keep-san 0
+      set blksize 512
+
+      # Load the kernel and initrd from the ${name} directory
+      echo Loading kernel and initrd...
+
+      # Check if we can find a Linux kernel
+      :try_kernel
+      kernel ${name}/bzImage || kernel ${name}/vmlinuz || goto no_kernel
+      initrd ${name}/initrd || goto no_initrd
+
+      # Boot parameters - adjust as needed
+      imgargs initrd console=ttyS0,115200n8 console=tty1
+
+      # Boot the system
+      echo Booting ${name}...
+      boot || goto boot_failed
+
+      :no_kernel
+      echo ERROR: Cannot find kernel (bzImage or vmlinuz)
+      echo Trying to boot with initrd only...
+      kernel ${name}/initrd || goto boot_failed
+      initrd
+      imgargs initrd console=ttyS0,115200n8 console=tty1
+      boot || goto boot_failed
+
+      :no_initrd
+      echo ERROR: Cannot find initrd
+      goto boot_failed
+
+      :boot_failed
+      echo ===================================
+      echo ERROR: Boot failed!
+      echo ===================================
+      echo Network status:
+      ifstat
+      route
+      echo
+      echo Press any key to return to menu...
+      prompt
+      chain default.ipxe
+      INNER
+                # Inject the correct machine values
+                sed -i "s/\${name}/${name}/g" /srv/tftp/${name}.ipxe
+                sed -i "s/\${machine.description}/${machine.description}/g" /srv/tftp/${name}.ipxe
+              fi
+
+              # Create MAC-specific script for direct boot
+              MAC_LOWER=$(echo ${machine.macAddress} | tr '[:upper:]' '[:lower:]')
+              cat > /srv/tftp/$MAC_LOWER.ipxe << 'INNER'
+      #!ipxe
+      # Direct boot script
+
+      # TFTP optimization settings
+      set retry 5
+      set keep-san 0
+      set blksize 512
+
+      echo Loading machine-specific boot...
+      chain MACHINE_NAME.ipxe || goto boot_failed
       exit
 
-      :fallback
+      :boot_failed
       echo ======================================
-      echo ERROR: Failed to load default.ipxe
+      echo ERROR: Failed to load boot script
       echo ======================================
       echo Network information:
       ifstat
@@ -493,11 +539,155 @@ in
       echo
       echo Press any key to retry...
       prompt
-      chain default.ipxe || reboot
+      chain boot.ipxe || reboot
+      INNER
+              # Inject the correct machine name - make sure to properly handle the replacement
+              sed -i "s/MACHINE_NAME/${name}/g" /srv/tftp/$MAC_LOWER.ipxe
+
+              # Create PXE boot configuration for this MAC
+              mkdir -p /srv/tftp/pxelinux.cfg
+              MAC_FILE=$(normalize_mac "${machine.macAddress}")
+              cat > /srv/tftp/pxelinux.cfg/$MAC_FILE << INNER
+      DEFAULT ${name}
+      LABEL ${name}
+        KERNEL ipxe.lkrn
+        APPEND dhcp && chain $MAC_LOWER.ipxe
+      INNER
+
+              echo "Setup complete for ${name}"
+            '') machines)}
+
+            # Generate timeout MAC matching code
+            echo "" >> /srv/tftp/default.ipxe
+            echo "# Get current MAC address" >> /srv/tftp/default.ipxe
+            echo "set curr-mac ''${net0/mac}" >> /srv/tftp/default.ipxe
+
+            # Add MAC address comparisons
+            ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
+              echo "echo Checking against ${name} (${machine.macAddress})" >> /srv/tftp/default.ipxe
+              echo "iseq ''${curr-mac} ${machine.macAddress} && chain ${name}.ipxe ||" >> /srv/tftp/default.ipxe
+            '') machines)}
+
+            # Add fallback
+            echo "" >> /srv/tftp/default.ipxe
+            echo "echo Unknown MAC address, booting to menu..." >> /srv/tftp/default.ipxe
+            echo "goto start" >> /srv/tftp/default.ipxe
+
+            # Create boot.ipxe for clients that look for this filename
+            cat > /srv/tftp/boot.ipxe << 'EOF'
+      #!ipxe
+      # Boot selector
+
+      echo Checking MAC address: ''${net0/mac}
       EOF
 
-      # Create default PXE configuration
-      cat > /srv/tftp/pxelinux.cfg/default << EOF
+            # Add MAC address specific boot logic
+            ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
+              echo "iseq ''${net0/mac} ${machine.macAddress} && echo \"Found match: ${name}\" && chain ${name}.ipxe ||" >> /srv/tftp/boot.ipxe
+            '') machines)}
+
+            # Add fallback to menu
+            cat >> /srv/tftp/boot.ipxe << 'EOF'
+
+      # If no match found, load menu
+      echo "No MAC match found, going to menu..."
+      chain default.ipxe || goto error
+
+      :error
+      echo ======================================
+      echo ERROR: All boot attempts failed
+      echo ======================================
+      echo Network information:
+      ifstat
+      route
+      echo
+      echo Press any key to retry...
+      prompt
+      reboot
+      EOF
+
+            # Create a debug script
+            cat > /srv/tftp/debug.ipxe << 'EOF'
+      #!ipxe
+      # Debug iPXE Script
+
+      :start
+      echo =========================================
+      echo iPXE DEBUG INFORMATION
+      echo =========================================
+      echo Network settings:
+      echo MAC:     ''${net0/mac}
+      echo IP:      ''${net0/ip}
+      echo Netmask: ''${net0/netmask}
+      echo Gateway: ''${net0/gateway}
+      echo DNS:     ''${dns}
+      echo
+      echo Network interface status:
+      ifstat
+      echo
+      echo Routing table:
+      route
+      echo
+
+      menu Debug options:
+      EOF
+
+            # Add debug menu items
+            ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
+              echo "item ${name} Force boot ${name}" >> /srv/tftp/debug.ipxe
+            '') machines)}
+
+            # Finish debug menu
+            cat >> /srv/tftp/debug.ipxe << 'EOF'
+      item imgstat Test file access
+      item menu    Back to main menu
+      item reboot  Reboot system
+
+      choose --timeout 120000 target && goto ''${target} || goto start
+
+      EOF
+
+            # Add machine sections to debug menu
+            ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
+              cat >> /srv/tftp/debug.ipxe << INNER
+      :${name}
+      echo Forcing boot of ${name}...
+      chain ${name}.ipxe || goto fail
+      goto start
+
+      INNER
+            '') machines)}
+
+            # Finish debug script
+            cat >> /srv/tftp/debug.ipxe << 'EOF'
+      :imgstat
+      echo Testing file access...
+      echo Checking if test.txt exists...
+      imgstat test.txt || echo "ERROR: Cannot access test.txt"
+      echo Checking if default.ipxe exists...
+      imgstat default.ipxe || echo "ERROR: Cannot access default.ipxe"
+      echo Press any key to continue...
+      prompt
+      goto start
+
+      :menu
+      chain default.ipxe || goto fail
+      goto start
+
+      :fail
+      echo =========================================
+      echo ERROR: Boot failed
+      echo =========================================
+      echo Press any key to return to menu...
+      prompt
+      goto start
+
+      :reboot
+      reboot
+      EOF
+
+            # Set up PXE configuration
+            cat > /srv/tftp/pxelinux.cfg/default << EOF
       DEFAULT ipxe
       PROMPT 0
       TIMEOUT 100
@@ -510,55 +700,33 @@ in
         KERNEL ipxe.lkrn
         APPEND dhcp && chain default.ipxe
 
+      LABEL debug
+        MENU LABEL Debug Mode
+        KERNEL ipxe.lkrn
+        APPEND dhcp && chain debug.ipxe
+
       LABEL shell
         KERNEL ipxe.lkrn
         APPEND dhcp && shell
       EOF
 
-      # Copy iPXE binaries (explicitly copy, not symlink)
-      echo "Copying iPXE binaries..."
-      cp -f ${pkgs.ipxe}/ipxe.lkrn /srv/tftp/ipxe.lkrn || echo "Warning: Failed to copy ipxe.lkrn"
-      cp -f ${pkgs.ipxe}/undionly.kpxe /srv/tftp/undionly.kpxe || echo "Warning: Failed to copy undionly.kpxe"
-      cp -f ${pkgs.ipxe}/ipxe.efi /srv/tftp/ipxe.efi || echo "Warning: Failed to copy ipxe.efi"
+            # Copy iPXE binaries
+            echo "Copying iPXE binaries..."
+            cp -f ${pkgs.ipxe}/ipxe.lkrn /srv/tftp/ipxe.lkrn || echo "Warning: Failed to copy ipxe.lkrn"
+            cp -f ${pkgs.ipxe}/undionly.kpxe /srv/tftp/undionly.kpxe || echo "Warning: Failed to copy undionly.kpxe"
+            cp -f ${pkgs.ipxe}/ipxe.efi /srv/tftp/ipxe.efi || echo "Warning: Failed to copy ipxe.efi"
 
-      # Add common PXE boot filenames for compatibility with different clients
-      echo "Creating common PXE boot filename symlinks..."
-      ln -sf undionly.kpxe /srv/tftp/pxelinux.0
-      ln -sf ipxe.efi /srv/tftp/bootx64.efi
+            # Add common PXE boot filenames
+            echo "Creating common PXE boot filename symlinks..."
+            ln -sf undionly.kpxe /srv/tftp/pxelinux.0
+            ln -sf ipxe.efi /srv/tftp/bootx64.efi
 
-      # Add verification for completeness
-      echo "Verifying critical iPXE files..."
-      for file in ipxe.lkrn undionly.kpxe ipxe.efi boot.ipxe default.ipxe; do
-        if [ -e "/srv/tftp/$file" ]; then
-          echo "✓ $file exists"
-        else
-          echo "✗ ERROR: $file is missing!"
-        fi
-      done
+            # Set permissions
+            chmod -R 755 /srv/tftp
+            chown -R nobody:nogroup /srv/tftp
 
-      # Verify MAC-specific boot files
-      echo "Verifying machine-specific boot files..."
-      ${concatStringsSep "\n" (lib.mapAttrsToList (name: machine: ''
-        if [ -e "/srv/tftp/${name}.ipxe" ]; then
-          echo "✓ ${name}.ipxe exists"
-        else
-          echo "✗ ERROR: ${name}.ipxe is missing!"
-        fi
-
-        MAC_LOWER=$(echo ${machine.macAddress} | tr '[:upper:]' '[:lower:]')
-        if [ -e "/srv/tftp/$MAC_LOWER.ipxe" ]; then
-          echo "✓ $MAC_LOWER.ipxe exists"
-        else
-          echo "✗ ERROR: $MAC_LOWER.ipxe is missing!"
-        fi
-      '') machines)}
-
-      # Set proper permissions
-      chmod -R 755 /srv/tftp
-      chown -R nobody:nogroup /srv/tftp
-
-      echo "TFTP setup complete. Contents of /srv/tftp:"
-      ls -la /srv/tftp/
+            echo "TFTP setup complete. Contents of /srv/tftp:"
+            ls -la /srv/tftp/
     '';
   };
 
@@ -599,6 +767,8 @@ in
       (name: machine: [
         machine.netboot
         machine.netbootIpxe
+        machine.kernel
+        machine.toplevel
       ])
       machines
   );

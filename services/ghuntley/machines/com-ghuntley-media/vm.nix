@@ -148,4 +148,6 @@ in
   iso = nixosSystem.config.system.build.isoImage;
   netboot = nixosSystem.config.system.build.netbootRamdisk;
   netbootIpxe = nixosSystem.config.system.build.netbootIpxeScript;
+  kernel = nixosSystem.config.system.build.kernel;
+  toplevel = nixosSystem.config.system.build.toplevel;
 }
