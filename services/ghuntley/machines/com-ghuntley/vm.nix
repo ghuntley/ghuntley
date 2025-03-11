@@ -32,6 +32,20 @@ let
           nixos-install-tools
         ];
 
+        # Ensure required kernel modules for netboot are included
+        boot.initrd.availableKernelModules = [
+          "virtio_pci"
+          "virtio_blk"
+          "virtio_net"
+          "virtio_rng"
+          "virtio_console"
+          "9p"
+          "9pnet"
+          "9pnet_virtio"
+          "overlay"
+          "squashfs"
+        ];
+
         # Network configuration for proper PXE functionality
         networking = {
           useDHCP = true;
