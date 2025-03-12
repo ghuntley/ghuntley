@@ -6,7 +6,6 @@
 {
   options = {
     services.depot.nix-cache.enable = lib.mkEnableOption "the Ponderoos binary cache";
-    # depot.nix-cache.builderball = lib.mkEnableOption "use experimental builderball cache";
   };
 
   config = lib.mkIf config.services.depot.nix-cache.enable {

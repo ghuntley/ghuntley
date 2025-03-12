@@ -17,11 +17,11 @@ in
     depot.third_party.agenix.cli # Age-encrypted secrets management tool
     pkgs.bind # DNS utilities like dig, nslookup, etc.
     pkgs.bitwarden-cli # Bitwarden CLI
+    pkgs.btop # Interactive process viewer and system monitor
     pkgs.cachix # Binary cache hosting service for Nix
     pkgs.diff-so-fancy # Git diff output beautifier
     pkgs.direnv # Per-directory environment variable manager
     pkgs.gitAndTools.gitFull # Distributed version control system
-    pkgs.htop # Interactive process viewer and system monitor
     pkgs.iftop # Network bandwidth monitoring tool
     pkgs.inetutils # Collection of common network utilities
     pkgs.iotop # I/O monitoring tool

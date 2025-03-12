@@ -33,37 +33,11 @@ let
       ({ modulesPath, pkgs, lib, config, ... }: {
         imports = [
           (modulesPath + "/installer/netboot/netboot.nix")
+          (depot.path + "/infra/nixos-modules/defaults-netboot-service.nix")
         ];
-
-        system.stateVersion = "24.11";
 
         networking.hostName = "ghuntley-media";
         networking.domain = "ghuntley";
-
-        # Ensure NFS utilities are installed
-        environment.systemPackages = with pkgs; [
-          nfs-utils
-        ];
-
-        boot.supportedFilesystems = [ "tmpfs" "nfs" ];
-        boot.tmp.useTmpfs = true;
-
-        # Add system-level optimizations
-        boot.kernel.sysctl = {
-          "net.core.rmem_max" = 16777216;
-          "net.core.wmem_max" = 16777216;
-          "net.ipv4.tcp_rmem" = "4096 87380 16777216";
-          "net.ipv4.tcp_wmem" = "4096 65536 16777216";
-          "net.core.netdev_max_backlog" = 30000;
-        };
-
-
-        fileSystems."/" = {
-          device = "none";
-          fsType = "tmpfs";
-          options = [ "size=50%" ];
-        };
-
 
         # Ensure mount point exists before NFS mount
         systemd.tmpfiles.rules = [
@@ -73,6 +47,11 @@ let
         fileSystems."/var/lib/tailscale" = makeNFSMount {
           nfsServer = "10.10.10.254";
           nfsPath = "/mnt/dpool/vms/ghuntley-media/tailscale";
+        };
+
+        fileSystems."/var/lib/netdata" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/dpool/vms/ghuntley-media/netdata";
         };
 
 
@@ -111,81 +90,7 @@ let
           nfsPath = "/mnt/dpool/ghuntley/media";
         };
 
-        services.tailscale.enable = true;
-
-        # # Enable persistence of data for services
-        # systemd.services.persistence = {
-        #   description = "Enable persistence of data for services";
-        #   wantedBy = [ "local-fs.target" ];
-        #   after = [ "mnt-state.mount" ];
-        #   before = [ "sysinit.target" ];
-        #   requiredBy = [ ];
-
-        #   script = ''
-
-        #     # Tailscale
-        #     systemctl stop tailscaled.service
-        #     mkdir -p /mnt/state/tailscale
-        #     rm -rf /var/lib/tailscale
-        #     ln -sfn /mnt/state/tailscale /var/lib/tailscale
-        #     systemctl start tailscaled.service
-
-        #     # Ombi
-        #     systemctl stop ombi.service
-        #     mkdir -p /mnt/state/ombi
-        #     rm -rf /var/lib/ombi
-        #     ln -sfn /mnt/state/ombi /var/lib/ombi
-        #     systemctl start ombi.service
-
-        #     # Plex
-        #     systemctl stop plex.service
-        #     mkdir -p /mnt/state/plex
-        #     rm -rf /var/lib/plex
-        #     ln -sfn /mnt/state/plex /var/lib/plex
-
-        #     # Sonarr
-        #     systemctl stop sonarr.service
-        #     mkdir -p /mnt/state/sonarr
-        #     rm -rf /var/lib/sonarr
-        #     ln -sfn /mnt/state/sonarr /var/lib/sonarr
-        #     systemctl start sonarr.service
-
-        #     # Radarr
-        #     systemctl stop radarr.service
-        #     mkdir -p /mnt/state/radarr
-        #     rm -rf /var/lib/radarr
-        #     ln -sfn /mnt/state/radarr /var/lib/radarr
-
-        #     # Lidarr
-        #     systemctl stop lidarr.service
-        #     mkdir -p /mnt/state/lidarr
-        #     rm -rf /var/lib/lidarr
-        #     ln -sfn /mnt/state/lidarr /var/lib/lidarr
-        #     systemctl start lidarr.service
-
-        #     # Sabnzbd
-        #     systemctl stop sabnzbd.service
-        #     mkdir -p /mnt/state/sabnzbd
-        #     rm -rf /var/lib/sabnzbd
-        #     ln -sfn /mnt/state/sabnzbd /var/lib/sabnzbd
-        #     systemctl start sabnzbd.service
-        #   '';
-
-        #   serviceConfig = {
-        #     Type = "oneshot";
-        #     RemainAfterExit = true;
-        #     User = "root";
-        #   };
-        # };
-
-        boot.loader.grub.enable = false;
-
-        # If your network supports jumbo frames, uncomment and adjust the interface name:
-        networking.interfaces.eth0.mtu = 9000;
-
         networking = {
-          useDHCP = true;
-          dhcpcd.enable = true;
           firewall = {
             allowedTCPPorts = [
               80 # HTTP
@@ -201,9 +106,6 @@ let
             ];
           };
         };
-
-        # Set empty root password
-        users.users.root.initialPassword = "";
 
         services.nginx = {
           enable = true;
@@ -305,7 +207,6 @@ let
           user = "nobody";
           group = "nogroup";
         };
-
 
       })
     ];
