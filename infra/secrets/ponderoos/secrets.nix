@@ -15,10 +15,10 @@ let
   ];
 
   # production
-  overalls = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA+ADi60itKAWFkKDy1PbkIkgCHMcIcfpbeR0Pmq6kj8";
+  workbench = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA+ADi60itKAWFkKDy1PbkIkgCHMcIcfpbeR0Pmq6kj8";
 
   prdDefault.publicKeys = allDefault.publicKeys ++ [
-    overalls
+    workbench
   ];
 
   # home

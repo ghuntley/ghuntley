@@ -53,14 +53,4 @@ in
     HandlePowerKey=suspend
   '';
 
-  # # Configure secrets for services that need them.
-  # age.secrets =
-  #   let
-  #     secretFile = name: depot.ops.secrets."${name}.age";
-  #   in
-  #   {
-  #     ssh-initrd-ed25519-key.file = secretFile "ssh-initrd-ed25519-key";
-  #     ssh-initrd-ed25519-pub.file = secretFile "ssh-initrd-ed25519-pub";
-  #   };
-
 }

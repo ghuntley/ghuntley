@@ -42,11 +42,4 @@ in
       hwclock -s
     '';
 
-  # Configure secrets for services that need them.
-  age.secrets =
-    let
-      secretFile = name: depot.infra.secrets."${name}.age";
-    in
-    { };
-
 }
