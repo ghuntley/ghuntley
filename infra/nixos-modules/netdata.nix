@@ -3,23 +3,21 @@
 
 { pkgs, config, lib, ... }: {
 
-  services.netdata.enable = true;
-  services.netdata.config = {
-    global = {
-      "update every" = 1;
+  services.netdata = {
+    enable = true;
+    package = pkgs.netdata.override {
+      withCloud = true;
+      withCloudUi = true;
     };
-    db = {
-      "mode" = "dbengine";
-    };
-    ml = {
-      "enabled" = "yes";
-    };
-    plugins = {
-      "ebpf" = "yes";
-      "fping" = "yes";
-      "ioping" = "yes";
-      "nfacct" = "yes";
-      "slabinfo" = "yes";
+    config = {
+      global = {
+        "update every" = 1;
+      };
+      db = {
+        "mode" = "dbengine";
+      };
     };
   };
+  services.netdata.claimTokenFile = config.age.secrets.netdata-cloud-claim-token.path;
+
 }

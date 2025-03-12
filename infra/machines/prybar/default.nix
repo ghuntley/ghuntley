@@ -173,6 +173,13 @@ in
       inbox-hello-credentials.file = secretFile "inbox-hello-credentials";
       inbox-hello-credentials.symlink = false;
 
+      netdata-cloud-claim-token = {
+        file = secretFile "netdata-cloud-claim-token";
+        mode = "0440";
+        group = "netdata";
+        symlink = false;
+      };
+
     };
 
   services.depot.nix-cache.enable = true;

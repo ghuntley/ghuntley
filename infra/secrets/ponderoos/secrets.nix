@@ -33,6 +33,8 @@ let
 
 in
 {
+  "netdata-cloud-claim-token.age".publicKeys = prdDefault.publicKeys ++ homeDefault.publicKeys;
+
   "geoipupdate-account-id.age".publicKeys = prdDefault.publicKeys;
   "geoipupdate-license-key.age".publicKeys = prdDefault.publicKeys;
 
