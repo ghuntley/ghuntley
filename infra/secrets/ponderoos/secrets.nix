@@ -23,9 +23,11 @@ let
 
   # home
   crowbar = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMBCGLUhUwafgC6Ol6l2sY5N0/PAdyDC89LgB2ptbf1q";
+  prybar = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOiiQUUVG9ZMyfXCpv4pa1IfiZwYnZAB09wNj4hA+xw7";
 
   homeDefault.publicKeys = allDefault.publicKeys ++ [
     crowbar
+    prybar
   ];
 
   # development
