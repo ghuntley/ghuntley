@@ -4,6 +4,27 @@
 { depot, pkgs, ... }:
 
 let
+  makeNFSMount = { nfsServer, nfsPath }: {
+    device = "${nfsServer}:${nfsPath}";
+    fsType = "nfs";
+    options = [
+      "noatime"
+      "nodiratime"
+      "rsize=1048576"
+      "wsize=1048576"
+      "actimeo=600"
+      "timeo=600"
+      "retrans=2"
+      "vers=4.2"
+      "rw"
+      "x-systemd.requires=network-online.target"
+      "x-systemd.after=network-online.target"
+      "x-systemd.required-by=multi-user.target"
+      "x-systemd.before=multi-user.target"
+      "_netdev"
+    ];
+  };
+
   nixosSystem = (import (pkgs.path + "/nixos/lib/eval-config.nix")) {
     system = builtins.currentSystem;
     pkgs = pkgs;
@@ -46,76 +67,116 @@ let
 
         # Ensure mount point exists before NFS mount
         systemd.tmpfiles.rules = [
-          "d /mnt/state 0755 root root -"
           "d /mnt/media 0777 root root -"
         ];
 
-        fileSystems."/mnt/state" = {
-          device = "10.10.10.254:/mnt/dpool/vms/ghuntley-media";
-          fsType = "nfs";
-          options = [
-            "noatime"
-            "nodiratime"
-            "rsize=1048576"
-            "wsize=1048576"
-            "actimeo=600"
-            "timeo=600"
-            "retrans=2"
-            "vers=4.2"
-          ];
+        fileSystems."/var/lib/tailscale" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/dpool/vms/ghuntley-media/tailscale";
+        };
+
+
+        fileSystems."/var/lib/plex" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/dpool/vms/ghuntley-media/plex";
+        };
+
+        fileSystems."/var/lib/ombi" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/dpool/vms/ghuntley-media/ombi";
+        };
+
+        fileSystems."/var/lib/sonarr" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/dpool/vms/ghuntley-media/sonarr";
+        };
+
+        fileSystems."/var/lib/radarr" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/dpool/vms/ghuntley-media/radarr";
+        };
+
+        fileSystems."/var/lib/lidarr" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/dpool/vms/ghuntley-media/lidarr";
+        };
+
+        fileSystems."/var/lib/sabnzbd" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/dpool/vms/ghuntley-media/sabnzbd";
+        };
+
+        fileSystems."/mnt/media" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/dpool/ghuntley/media";
         };
 
         services.tailscale.enable = true;
 
-        # Create symbolic links after /mnt/state is mounted
-        systemd.services.persistence = {
-          description = "Create required symbolic links to enable persistence";
-          wantedBy = [ "multi-user.target" ];
-          after = [ "mnt-state.mount" ];
-          before = [ "nginx.service" "plex.service" "sonarr.service" "radarr.service" "lidarr.service" "sabnzbd.service" ];
+        # # Enable persistence of data for services
+        # systemd.services.persistence = {
+        #   description = "Enable persistence of data for services";
+        #   wantedBy = [ "local-fs.target" ];
+        #   after = [ "mnt-state.mount" ];
+        #   before = [ "sysinit.target" ];
+        #   requiredBy = [ ];
 
-          script = ''
-            mkdir -p /mnt/state/plex
-            mkdir -p /mnt/state/sonarr
-            mkdir -p /mnt/state/radarr
-            mkdir -p /mnt/state/lidarr
-            mkdir -p /mnt/state/sabnzbd
+        #   script = ''
 
-            chown -R plex:plex /mnt/state/plex
-            chown -R sonarr:sonarr /mnt/state/sonarr
-            chown -R radarr:radarr /mnt/state/radarr
-            chown -R lidarr:lidarr /mnt/state/lidarr
-            chown -R sabnzbd:sabnzbd /mnt/state/sabnzbd
+        #     # Tailscale
+        #     systemctl stop tailscaled.service
+        #     mkdir -p /mnt/state/tailscale
+        #     rm -rf /var/lib/tailscale
+        #     ln -sfn /mnt/state/tailscale /var/lib/tailscale
+        #     systemctl start tailscaled.service
 
-            ln -sfn /mnt/state/plex /var/lib/plex
-            ln -sfn /mnt/state/sonarr /var/lib/sonarr
-            ln -sfn /mnt/state/radarr /var/lib/radarr
-            ln -sfn /mnt/state/lidarr /var/lib/lidarr
-            ln -sfn /mnt/state/sabnzbd /var/lib/sabnzbd
-          '';
+        #     # Ombi
+        #     systemctl stop ombi.service
+        #     mkdir -p /mnt/state/ombi
+        #     rm -rf /var/lib/ombi
+        #     ln -sfn /mnt/state/ombi /var/lib/ombi
+        #     systemctl start ombi.service
 
-          serviceConfig = {
-            Type = "oneshot";
-            RemainAfterExit = true;
-            User = "root";
-          };
-        };
+        #     # Plex
+        #     systemctl stop plex.service
+        #     mkdir -p /mnt/state/plex
+        #     rm -rf /var/lib/plex
+        #     ln -sfn /mnt/state/plex /var/lib/plex
 
-        # Mount NFS share from ZFS pool
-        fileSystems."/mnt/media" = {
-          device = "10.10.10.254:/mnt/dpool/ghuntley/media";
-          fsType = "nfs";
-          options = [
-            "noatime"
-            "nodiratime"
-            "rsize=1048576"
-            "wsize=1048576"
-            "actimeo=600"
-            "timeo=600"
-            "retrans=2"
-            "vers=4.2"
-          ];
-        };
+        #     # Sonarr
+        #     systemctl stop sonarr.service
+        #     mkdir -p /mnt/state/sonarr
+        #     rm -rf /var/lib/sonarr
+        #     ln -sfn /mnt/state/sonarr /var/lib/sonarr
+        #     systemctl start sonarr.service
+
+        #     # Radarr
+        #     systemctl stop radarr.service
+        #     mkdir -p /mnt/state/radarr
+        #     rm -rf /var/lib/radarr
+        #     ln -sfn /mnt/state/radarr /var/lib/radarr
+
+        #     # Lidarr
+        #     systemctl stop lidarr.service
+        #     mkdir -p /mnt/state/lidarr
+        #     rm -rf /var/lib/lidarr
+        #     ln -sfn /mnt/state/lidarr /var/lib/lidarr
+        #     systemctl start lidarr.service
+
+        #     # Sabnzbd
+        #     systemctl stop sabnzbd.service
+        #     mkdir -p /mnt/state/sabnzbd
+        #     rm -rf /var/lib/sabnzbd
+        #     ln -sfn /mnt/state/sabnzbd /var/lib/sabnzbd
+        #     systemctl start sabnzbd.service
+        #   '';
+
+        #   serviceConfig = {
+        #     Type = "oneshot";
+        #     RemainAfterExit = true;
+        #     User = "root";
+        #   };
+        # };
 
         boot.loader.grub.enable = false;
 
@@ -209,18 +270,41 @@ let
           };
         };
 
-        services.plex.enable = true;
+        services.plex = {
+          enable = true;
+          user = "nobody";
+          group = "nogroup";
+        };
 
-        services.sabnzbd.enable = true;
+        services.sabnzbd = {
+          enable = true;
+          user = "nobody";
+          group = "nogroup";
+        };
 
-        services.ombi.enable = true;
+        services.ombi = {
+          enable = true;
+          user = "nobody";
+          group = "nogroup";
+        };
 
-        services.sonarr.enable = true;
+        services.sonarr = {
+          enable = true;
+          user = "nobody";
+          group = "nogroup";
+        };
 
-        services.radarr.enable = true;
+        services.radarr = {
+          enable = true;
+          user = "nobody";
+          group = "nogroup";
+        };
 
-        services.lidarr.enable = true;
-
+        services.lidarr = {
+          enable = true;
+          user = "nobody";
+          group = "nogroup";
+        };
 
 
       })
