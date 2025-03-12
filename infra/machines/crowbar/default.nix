@@ -150,9 +150,6 @@ in
       ovh-backup-encryption-key.file = secretFile "ovh-backup-encryption-key";
       ovh-backup-encryption-key.symlink = false;
 
-      ovh-files-credentials.file = secretFile "ovh-files-credentials";
-      ovh-files-credentials.symlink = false;
-
       nix-cache-pubkey.file = secretFile "nix-cache-pubkey";
       nix-cache-pubkey.symlink = false;
 
