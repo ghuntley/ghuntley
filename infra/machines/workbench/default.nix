@@ -563,6 +563,9 @@ in
     stateDir = "/var/lib/goatcounter/com-ghuntley";
   };
 
+  # Explicitly set the netdata claim token path
+  services.netdata.claimTokenFile = config.age.secrets.netdata-cloud-claim-token.path;
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It's perfectly fine and recommended to leave
