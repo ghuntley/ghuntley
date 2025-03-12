@@ -11,139 +11,138 @@ let
     modules = [
       ({ modulesPath, pkgs, lib, config, ... }: {
         imports = [
-          (modulesPath + "/virtualisation/qemu-vm.nix")
-          (modulesPath + "/installer/cd-dvd/iso-image.nix")
           (modulesPath + "/installer/netboot/netboot.nix")
-          # We're overriding the problematic settings from this module directly
-          (depot.path + "/infra/nixos-modules/defaults-qemu-service.nix")
         ];
 
         system.stateVersion = "24.11";
 
-        networking.hostName = "com-ghuntley-media";
+        networking.hostName = "ghuntley-media";
         networking.domain = "ghuntley";
 
-        # PXE boot configuration
-        # Include necessary packages in the netboot image
-        netboot.storeContents = with pkgs; [
-          stdenv
-          busybox
-          nix
-          nixos-install-tools
+        # Ensure NFS utilities are installed
+        environment.systemPackages = with pkgs; [
+          nfs-utils
         ];
 
-        # Ensure required kernel modules for netboot are included
-        boot.initrd.availableKernelModules = [
-          "virtio_pci"
-          "virtio_blk"
-          "virtio_net"
-          "virtio_rng"
-          "virtio_console"
-          "9p"
-          "9pnet"
-          "9pnet_virtio"
-          "overlay"
-          "squashfs"
+        boot.supportedFilesystems = [ "tmpfs" "nfs" ];
+        boot.tmp.useTmpfs = true;
+
+        # Add system-level optimizations
+        boot.kernel.sysctl = {
+          "net.core.rmem_max" = 16777216;
+          "net.core.wmem_max" = 16777216;
+          "net.ipv4.tcp_rmem" = "4096 87380 16777216";
+          "net.ipv4.tcp_wmem" = "4096 65536 16777216";
+          "net.core.netdev_max_backlog" = 30000;
+        };
+
+
+        fileSystems."/" = {
+          device = "none";
+          fsType = "tmpfs";
+          options = [ "size=50%" ];
+        };
+
+
+        # Ensure mount point exists before NFS mount
+        systemd.tmpfiles.rules = [
+          "d /mnt/state 0755 root root -"
+          "d /mnt/media 0777 root root -"
         ];
 
-        # Force inclusion of these modules
-        boot.initrd.kernelModules = [
-          "squashfs"
-          "overlay"
-          "9p"
-          "9pnet"
-          "9pnet_virtio"
-        ];
+        fileSystems."/mnt/state" = {
+          device = "10.10.10.254:/mnt/dpool/vms/ghuntley-media";
+          fsType = "nfs";
+          options = [
+            "noatime"
+            "nodiratime"
+            "rsize=1048576"
+            "wsize=1048576"
+            "actimeo=600"
+            "timeo=600"
+            "retrans=2"
+            "vers=4.2"
+          ];
+        };
 
-        # Override any postDeviceCommands from other modules since we're using systemd in initrd
-        boot.initrd.postDeviceCommands = lib.mkForce "";
+        services.tailscale.enable = true;
 
-        # Override problematic defaults in defaults-qemu-service.nix
-        boot.initrd.systemd = {
-          enable = true;
-          # Make sure systemd handles the mounting of /dev
-          services."dev-mount" = lib.mkForce {
-            description = "Mount devtmpfs at /dev";
-            wantedBy = [ "initrd-fs.target" ];
-            before = [ "initrd-fs.target" ];
-            unitConfig.DefaultDependencies = "no";
-            serviceConfig = {
-              Type = "oneshot";
-              RemainAfterExit = true;
-            };
-            script = ''
-              if ! mountpoint -q /dev; then
-                mkdir -p /dev
-                mount -t devtmpfs none /dev
-              fi
-            '';
+        # Create symbolic links after /mnt/state is mounted
+        systemd.services.persistence = {
+          description = "Create required symbolic links to enable persistence";
+          wantedBy = [ "multi-user.target" ];
+          after = [ "mnt-state.mount" ];
+          before = [ "nginx.service" "plex.service" "sonarr.service" "radarr.service" "lidarr.service" "sabnzbd.service" ];
+
+          script = ''
+            mkdir -p /mnt/state/plex
+            mkdir -p /mnt/state/sonarr
+            mkdir -p /mnt/state/radarr
+            mkdir -p /mnt/state/lidarr
+            mkdir -p /mnt/state/sabnzbd
+
+            chown -R plex:plex /mnt/state/plex
+            chown -R sonarr:sonarr /mnt/state/sonarr
+            chown -R radarr:radarr /mnt/state/radarr
+            chown -R lidarr:lidarr /mnt/state/lidarr
+            chown -R sabnzbd:sabnzbd /mnt/state/sabnzbd
+
+            ln -sfn /mnt/state/plex /var/lib/plex
+            ln -sfn /mnt/state/sonarr /var/lib/sonarr
+            ln -sfn /mnt/state/radarr /var/lib/radarr
+            ln -sfn /mnt/state/lidarr /var/lib/lidarr
+            ln -sfn /mnt/state/sabnzbd /var/lib/sabnzbd
+          '';
+
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+            User = "root";
           };
         };
 
-        # Add additional debugging options for netboot
-        boot.kernelParams = [
-          "console=ttyS0"
-          "console=tty1"
-          "loglevel=7" # Maximum log level
-          "debug"
-          "boot.shell_on_fail" # Drop to shell on failure
-          "ip=dhcp" # Use DHCP for IP configuration
-          "netboot.timeout=10" # Reduce timeout for faster boot
-          "netboot.9p.windowsize=512" # Larger 9p window size for better performance
-          "netboot.9p.msize=16384" # Larger message size for 9p protocol
-          "netboot.9p.trans=virtio" # Use virtio transport for 9p
-          "netboot.disable_ipv6=1" # Disable IPv6 to speed up boot
-        ];
-
-        # Ensure udev is enabled for device management
-        services.udev.enable = true;
-
-        # Filesystem configuration for netboot
-        # Use an in-memory filesystem for root during PXE boot
-        fileSystems."/" = lib.mkForce {
-          device = "none";
-          fsType = "tmpfs";
-          options = [ "defaults" "mode=755" "size=50%" ];
+        # Mount NFS share from ZFS pool
+        fileSystems."/mnt/media" = {
+          device = "10.10.10.254:/mnt/dpool/ghuntley/media";
+          fsType = "nfs";
+          options = [
+            "noatime"
+            "nodiratime"
+            "rsize=1048576"
+            "wsize=1048576"
+            "actimeo=600"
+            "timeo=600"
+            "retrans=2"
+            "vers=4.2"
+          ];
         };
 
-        # Define persistent storage for media data
-        # This will be mounted after boot
-        fileSystems."/var/lib/media" = lib.mkIf (config.virtualisation.useNixStoreImage or false) {
-          device = "/dev/disk/by-label/media";
-          fsType = "ext4";
-          options = [ "defaults" "nofail" ];
-          neededForBoot = false;
-        };
+        boot.loader.grub.enable = false;
 
-        # Create symlinks for media service data directories to point to persistent storage
-        system.activationScripts.mediaLinks = ''
-          mkdir -p /var/lib/media/{plex,ombi,sonarr,radarr,lidarr,sabnzbd}
+        # If your network supports jumbo frames, uncomment and adjust the interface name:
+        networking.interfaces.eth0.mtu = 9000;
 
-          # Create symlinks if they don't exist
-          for svc in plex ombi sonarr radarr lidarr sabnzbd; do
-            if [ ! -L /var/lib/$svc ]; then
-              # Ensure target directory exists
-              mkdir -p /var/lib/media/$svc
-
-              # Create symlink
-              ln -sfn /var/lib/media/$svc /var/lib/$svc
-            fi
-          done
-        '';
-
-        # Network configuration for proper PXE functionality
         networking = {
           useDHCP = true;
           dhcpcd.enable = true;
           firewall = {
-            allowedTCPPorts = [ 32400 67 69 4011 5001 ]; # DHCP, TFTP, Plex, Ombi ports
-            allowedUDPPorts = [ 67 68 69 4011 ]; # DHCP and TFTP ports
+            allowedTCPPorts = [
+              80 # HTTP
+              8080 # Sabnzbd
+              5000 # Ombi
+              8989 # Sonarr
+              7878 # Radarr
+              8686 # Lidarr
+              32400 # Plex Media Server
+            ];
+            allowedUDPPorts = [
+              32400 # Plex Media Server
+            ];
           };
         };
 
-        # Run nginx
-        security.acme.acceptTerms = true;
-        security.acme.defaults.email = "ghuntley@ghuntley.com";
+        # Set empty root password
+        users.users.root.initialPassword = "";
 
         services.nginx = {
           enable = true;
@@ -189,10 +188,10 @@ let
           '';
         };
 
-        services.nginx.virtualHosts."media.ghuntley.com" = {
+        services.nginx.virtualHosts."ghuntley-media" = {
 
-          forceSSL = true;
-          enableACME = true;
+          forceSSL = false;
+          enableACME = false;
 
           locations."/" = {
             extraConfig = ''
@@ -212,32 +211,17 @@ let
 
         services.plex.enable = true;
 
-        services.ombi.enable = true;
-        services.ombi.port = 5001;
-
-        services.sonarr.enable = true;
-        services.radarr.enable = true;
-        services.lidarr.enable = true;
-
         services.sabnzbd.enable = true;
 
-        services.depot.restic = {
-          paths = [
-            "/var/lib/ombi"
-            "/var/lib/plex"
-            "/var/lib/sonarr"
-            "/var/lib/radarr"
-            "/var/lib/lidarr"
-            "/var/lib/sabnzbd"
-          ];
-          exclude = [ "" ];
-        };
+        services.ombi.enable = true;
 
-        # Set empty root password
-        users.users.root.initialPassword = "";
+        services.sonarr.enable = true;
 
-        isoImage.makeEfiBootable = true;
-        isoImage.makeUsbBootable = true;
+        services.radarr.enable = true;
+
+        services.lidarr.enable = true;
+
+
 
       })
     ];
@@ -245,7 +229,6 @@ let
 in
 {
   vm = nixosSystem.config.system.build.vm;
-  iso = nixosSystem.config.system.build.isoImage;
   netboot = nixosSystem.config.system.build.netbootRamdisk;
   netbootIpxe = nixosSystem.config.system.build.netbootIpxeScript;
   kernel = nixosSystem.config.system.build.kernel;

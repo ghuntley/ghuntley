@@ -128,9 +128,9 @@ in
   services.depot.automatic-nix-gc = {
     enable = true;
     interval = "1 hour";
-    diskThreshold = 64; # GiB
-    maxFreed = 8; # GiB
-    preserveGenerations = "90d";
+    diskThreshold = 128; # GiB
+    maxFreed = 64; # GiB
+    preserveGenerations = "14d";
   };
 
   # Offsite backups to OVH
@@ -433,7 +433,7 @@ in
       # Set some network options for better performance
       set retry:int32 5
       set keep-san 0
-      set blksize 512
+      set blksize 4096
 
       # Load the kernel and initrd from the ${name} directory
       echo Loading kernel and initrd...
@@ -442,16 +442,14 @@ in
       kernel ${name}/bzImage \
         init=${machine.toplevel}/init \
         initrd=${name}/initrd \
-        root=/dev/ram0 \
+        root=tmpfs \
+        systemd.volatile=yes \
+        boot.shell_on_fail \
+        boot.trace \
+        nixos.label=netboot \
         console=ttyS0,115200n8 console=tty1 \
         loglevel=7 \
-        boot.shell_on_fail \
-        boot.debug1 \
-        boot.trace \
-        systemd.log_level=debug \
-        systemd.log_target=console \
-        rd.debug=1 \
-        debug ignore_loglevel
+        net.ifnames=0
 
       initrd ${name}/initrd
 
