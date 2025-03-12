@@ -311,9 +311,6 @@ in
 
             echo "Setting up TFTP boot environment..."
 
-            # Create a simple test file to verify TFTP access
-            echo "TFTP test file - $(date)" > /srv/tftp/test.txt
-
             # Helper function to normalize MAC address for PXELinux config
             normalize_mac() {
               echo "01-$(echo "$1" | tr '[:upper:]' '[:lower:]' | tr ':' '-')"
@@ -450,9 +447,11 @@ in
         loglevel=7 \
         boot.shell_on_fail \
         boot.debug1 \
+        boot.trace \
         systemd.log_level=debug \
         systemd.log_target=console \
-        rd.debug=1
+        rd.debug=1 \
+        debug ignore_loglevel
 
       initrd ${name}/initrd
 
@@ -607,37 +606,6 @@ in
             echo "TFTP setup complete. Contents of /srv/tftp:"
             ls -la /srv/tftp/
     '';
-  };
-
-  # Create a HTTP/HTTPS server to serve iPXE files as backup
-  services.nginx.virtualHosts."pxe.ponderoos.com" = {
-    # Enable HTTPS with Let's Encrypt
-    forceSSL = true;
-    enableACME = true;
-
-    # Recommended settings for security
-    http2 = true;
-
-    # Serve files from the TFTP directory
-    locations."/" = {
-      root = "/srv/tftp";
-      extraConfig = ''
-        autoindex on;
-
-        # Add appropriate MIME types for iPXE scripts
-        types {
-          application/octet-stream ipxe;
-          application/octet-stream kpxe;
-          application/octet-stream efi;
-          application/octet-stream lkrn;
-        }
-
-        # Increase timeout for large files
-        proxy_read_timeout 300;
-        proxy_connect_timeout 300;
-        proxy_send_timeout 300;
-      '';
-    };
   };
 
   # Ensure the machine netboot artifacts are built
