@@ -4,6 +4,8 @@
 { depot, pkgs, ... }:
 
 let
+  inherit (depot.nix.nfs) makeNFSMount;
+
   nixosSystem = (import (pkgs.path + "/nixos/lib/eval-config.nix")) {
     system = builtins.currentSystem;
     pkgs = pkgs;
@@ -11,25 +13,128 @@ let
     modules = [
       ({ modulesPath, pkgs, lib, config, ... }: {
         imports = [
-          (modulesPath + "/virtualisation/qemu-vm.nix")
-          (modulesPath + "/installer/cd-dvd/iso-image.nix")
-          (depot.path + "/infra/nixos-modules/defaults-qemu-service.nix")
-          (depot.path + "/infra/nixos-modules/goatcounter.nix")
+          (modulesPath + "/installer/netboot/netboot.nix")
+          (depot.path + "/infra/nixos-modules/defaults-netboot-service.nix")
+          (depot.path + "/infra/nixos-modules/podman.nix")
+          (depot.path + "/infra/nixos-modules/libvirt.nix")
         ];
 
-        system.stateVersion = "24.11";
-
-        networking.hostName = "ghuntley-com";
+        networking.hostName = "dev";
         networking.domain = "ghuntley";
 
-        system.activationScripts.createCustomDirs = ''
-          mkdir -p /srv/ghost
-          mkdir -p /srv/linktree
-          chown -R nginx:nginx /srv/linktree
-          chmod -R 0755 /srv/linktree
-        '';
+        networking.defaultGateway.address = "51.161.203.254";
+        networking.nameservers = [ "1.1.1.1" ];
 
-        # Run nginx
+        networking.bridges."br0".interfaces = [ "eth1" ];
+        networking.interfaces."br0".ipv4.addresses = [
+          {
+            address = "51.161.203.154";
+            prefixLength = 24;
+          }
+          {
+            address = "192.168.1.1";
+            prefixLength = 24;
+          }
+        ];
+
+        fileSystems."/var/lib/acme" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/rpool/vms/ghuntley-dev/acme";
+        };
+
+        fileSystems."/var/lib/docker" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/rpool/vms/ghuntley-dev/docker";
+        };
+
+        fileSystems."/var/lib/libvirt/images" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/rpool/vms/ghuntley-dev/libvirt";
+        };
+
+        fileSystems."/var/lib/tailscale" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/rpool/vms/ghuntley-dev/tailscale";
+        };
+
+        fileSystems."/var/lib/netdata" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/rpool/vms/ghuntley-dev/netdata";
+        };
+
+
+        fileSystems."/srv" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/rpool/vms/ghuntley-dev/srv";
+        };
+
+        networking = {
+          firewall = {
+            allowedTCPPorts = [
+              443 # Coder
+              80 # Coder
+            ];
+          };
+        };
+
+        # Coder container configuration
+        virtualisation.oci-containers.containers."coder" = {
+          image = "ghcr.io/coder/coder:latest";
+          ports = [
+            "7080:7080"
+          ];
+          volumes = [
+            "/srv:/home/coder"
+            "/var/run/docker.sock:/var/run/docker.sock"
+            "/var/run/libvirt/libvirt-sock:/var/run/libvirt/libvirt-sock"
+            "/var/lib/libvirt/images:/var/lib/libvirt/images"
+            "/dev/kvm:/dev/kvm"
+          ];
+          environment = {
+            CODER_ACCESS_URL = "https://ghuntley.dev";
+            CODER_DISABLE_PASSWORD_AUTH = "false";
+            CODER_EXPERIMENTS = "*";
+            CODER_OAUTH2_GITHUB_ALLOW_EVERYONE = "true";
+            CODER_OAUTH2_GITHUB_ALLOW_SIGNUPS = "true";
+            CODER_OIDC_ALLOW_SIGNUPS = "true";
+            CODER_REDIRECT_TO_ACCESS_URL = "false";
+            CODER_SECURE_AUTH_COOKIE = "true";
+            CODER_LOG_FILTER = ".*";
+            CODER_TELEMETRY_ENABLED = "true";
+            CODER_UPDATE_CHECK = "true";
+            CODER_WILDCARD_ACCESS_URL = "*.ghuntley.dev";
+          };
+          extraOptions = [
+            "--network=host"
+            "--user=nobody"
+            "--group-add=${toString config.users.groups.docker.gid}"
+          ];
+        };
+
+        # Update service configuration
+        systemd.services.docker-pull-coder = {
+          serviceConfig.User = "root";
+          serviceConfig.Type = "oneshot";
+          path = [
+            pkgs.docker
+            pkgs.systemd
+          ];
+          script = ''
+            ${pkgs.docker}/bin/docker pull ghcr.io/coder/coder:latest
+            ${pkgs.systemd}/bin/systemctl restart docker-coder
+
+            # wait for coder container to start before adding cdrkit
+            sleep 5
+            ${pkgs.docker}/bin/docker exec `docker ps -aqf "name=^coder$"` apk add cdrkit
+          '';
+        };
+
+        systemd.timers.docker-pull-coder = {
+          wantedBy = [ "timers.target" ];
+          partOf = [ "docker-pull-coder.service" ];
+          timerConfig.OnCalendar = "daily";
+        };
+
         security.acme.acceptTerms = true;
         security.acme.defaults.email = "ghuntley@ghuntley.com";
 
@@ -60,7 +165,7 @@ let
             add_header 'Referrer-Policy' 'origin-when-cross-origin';
 
             # Disable embedding as a frame
-            # add_header X-Frame-Options DENY;
+            add_header X-Frame-Options DENY;
 
             # Prevent injection of code in other mime types (XSS Attacks)
             add_header X-Content-Type-Options nosniff;
@@ -71,17 +176,22 @@ let
 
             # This might create errors
             proxy_cookie_path / "/; secure; HttpOnly; SameSite=strict";
+
+            # Prevent search engines from indexing the site
+            add_header X-Robots-Tag "none";
           '';
         };
 
-        services.nginx.virtualHosts."ghuntley.com" = {
+        services.nginx.virtualHosts."ghuntley.dev" = {
 
-          forceSSL = true;
+          serverAliases = [ "*.ghuntley.dev" ];
+
+          forceSSL = false;
           enableACME = true;
 
           locations."/" = {
             extraConfig = ''
-              proxy_pass http://localhost:3001;
+              proxy_pass http://localhost:7080;
               proxy_pass_header Authorization;
               proxy_http_version 1.1;
               proxy_ssl_server_name on;
@@ -90,127 +200,10 @@ let
               proxy_set_header X-Real-IP $remote_addr;
               proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
               proxy_set_header X-Forwarded-Proto $scheme;
-              proxy_buffering off;
-            '';
-          };
-
-          locations."/linktree/" = {
-            extraConfig = ''
-              alias /srv/linktree/;
+              proxy_set_header Host $host;
             '';
           };
         };
-
-        # Enable and configure containerd
-        virtualisation.containerd = {
-          enable = true;
-          settings = {
-            version = 2;
-            plugins."io.containerd.grpc.v1.cri" = {
-              containerd.runtimes.runc = {
-                runtime_type = "io.containerd.runc.v2";
-              };
-            };
-          };
-        };
-
-        # Configure Docker through native NixOS options
-        systemd.services.docker = {
-          description = "Docker Application Container Engine";
-          wantedBy = [ "multi-user.target" ];
-          after = [ "network-online.target" ];
-          wants = [ "network-online.target" ];
-          serviceConfig = {
-            Type = "notify";
-            Environment = [
-              "DOCKER_TMPDIR=/var/run/docker"
-            ];
-            ExecStart = [
-              "" # Clear any existing ExecStart
-              "${pkgs.docker}/bin/dockerd --containerd=/run/containerd/containerd.sock --debug --log-level=debug"
-            ];
-            ExecReload = [
-              "${pkgs.procps}/bin/kill -s HUP $MAINPID"
-            ];
-            LimitNOFILE = "infinity";
-            LimitNPROC = "infinity";
-            LimitCORE = "infinity";
-            TimeoutStartSec = "0";
-            TimeoutStopSec = "120";
-            Restart = "always";
-            RestartSec = "2s";
-          };
-        };
-
-        # Ghost container configuration
-        virtualisation.oci-containers.containers."ghost" = {
-          image = "ghost:latest";
-          ports = [
-            "3001:2368"
-          ];
-          volumes = [
-            "/srv/ghost:/var/lib/ghost/content:cached"
-            "/srv/ghost/config.production.json:/var/lib/ghost/config.production.json"
-          ];
-          environment = {
-            url = "https://ghuntley.com";
-            database__client = "sqlite3";
-            database__connection__filename = "/var/lib/ghost/content/data/ghost.db";
-            #DEBUG = "ghost:*";
-            #NODE_ENV = "development";
-            #logging__level = "debug";
-            #database__debug = "true";
-          };
-        };
-
-        # Update service configuration
-        systemd.services.podman-pull-ghost = {
-          serviceConfig.User = "root";
-          serviceConfig.Type = "oneshot";
-          path = [
-            pkgs.docker
-            pkgs.systemd
-          ];
-          script = ''
-            ${pkgs.docker}/bin/docker pull ghost
-            ${pkgs.systemd}/bin/systemctl restart podman-ghost
-          '';
-        };
-
-        systemd.timers.podman-pull-ghost = {
-          wantedBy = [ "timers.target" ];
-          partOf = [ "podman-pull-ghost.service" ];
-          timerConfig.OnCalendar = "daily";
-        };
-
-        # Configure secrets for services that need them.
-        age.secrets =
-          let
-            secretFile = name: depot.infra.secrets.ponderoos."${name}.age";
-          in
-          {
-            ovh-backup-credentials.file = secretFile "ovh-backup-credentials";
-            ovh-backup-credentials.symlink = false;
-
-            ovh-backup-encryption-key.file = secretFile "ovh-backup-encryption-key";
-            ovh-backup-encryption-key.symlink = false;
-
-            nix-cache-pubkey.file = secretFile "nix-cache-pubkey";
-            nix-cache-pubkey.symlink = false;
-          };
-
-        virtualisation = {
-          memorySize = 8192;
-          cores = 16;
-          graphics = false;
-          diskSize = 98304; # Size in MiB (96 GiB)
-        };
-
-        # Set empty root password
-        users.users.root.initialPassword = "";
-
-        isoImage.makeEfiBootable = true;
-        isoImage.makeUsbBootable = true;
 
       })
     ];
@@ -218,5 +211,8 @@ let
 in
 {
   vm = nixosSystem.config.system.build.vm;
-  iso = nixosSystem.config.system.build.isoImage;
+  netboot = nixosSystem.config.system.build.netbootRamdisk;
+  netbootIpxe = nixosSystem.config.system.build.netbootIpxeScript;
+  kernel = nixosSystem.config.system.build.kernel;
+  toplevel = nixosSystem.config.system.build.toplevel;
 }
