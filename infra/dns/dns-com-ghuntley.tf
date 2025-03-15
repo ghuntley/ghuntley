@@ -244,3 +244,11 @@ resource "cloudflare_record" "com_ghuntley_chat" {
   value   = var.com_ghuntley_ipv4
   proxied = false
 }
+
+resource "cloudflare_record" "com_ghuntley_sa" {
+  zone_id = var.com_ghuntley_cloudflare_zone_id
+  name    = "sa"
+  type    = "CNAME"
+  value   = "simpleanalyticsexternal.com"
+  proxied = false
+}

@@ -71,6 +71,7 @@ let
         services.depot.geoipupdate = {
           enable = true;
           accountId = 1125904;
+          stateDir = "/var/lib/goatcounter";
           licenseKey = "/var/lib/goatcounter/geoipupdate-license-key";
         };
 

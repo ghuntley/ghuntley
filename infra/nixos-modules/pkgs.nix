@@ -34,6 +34,7 @@ in
     pkgs.opentelemetry-collector # Telemetry data collector and processor
     pkgs.pre-commit # Framework for managing git pre-commit hooks
     pkgs.starship # Cross-shell customizable prompt
+    pkgs.sqlite # SQL database engine
     pkgs.stow # Symlink farm manager
     pkgs.tmux # Terminal multiplexer
     pkgs.tree # Directory listing as tree structure
