@@ -21,6 +21,7 @@ in
     pkgs.cachix # Binary cache hosting service for Nix
     pkgs.diff-so-fancy # Git diff output beautifier
     pkgs.direnv # Per-directory environment variable manager
+    pkgs.elinks # Text-based web browser
     pkgs.gitAndTools.gitFull # Distributed version control system
     pkgs.iftop # Network bandwidth monitoring tool
     pkgs.inetutils # Collection of common network utilities

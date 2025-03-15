@@ -2,16 +2,12 @@
 # SPDX-License-Identifier: Proprietary
 
 { pkgs, config, lib, ... }: {
+
   virtualisation.docker.extraOptions = "--iptables=false --ip6tables=false";
   networking.firewall.extraCommands = ''
     iptables -P FORWARD ACCEPT \
-    && iptables -t nat -A POSTROUTING -s 172.17.0.0/16 -j SNAT --to-source 51.161.196.125
+    && iptables -t nat -A POSTROUTING -s 0.0.0.0/0 -j SNAT --to-source 0.0.0.0/0
   '';
-
-  # && iptables -t nat -A POSTROUTING -s 172.16.65.0/24 -j SNAT --to-source 51.161.196.125
-  # && iptables -t nat -A POSTROUTING -s 192.168.122.0/24 -j SNAT --to-source 51.161.196.125
-
-  #networking.firewall.extraCommands = ''iptables -t nat -A POSTROUTING -s 172.17.0.0/16 -j MASQUERADE && iptables -P FORWARD ACCEPT'';
 
   networking.firewall = {
     # always allow traffic from your docker0 network
@@ -22,7 +18,4 @@
   virtualisation.docker.enable = true;
   virtualisation.docker.package = pkgs.docker;
   virtualisation.oci-containers.backend = "docker";
-
-  # virtualisation.podman.dockerCompat = true;
-  # virtualisation.podman.dockerSocket.enable = true;
 }

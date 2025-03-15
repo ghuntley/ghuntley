@@ -100,37 +100,38 @@ in
   # Tailscale
   systemd.services.tailscaled = {
     wantedBy = [ "multi-user.target" ];
+    after = [ "var-lib-tailscale.mount" ];
+    requires = [ "var-lib-tailscale.mount" ];
 
     serviceConfig = {
-      StateDirectory = "tailscale";
-      RuntimeDirectory = "tailscale";
-      CacheDirectory = "tailscale";
+      PrivateMounts = lib.mkForce false;
+      MountFlags = lib.mkForce "shared";
+      StateDirectory = lib.mkForce "";
+      RuntimeDirectory = lib.mkForce "tailscale";
+      CacheDirectory = lib.mkForce "tailscale";
+      PrivateTmp = lib.mkForce false;
 
-      PrivateTmp = false;
-      DynamicUser = false;
-
-      Type = "notify";
-      User = "nobody";
-      Group = "nogroup";
-      # Disable systemd security features that prevent nobody from working
-      NoNewPrivileges = false;
-      ProtectSystem = false;
-      ProtectHome = false;
-      PrivateDevices = false;
-      ProtectKernelTunables = false;
-      ProtectControlGroups = false;
-      RestrictAddressFamilies = [ ];
-      LockPersonality = false;
-      MemoryDenyWriteExecute = false;
-      RestrictRealtime = false;
-      RestrictSUIDSGID = false;
-      ProtectKernelModules = false;
-      ProtectKernelLogs = false;
-      ProtectClock = false;
-      IPAddressDeny = [ ];
-      RestrictNamespaces = false;
+      User = lib.mkForce "root";
+      Group = lib.mkForce "wheel";
     };
   };
+
+  # Netdata
+  systemd.services.netdata = {
+    wantedBy = [ "multi-user.target" ];
+    after = [ "var-lib-netdata.mount" ];
+    requires = [ "var-lib-netdata.mount" ];
+
+    serviceConfig = {
+      PrivateMounts = lib.mkForce false;
+      MountFlags = lib.mkForce "shared";
+      StateDirectory = lib.mkForce "";
+      RuntimeDirectory = lib.mkForce "netdata";
+      CacheDirectory = lib.mkForce "netdata";
+      PrivateTmp = lib.mkForce false;
+    };
+  };
+
 
   system.stateVersion = "24.11";
 }

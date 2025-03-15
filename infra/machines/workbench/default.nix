@@ -14,36 +14,48 @@ let
   scm = name: depot.path.origSrc + ("/infra/scm/nixos-modules/" + name);
 
   # Import machine configurations
-  mediaMachine = import (depot.path.origSrc + "/services/ghuntley/machines/com-ghuntley-media/default.nix") {
+  mediaMachine = import (depot.path.origSrc + "/services/ghuntley/machines/ghuntley-media/default.nix") {
     inherit depot pkgs;
   };
 
-  ghuntleyMachine = import (depot.path.origSrc + "/services/ghuntley/machines/com-ghuntley/default.nix") {
+  ghuntleyMachine = import (depot.path.origSrc + "/services/ghuntley/machines/ghuntley-com/default.nix") {
+    inherit depot pkgs;
+  };
+
+  dashboardMachine = import (depot.path.origSrc + "/services/ghuntley/machines/ghuntley-dashboard/default.nix") {
     inherit depot pkgs;
   };
 
   # Machine configurations for PXE boot
   machines = {
-    # Media server with actual configuration
-    "media" = {
+    "ghuntley-media" = {
       macAddress = "bc:24:11:61:77:72";
+      description = "Media Server";
       netboot = mediaMachine.netboot;
       netbootIpxe = mediaMachine.netbootIpxe;
-      description = "Media Server";
       kernel = mediaMachine.kernel;
       kernelFile = "bzImage";
       toplevel = mediaMachine.toplevel;
     };
 
-    # ghuntley.com machine with actual configuration
-    "ghuntley" = {
+    "ghuntley-com" = {
       macAddress = "bc:24:11:97:45:4b";
+      description = "ghuntley.com Website";
       netboot = ghuntleyMachine.netboot;
       netbootIpxe = ghuntleyMachine.netbootIpxe;
-      description = "ghuntley.com Website";
       kernel = ghuntleyMachine.kernel;
       kernelFile = "bzImage";
       toplevel = ghuntleyMachine.toplevel;
+    };
+
+    "ghuntley-dashboard" = {
+      macAddress = "bc:24:11:f2:ef:2c";
+      description = "ghuntley.com Dashboard";
+      netboot = dashboardMachine.netboot;
+      netbootIpxe = dashboardMachine.netbootIpxe;
+      kernel = dashboardMachine.kernel;
+      kernelFile = "bzImage";
+      toplevel = dashboardMachine.toplevel;
     };
   };
 
