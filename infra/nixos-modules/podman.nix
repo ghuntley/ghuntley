@@ -3,7 +3,6 @@
 
 { pkgs, config, lib, ... }: {
 
-  virtualisation.docker.extraOptions = "--iptables=false --ip6tables=false";
   networking.firewall.extraCommands = ''
     iptables -P FORWARD ACCEPT \
     && iptables -t nat -A POSTROUTING -s 0.0.0.0/0 -j SNAT --to-source 0.0.0.0/0
@@ -15,7 +14,10 @@
   };
 
   virtualisation.podman.enable = false;
-  virtualisation.docker.enable = true;
-  virtualisation.docker.package = pkgs.docker;
+  virtualisation.docker = {
+    enable = true;
+    package = pkgs.docker;
+    extraOptions = "--ip-masq=true --userland-proxy=true --iptables=false --ip6tables=false";
+  };
   virtualisation.oci-containers.backend = "docker";
 }

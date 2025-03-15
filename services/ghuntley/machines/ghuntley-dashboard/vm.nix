@@ -56,8 +56,10 @@ let
             "/srv:/appdata:cached"
           ];
           environment = {
+            # Not really a secret but it needs to be a constant value.
             SECRET_ENCRYPTION_KEY = "e06c520f1b8c10e7218f40d634bf85217ed8c9919a5a82d50d4da19bec254662";
           };
+          extraOptions = [ "--network=host" ];
         };
 
         # Update service configuration
@@ -77,7 +79,7 @@ let
         systemd.timers.docker-pull-homearr = {
           wantedBy = [ "timers.target" ];
           partOf = [ "docker-pull-homearr.service" ];
-          timerConfig.OnCalendar = "hourly";
+          timerConfig.OnCalendar = "daily";
         };
 
       })
