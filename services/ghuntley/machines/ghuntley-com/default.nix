@@ -18,14 +18,12 @@ in
 
   # Individual components
   vm = machine.vm;
-  iso = machine.iso;
-  url = getIsoUrl machine.iso;
+  # iso = machine.iso;
+  # url = getIsoUrl machine.iso;
 
   # PXE boot components
   netboot = machine.netboot;
   netbootIpxe = machine.netbootIpxe;
-  netbootUrl = getUrl machine.netboot "netboot.tar.gz";
-  netbootIpxeUrl = getUrl machine.netbootIpxe "netboot.ipxe";
   kernel = machine.kernel;
   toplevel = machine.toplevel;
 
@@ -37,8 +35,6 @@ in
     "url"
     "netboot"
     "netbootIpxe"
-    "netbootUrl"
-    "netbootIpxeUrl"
     "kernel"
     "toplevel"
   ];

@@ -59,14 +59,5 @@ in
         DatabaseDirectory = cfg.stateDir;
       };
     };
-
-    # Configure backups using depot.restic
-    services.depot.restic = {
-      enable = true;
-      paths = [
-        cfg.stateDir
-      ];
-      exclude = [ ];
-    };
   };
 }

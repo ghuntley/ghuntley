@@ -58,7 +58,7 @@ in
 
     errorsTo = mkOption {
       type = types.str;
-      default = "no-reply+goatcounter@ponderoos.com";
+      default = "no-reply+goatcounter@ghuntley.com";
       description = "Email address to use for sending errors";
     };
   };
@@ -93,18 +93,8 @@ in
           proxy_set_header X-Real-IP $remote_addr;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
-          add_header X-Robots-Tag "none";
         '';
       };
-    };
-
-    # Configure backups using depot.restic
-    services.depot.restic = {
-      enable = true;
-      paths = [
-        cfg.stateDir
-      ];
-      exclude = [ ];
     };
   };
 }

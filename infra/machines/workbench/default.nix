@@ -47,7 +47,7 @@ let
     };
 
     "ghuntley-com" = {
-      macAddress = "bc:24:11:97:45:4b";
+      macAddress = "BC:24:11:92:BC:3E";
       description = "ghuntley.com Website";
       netboot = ghuntleyMachine.netboot;
       netbootIpxe = ghuntleyMachine.netbootIpxe;

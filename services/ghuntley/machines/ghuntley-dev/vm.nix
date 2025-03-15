@@ -26,6 +26,8 @@ let
         networking.nameservers = [ "1.1.1.1" ];
 
         networking.bridges."br0".interfaces = [ "eth1" ];
+        networking.firewall.interfaces."br0".allowedTCPPorts = [ 80 443 ];
+
         networking.interfaces."br0".ipv4.addresses = [
           {
             address = "51.161.203.154";
@@ -68,20 +70,12 @@ let
           nfsPath = "/mnt/rpool/vms/ghuntley-dev/srv";
         };
 
-        networking = {
-          firewall = {
-            allowedTCPPorts = [
-              443 # Coder
-              80 # Coder
-            ];
-          };
-        };
 
         # Coder container configuration
         virtualisation.oci-containers.containers."coder" = {
           image = "ghcr.io/coder/coder:latest";
           ports = [
-            "7080:7080"
+            "3000:3000"
           ];
           volumes = [
             "/srv:/home/coder"
@@ -92,11 +86,11 @@ let
           ];
           environment = {
             CODER_ACCESS_URL = "https://ghuntley.dev";
-            CODER_DISABLE_PASSWORD_AUTH = "false";
+            CODER_DISABLE_PASSWORD_AUTH = "true";
             CODER_EXPERIMENTS = "*";
             CODER_OAUTH2_GITHUB_ALLOW_EVERYONE = "true";
-            CODER_OAUTH2_GITHUB_ALLOW_SIGNUPS = "true";
-            CODER_OIDC_ALLOW_SIGNUPS = "true";
+            CODER_OAUTH2_GITHUB_ALLOW_SIGNUPS = "false";
+            CODER_OIDC_ALLOW_SIGNUPS = "false";
             CODER_REDIRECT_TO_ACCESS_URL = "false";
             CODER_SECURE_AUTH_COOKIE = "true";
             CODER_LOG_FILTER = ".*";
@@ -183,15 +177,14 @@ let
         };
 
         services.nginx.virtualHosts."ghuntley.dev" = {
-
           serverAliases = [ "*.ghuntley.dev" ];
 
-          forceSSL = false;
+          forceSSL = true;
           enableACME = true;
 
           locations."/" = {
             extraConfig = ''
-              proxy_pass http://localhost:7080;
+              proxy_pass http://127.0.0.1:3000;
               proxy_pass_header Authorization;
               proxy_http_version 1.1;
               proxy_ssl_server_name on;

@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
 
-{ depot, lib, pkgs, ... }:
+{ depot, lib, pkgs, config, ... }:
 
 # Default set of modules that are imported in all Depot nixos systems
 #
@@ -128,6 +128,23 @@ in
       StateDirectory = lib.mkForce "";
       RuntimeDirectory = lib.mkForce "netdata";
       CacheDirectory = lib.mkForce "netdata";
+      PrivateTmp = lib.mkForce false;
+    };
+  };
+
+
+  # Goatcounter
+  systemd.services.goatcounter = lib.mkIf (config.services ? depot && config.services.depot ? goatcounter && config.services.depot.goatcounter.enable) {
+    wantedBy = [ "multi-user.target" ];
+    after = [ "var-lib-goatcounter.mount" ];
+    requires = [ "var-lib-goatcounter.mount" ];
+
+    serviceConfig = {
+      PrivateMounts = lib.mkForce false;
+      MountFlags = lib.mkForce "shared";
+      StateDirectory = lib.mkForce "";
+      RuntimeDirectory = lib.mkForce "goatcounter";
+      CacheDirectory = lib.mkForce "goatcounter";
       PrivateTmp = lib.mkForce false;
     };
   };

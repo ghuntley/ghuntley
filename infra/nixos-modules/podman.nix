@@ -3,10 +3,10 @@
 
 { pkgs, config, lib, ... }: {
 
-  networking.firewall.extraCommands = ''
-    iptables -P FORWARD ACCEPT \
-    && iptables -t nat -A POSTROUTING -s 0.0.0.0/0 -j SNAT --to-source 0.0.0.0/0
-  '';
+  # networking.firewall.extraCommands = ''
+  #   iptables -P FORWARD ACCEPT \
+  #   && iptables -t nat -A POSTROUTING -s 0.0.0.0/0 -j SNAT --to-source 0.0.0.0/0
+  # '';
 
   networking.firewall = {
     # always allow traffic from your docker0 network
