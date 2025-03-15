@@ -236,3 +236,11 @@ resource "cloudflare_record" "com_ghuntley_stats" {
   value   = var.com_ponderoos_ipv4
   proxied = false
 }
+
+resource "cloudflare_record" "com_ghuntley_chat" {
+  zone_id = var.com_ghuntley_cloudflare_zone_id
+  name    = "chat"
+  type    = "A"
+  value   = var.com_ghuntley_ipv4
+  proxied = false
+}

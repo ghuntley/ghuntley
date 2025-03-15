@@ -88,14 +88,6 @@ resource "cloudflare_record" "dev_ghuntley_mx_10_2" {
 
 # records
 
-resource "cloudflare_record" "dev_ghuntley_www" {
-  zone_id = var.dev_ghuntley_cloudflare_zone_id
-  name    = "www"
-  type    = "A"
-  value   = var.dev_ghuntley_ipv4
-  proxied = true
-}
-
 # resource "cloudflare_record" "dev_ghuntley_www_ipv6" {
 #   zone_id = var.dev_ghuntley_cloudflare_zone_id
 #   name    = "www"
@@ -108,8 +100,9 @@ resource "cloudflare_record" "dev_ghuntley_wildcard" {
   name    = "*"
   type    = "A"
   value   = var.dev_ghuntley_ipv4
-  proxied = true
+  proxied = false
 }
+
 
 # resource "cloudflare_record" "dev_ghuntley_wildcard_ipv6" {
 #   zone_id = var.dev_ghuntley_cloudflare_zone_id

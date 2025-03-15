@@ -71,7 +71,7 @@ in
   fileSystems."/" = {
     device = "none";
     fsType = "tmpfs";
-    options = [ "size=50%" ];
+    options = [ "size=75%" ];
   };
 
   # Network configuration

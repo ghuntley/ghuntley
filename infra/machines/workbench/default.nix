@@ -26,6 +26,14 @@ let
     inherit depot pkgs;
   };
 
+  chatMachine = import (depot.path.origSrc + "/services/ghuntley/machines/ghuntley-chat/default.nix") {
+    inherit depot pkgs;
+  };
+
+  devMachine = import (depot.path.origSrc + "/services/ghuntley/machines/ghuntley-dev/default.nix") {
+    inherit depot pkgs;
+  };
+
   # Machine configurations for PXE boot
   machines = {
     "ghuntley-media" = {
@@ -48,6 +56,16 @@ let
       toplevel = ghuntleyMachine.toplevel;
     };
 
+    "ghuntley-dev" = {
+      macAddress = "BC:24:11:97:45:4B";
+      description = "ghuntley.dev Development Environment";
+      netboot = devMachine.netboot;
+      netbootIpxe = devMachine.netbootIpxe;
+      kernel = devMachine.kernel;
+      kernelFile = "bzImage";
+      toplevel = devMachine.toplevel;
+    };
+
     "ghuntley-dashboard" = {
       macAddress = "bc:24:11:f2:ef:2c";
       description = "ghuntley.com Dashboard";
@@ -57,6 +75,17 @@ let
       kernelFile = "bzImage";
       toplevel = dashboardMachine.toplevel;
     };
+
+    "ghuntley-chat" = {
+      macAddress = "BC:24:11:B5:16:87";
+      description = "ghuntley.com Chat";
+      netboot = chatMachine.netboot;
+      netbootIpxe = chatMachine.netbootIpxe;
+      kernel = chatMachine.kernel;
+      kernelFile = "bzImage";
+      toplevel = chatMachine.toplevel;
+    };
+
   };
 
 

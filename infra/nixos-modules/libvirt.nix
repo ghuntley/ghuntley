@@ -3,7 +3,7 @@
 
 { pkgs, config, lib, ... }: {
 
-  boot.extraModprobeConfig = "options kvm_intel nested=1";
+  boot.extraModprobeConfig = "options kvm_amd nested=1";
   security.polkit.enable = true;
 
   virtualisation.libvirtd.enable = true;
