@@ -146,8 +146,9 @@ depot.nix.lazy-deps {
   python.attr = "third_party.nixpkgs.python38";
 
   ## rust
-  rustc.attr = "third_party.nixpkgs.rustc";
-  cargo.attr = "third_party.nixpkgs.cargo";
+  rustc.attr = "third_party.nixpkgs.rust-bin.stable.latest.rustc";
+  cargo.attr = "third_party.nixpkgs.rust-bin.stable.latest.cargo";
+  pkg-config.attr = "third_party.nixpkgs.pkg-config";
 
   ## ocaml
   dune.attr = "third_party.nixpkgs.dune_3";

@@ -96,6 +96,14 @@ resource "cloudflare_record" "net_ghuntley_www" {
   proxied = true
 }
 
+resource "cloudflare_record" "net_ghuntley_media" {
+  zone_id = var.net_ghuntley_cloudflare_zone_id
+  name    = "media"
+  type    = "A"
+  value   = var.net_ghuntley_media_ipv4
+  proxied = false
+}
+
 # resource "cloudflare_record" "net_ghuntley_www_ipv6" {
 #   zone_id = var.net_ghuntley_cloudflare_zone_id
 #   name    = "www"

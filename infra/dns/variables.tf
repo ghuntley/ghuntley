@@ -77,3 +77,8 @@ variable "net_ghuntley_ipv4" {
   type      = string
   sensitive = true
 }
+
+variable "net_ghuntley_media_ipv4" {
+  type      = string
+  sensitive = true
+}
