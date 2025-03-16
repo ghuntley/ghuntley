@@ -1,0 +1,34 @@
+<div class="repo-list">
+    <h1>Git Repositories</h1>
+
+    {% if repos.is_empty() %}
+        <div class="empty-state">
+            <p>No repositories found.</p>
+        </div>
+    {% else %}
+        <div class="repo-grid">
+            {% for repo in repos %}
+                <div class="repo-card">
+                    <h2 class="repo-name"><a href="/{{ repo.name }}">{{ repo.name }}</a></h2>
+                    <p class="repo-description">
+                        {% if repo.description %}
+                            {{ repo.description }}
+                        {% else %}
+                            <em>No description available</em>
+                        {% endif %}
+                    </p>
+                    <div class="repo-meta">
+                        <span class="repo-updated">
+                            Last updated:
+                            {% if repo.last_updated %}
+                                {{ repo.last_updated }}
+                            {% else %}
+                                <em>Unknown</em>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

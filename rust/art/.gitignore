@@ -1,0 +1,37 @@
+# Rust build artifacts
+/target/
+**/*.rs.bk
+*.pdb
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Generated files
+Cargo.lock
+
+# Repository directory content
+/repositories/*
+!repositories/.gitkeep
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+
+# OS Files
+.DS_Store
+Thumbs.db

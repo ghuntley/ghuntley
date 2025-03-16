@@ -1,0 +1,290 @@
+/* Accessibility styles for Art application */
+
+/* Skip-to-content link - hidden by default, visible on focus */
+.skip-to-content {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #2563EB;
+    color: white;
+    padding: 8px;
+    z-index: 100;
+    transition: top 0.3s ease;
+}
+
+.skip-to-content:focus {
+    top: 0;
+}
+
+/* Focus indicators */
+:focus {
+    outline: 2px solid #2563EB;
+    outline-offset: 2px;
+}
+
+/* Keyboard shortcuts panel */
+.keyboard-shortcuts {
+    margin-bottom: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    background-color: #f9fafb;
+}
+
+.shortcuts-toggle {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.shortcuts-toggle:focus {
+    outline: 2px solid #2563EB;
+    outline-offset: -2px;
+}
+
+.shortcuts-panel {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.shortcuts-panel ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.shortcuts-panel li {
+    margin-bottom: 0.5rem;
+}
+
+.shortcuts-panel kbd {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    font-family: monospace;
+    line-height: 1;
+    color: #111827;
+    background-color: #e5e7eb;
+    border-radius: 0.25rem;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+    margin-right: 0.25rem;
+}
+
+/* High contrast mode */
+.high-contrast {
+    --text-color: #000000;
+    --background-color: #ffffff;
+    --link-color: #0000EE;
+    --link-visited-color: #551A8B;
+    --border-color: #000000;
+}
+
+.high-contrast body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.high-contrast a {
+    color: var(--link-color);
+}
+
+.high-contrast a:visited {
+    color: var(--link-visited-color);
+}
+
+.high-contrast button,
+.high-contrast input,
+.high-contrast select,
+.high-contrast textarea {
+    border-color: var(--border-color);
+}
+
+/* Accessible line numbers for code */
+.line-number {
+    user-select: none;
+    color: #6b7280;
+    text-align: right;
+    padding-right: 1rem;
+    min-width: 3rem;
+    display: inline-block;
+}
+
+/* Code lines with tabindex for keyboard navigation */
+.line[tabindex="0"] {
+    display: block;
+    outline: none;
+}
+
+.line[tabindex="0"]:focus {
+    background-color: rgba(37, 99, 235, 0.1);
+    outline: none;
+}
+
+/* Accessible tables */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table caption {
+    font-weight: bold;
+    padding: 0.5rem;
+    text-align: left;
+}
+
+th {
+    text-align: left;
+    background-color: #f3f4f6;
+}
+
+th,
+td {
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+}
+
+/* Large text mode */
+.large-text {
+    font-size: 125%;
+    line-height: 1.5;
+}
+
+.large-text h1,
+.large-text h2,
+.large-text h3,
+.large-text h4,
+.large-text h5,
+.large-text h6 {
+    line-height: 1.3;
+}
+
+/* Accessibility toggles */
+.accessibility-controls {
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: #f9fafb;
+    border-radius: 0.375rem;
+}
+
+.accessibility-controls fieldset {
+    border: 1px solid #e5e7eb;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.accessibility-controls legend {
+    font-weight: 500;
+    padding: 0 0.5rem;
+}
+
+.accessibility-controls label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Accessibility report styles */
+.accessibility-report {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    overflow: hidden;
+}
+
+.accessibility-report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.accessibility-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    background-color: #ffffff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.score-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.score-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.accessibility-violations {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.violation-item {
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.violation-item:last-child {
+    border-bottom: none;
+}
+
+.violation-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.violation-type {
+    font-weight: 500;
+}
+
+.violation-level {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.violation-level-critical {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+.violation-level-serious {
+    background-color: #ffedd5;
+    color: #f59e0b;
+}
+
+.violation-level-moderate {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.violation-level-minor {
+    background-color: #ecfdf5;
+    color: #10b981;
+}
+
+.violation-description {
+    margin-bottom: 0.5rem;
+}
+
+.violation-suggestion {
+    font-style: italic;
+    color: #6b7280;
+}
+
+.wcag-reference {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #2563eb;
+}

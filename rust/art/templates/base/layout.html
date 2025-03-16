@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/css/normalize.css">
+    <link rel="stylesheet" href="/static/css/art.css">
+    <link rel="stylesheet" href="/static/css/user.css">
+    <link rel="stylesheet" href="/static/css/maintenance.css">
+    {% if head %}{{ head|safe }}{% endif %}
+</head>
+
+<body class="{% if body_classes %}{{ body_classes }}{% endif %}">
+    <header class="site-header">
+        <div class="container">
+            <h1 class="site-title">
+                <a href="/">Art</a>
+            </h1>
+            <nav class="site-nav">
+                <ul>
+                    <li><a href="/">Repositories</a></li>
+                    <li><a href="/search">Search</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/maintenance/dashboard">Maintenance</a></li>
+                    {% if user %}
+                    <li><a href="/user/profile">Profile</a></li>
+                    <li><a href="/notifications">Notifications</a></li>
+                    {% if user.is_admin %}
+                    <li><a href="/user/management">Manage Users</a></li>
+                    {% endif %}
+                    <li>
+                        <form method="POST" action="/user/logout" class="inline-form">
+                            <button type="submit" class="nav-logout-btn">Logout</button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <li><a href="/user/login">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    {% if notification_banner %}
+    {{ notification_banner|safe }}
+    {% endif %}
+
+    <main class="site-content">
+        <div class="container">
+            {{ content|safe }}
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; {{ year }} Art Git Repository Browser</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/art.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,408 @@
+/*
+ * Art - Git Repository Browser
+ * Main CSS Styles
+ */
+
+:root {
+    --color-primary: #0366d6;
+    --color-secondary: #6c757d;
+    --color-success: #28a745;
+    --color-danger: #dc3545;
+    --color-warning: #ffc107;
+    --color-light: #f8f9fa;
+    --color-dark: #343a40;
+    --color-bg: #ffffff;
+    --color-text: #24292e;
+    --color-border: #e1e4e8;
+    --color-link: #0366d6;
+    --color-link-hover: #044289;
+    --color-code-bg: #f6f8fa;
+    --color-diff-add: #e6ffed;
+    --color-diff-del: #ffeef0;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --font-mono: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-primary: #58a6ff;
+        --color-secondary: #8b949e;
+        --color-success: #3fb950;
+        --color-danger: #f85149;
+        --color-warning: #d29922;
+        --color-light: #484f58;
+        --color-dark: #c9d1d9;
+        --color-bg: #0d1117;
+        --color-text: #c9d1d9;
+        --color-border: #30363d;
+        --color-link: #58a6ff;
+        --color-link-hover: #79c0ff;
+        --color-code-bg: #161b22;
+        --color-diff-add: #033a16;
+        --color-diff-del: #3c1618;
+    }
+}
+
+/* Base styles */
+html,
+body {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+a {
+    color: var(--color-link);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--color-link-hover);
+    text-decoration: underline;
+}
+
+pre,
+code {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    background-color: var(--color-code-bg);
+    border-radius: 3px;
+}
+
+pre {
+    padding: 1rem;
+    overflow: auto;
+}
+
+code {
+    padding: 0.2rem 0.4rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background-color: var(--color-light);
+    color: var(--color-dark);
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    background-color: var(--color-border);
+    text-decoration: none;
+}
+
+/* Header and Footer */
+.site-header {
+    border-bottom: 1px solid var(--color-border);
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+}
+
+.site-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.site-nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.site-nav li {
+    margin-left: 1.5rem;
+}
+
+.site-footer {
+    border-top: 1px solid var(--color-border);
+    padding: 1rem 0;
+    margin-top: 2rem;
+    color: var(--color-secondary);
+    font-size: 0.875rem;
+}
+
+/* Repository List */
+.repo-list h1 {
+    margin-bottom: 1.5rem;
+}
+
+.repo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.repo-card {
+    padding: 1.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.repo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.repo-name {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.repo-description {
+    color: var(--color-secondary);
+    margin-bottom: 1rem;
+}
+
+.repo-meta {
+    font-size: 0.875rem;
+    color: var(--color-secondary);
+}
+
+/* Repository Detail */
+.repo-header {
+    margin-bottom: 2rem;
+}
+
+.repo-name {
+    margin-bottom: 0.5rem;
+}
+
+.repo-description {
+    font-size: 1.25rem;
+    color: var(--color-secondary);
+    margin-bottom: 1rem;
+}
+
+.repo-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.repo-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.branch-list,
+.tag-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.branch-item,
+.tag-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.branch-item.current {
+    font-weight: bold;
+    background-color: var(--color-code-bg);
+    padding: 0.5rem;
+    border-radius: 3px;
+}
+
+/* Commit List */
+.commit-list h1 {
+    margin-bottom: 0.5rem;
+}
+
+.commit-header {
+    margin-bottom: 2rem;
+}
+
+.commit-actions {
+    margin-top: 1rem;
+}
+
+.commit-table {
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.commit-item {
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.commit-item:last-child {
+    border-bottom: none;
+}
+
+.commit-info {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+}
+
+.commit-hash {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+}
+
+.commit-meta {
+    display: flex;
+    justify-content: space-between;
+    color: var(--color-secondary);
+    font-size: 0.875rem;
+}
+
+/* Commit Detail */
+.commit-message {
+    margin-bottom: 2rem;
+}
+
+.meta-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+}
+
+.meta-table th {
+    text-align: left;
+    padding: 0.5rem 1rem 0.5rem 0;
+    vertical-align: top;
+    width: 100px;
+}
+
+.full-hash {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    word-break: break-all;
+}
+
+.diff-content {
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    overflow: auto;
+}
+
+/* File Viewer */
+.file-header {
+    margin-bottom: 2rem;
+}
+
+.file-actions {
+    margin-top: 1rem;
+}
+
+.file-meta {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background-color: var(--color-code-bg);
+}
+
+.file-content-container {
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    overflow: auto;
+}
+
+.code-container {
+    padding: 0;
+}
+
+.code-display {
+    margin: 0;
+    padding: 1rem;
+}
+
+/* Directory Listing */
+.directory-header {
+    margin-bottom: 1rem;
+}
+
+.directory-actions {
+    margin-top: 1rem;
+}
+
+.breadcrumbs {
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--color-code-bg);
+    border-radius: 6px;
+}
+
+.file-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+}
+
+.file-table th {
+    text-align: left;
+    padding: 0.75rem;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.file-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.file-entry:hover {
+    background-color: var(--color-code-bg);
+}
+
+.file-size,
+.file-time {
+    white-space: nowrap;
+    color: var(--color-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .repo-content {
+        grid-template-columns: 1fr;
+    }
+
+    .commit-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .file-table th:nth-child(2),
+    .file-table td:nth-child(2) {
+        display: none;
+    }
+}

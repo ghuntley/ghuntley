@@ -1,0 +1,474 @@
+/* Art: Main CSS
+ *
+ * This is the main stylesheet for the Art UI
+ * It follows the design principles specified in the specs:
+ * - Server-Side Rendering Only
+ * - Minimalist Design
+ * - Content-First Approach
+ * - Progressive Enhancement
+ * - Responsive Layout
+ * - Accessible Design
+ * - Performance-Focused
+ */
+
+/* Import base styles first */
+@import "normalize.css";
+@import "accessibility.css";
+@import "responsive.css";
+@import "dark-mode.css";
+
+/* Base styles */
+:root {
+    /* Light theme colors */
+    --bg-color: #ffffff;
+    --bg-color-alt: #f5f5f5;
+    --text-color: #333333;
+    --text-color-muted: #666666;
+    --border-color: #dddddd;
+    --accent-color: #2196f3;
+    --accent-color-hover: #1976d2;
+    --success-color: #4caf50;
+    --warning-color: #ff9800;
+    --error-color: #f44336;
+    --code-bg: #f8f8f8;
+    --table-header-bg: #f0f0f0;
+    --table-row-hover: #f9f9f9;
+    --selection-color: rgba(33, 150, 243, 0.2);
+
+    /* Spacing variables */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+
+    /* Typography */
+    --font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    --font-family-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+    --font-size-base: 1rem;
+    --font-size-sm: 0.875rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-xxl: 1.5rem;
+    --line-height: 1.5;
+}
+
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    line-height: var(--line-height);
+}
+
+body {
+    font-family: var(--font-family-sans);
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    min-height: 100vh;
+}
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+a:hover,
+a:focus {
+    color: var(--accent-color-hover);
+    text-decoration: underline;
+}
+
+pre,
+code {
+    font-family: var(--font-family-mono);
+    background-color: var(--code-bg);
+    border-radius: 3px;
+}
+
+code {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-sm);
+}
+
+pre {
+    padding: var(--spacing-md);
+    margin: var(--spacing-md) 0;
+    overflow-x: auto;
+    border: 1px solid var(--border-color);
+}
+
+pre code {
+    padding: 0;
+    background-color: transparent;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: var(--font-size-xxl);
+}
+
+h2 {
+    font-size: var(--font-size-xl);
+}
+
+h3 {
+    font-size: var(--font-size-lg);
+}
+
+p {
+    margin-bottom: var(--spacing-md);
+}
+
+ul,
+ol {
+    margin-bottom: var(--spacing-md);
+    padding-left: var(--spacing-lg);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--spacing-md) 0;
+    border: 1px solid var(--border-color);
+}
+
+th,
+td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    font-weight: bold;
+    background-color: var(--table-header-bg);
+}
+
+tr:hover {
+    background-color: var(--table-row-hover);
+}
+
+button,
+.button {
+    display: inline-block;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height);
+}
+
+button:hover,
+.button:hover {
+    background-color: var(--accent-color-hover);
+    text-decoration: none;
+}
+
+input,
+select,
+textarea {
+    display: block;
+    width: 100%;
+    padding: var(--spacing-sm);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    margin-bottom: var(--spacing-md);
+}
+
+label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: bold;
+}
+
+::selection {
+    background-color: var(--selection-color);
+}
+
+/* Layout containers and structure */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+.header {
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.content {
+    padding: var(--spacing-lg) 0;
+}
+
+.footer {
+    padding: var(--spacing-md) 0;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-color-muted);
+    font-size: var(--font-size-sm);
+}
+
+/* Repository specific styles */
+.repo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.repo-navigation {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.repo-navigation a {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: 3px;
+}
+
+.repo-navigation a.active {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.repo-metadata {
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    background-color: var(--bg-color-alt);
+}
+
+.file-browser {
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.file-header {
+    padding: var(--spacing-md);
+    background-color: var(--bg-color-alt);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: bold;
+}
+
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.file-list-item {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+}
+
+.file-list-item:last-child {
+    border-bottom: none;
+}
+
+.file-list-item .file-icon {
+    margin-right: var(--spacing-sm);
+}
+
+.file-list-item .file-name {
+    flex-grow: 1;
+}
+
+.file-list-item .file-meta {
+    color: var(--text-color-muted);
+    font-size: var(--font-size-sm);
+}
+
+/* Code view */
+.code-view {
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: var(--spacing-lg);
+}
+
+.code-header {
+    padding: var(--spacing-md);
+    background-color: var(--bg-color-alt);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.line-numbers {
+    text-align: right;
+    padding-right: var(--spacing-md);
+    padding-left: var(--spacing-sm);
+    color: var(--text-color-muted);
+    user-select: none;
+    background-color: var(--bg-color-alt);
+    border-right: 1px solid var(--border-color);
+    font-family: var(--font-family-mono);
+}
+
+/* Commit history */
+.commit-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.commit-item {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.commit-item:last-child {
+    border-bottom: none;
+}
+
+.commit-sha {
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+    color: var(--accent-color);
+    background-color: var(--code-bg);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 3px;
+}
+
+.commit-message {
+    margin: var(--spacing-sm) 0;
+}
+
+.commit-meta {
+    font-size: var(--font-size-sm);
+    color: var(--text-color-muted);
+}
+
+/* Clone URL section */
+.clone-url {
+    padding: var(--spacing-md);
+    background-color: var(--bg-color-alt);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    margin-bottom: var(--spacing-md);
+}
+
+.clone-url-field {
+    display: flex;
+}
+
+.clone-url-field input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-bottom: 0;
+}
+
+.clone-url-field button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* Messages and alerts */
+.message {
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    border-left-width: 4px;
+}
+
+.message.success {
+    background-color: #e8f5e9;
+    border-color: var(--success-color);
+}
+
+.message.warning {
+    background-color: #fff3e0;
+    border-color: var(--warning-color);
+}
+
+.message.error {
+    background-color: #ffebee;
+    border-color: var(--error-color);
+}
+
+/* Utilities */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-muted {
+    color: var(--text-color-muted);
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+.mb-1 {
+    margin-bottom: var(--spacing-sm);
+}
+
+.mb-2 {
+    margin-bottom: var(--spacing-md);
+}
+
+.mb-3 {
+    margin-bottom: var(--spacing-lg);
+}
+
+.pb-0 {
+    padding-bottom: 0;
+}
+
+.pb-1 {
+    padding-bottom: var(--spacing-sm);
+}
+
+.pb-2 {
+    padding-bottom: var(--spacing-md);
+}
+
+.pb-3 {
+    padding-bottom: var(--spacing-lg);
+}
+
+/* Animation utilities (kept minimal for performance) */
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

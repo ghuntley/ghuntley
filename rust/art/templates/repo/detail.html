@@ -1,0 +1,57 @@
+<div class="repo-detail">
+    <header class="repo-header">
+        <h1 class="repo-name">{{ repo.name }}</h1>
+        {% if repo.description %}
+            <p class="repo-description">{{ repo.description }}</p>
+        {% endif %}
+
+        <div class="repo-meta">
+            <div class="repo-ref">
+                Current branch: <strong>{{ current_branch }}</strong>
+                {% if last_commit_time %}
+                    (Last commit: {{ last_commit_time }})
+                {% endif %}
+            </div>
+
+            <div class="repo-actions">
+                <a href="/{{ repo.name }}/commits/{{ current_branch }}" class="btn">Commits</a>
+                <a href="/{{ repo.name }}/tree/{{ current_branch }}" class="btn">Files</a>
+                <a href="/{{ repo.name }}.git" class="btn">Clone</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="repo-content">
+        <div class="repo-branches">
+            <h2>Branches</h2>
+
+            {% if branches.is_empty() %}
+                <p class="empty-state">No branches found</p>
+            {% else %}
+                <ul class="branch-list">
+                    {% for branch in branches %}
+                        <li class="branch-item {% if branch == current_branch %}current{% endif %}">
+                            <a href="/{{ repo.name }}/tree/{{ branch }}">{{ branch }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="repo-tags">
+            <h2>Tags</h2>
+
+            {% if tags.is_empty() %}
+                <p class="empty-state">No tags found</p>
+            {% else %}
+                <ul class="tag-list">
+                    {% for tag in tags %}
+                        <li class="tag-item">
+                            <a href="/{{ repo.name }}/tree/{{ tag }}">{{ tag }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+</div>

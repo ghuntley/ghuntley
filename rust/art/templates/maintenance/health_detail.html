@@ -1,0 +1,153 @@
+{% extends "base/layout.html" %}
+
+{% block content %}
+<div class="health-detail">
+    <div class="breadcrumb">
+        <a href="/">Repositories</a> &gt;
+        <a href="/{{ repo.name }}">{{ repo.name }}</a> &gt;
+        <a href="/maintenance/dashboard">Maintenance</a> &gt;
+        <span>Health Report</span>
+    </div>
+
+    <h1>Health Report: {{ repo.name }}</h1>
+
+    <div class="health-status-badge status-{{ repo.status }}">
+        {{ repo.status|upper }}
+    </div>
+
+    <div class="health-overview">
+        <div class="stat-cards">
+            <div class="stat-card">
+                <h3>Repository Size</h3>
+                <p class="stat-number">{{ repo.size_formatted }}</p>
+                <p class="stat-detail">{{ repo.size_bytes }} bytes</p>
+            </div>
+            <div class="stat-card">
+                <h3>Loose Objects</h3>
+                <p class="stat-number">{{ repo.loose_objects }}</p>
+                {% if repo.loose_objects > 1000 %}
+                <p class="stat-alert">High number of loose objects</p>
+                {% endif %}
+            </div>
+            <div class="stat-card">
+                <h3>Packfiles</h3>
+                <p class="stat-number">{{ repo.packfiles }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Last Commit</h3>
+                <p class="stat-number">{{ repo.last_commit|default("None") }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="health-details">
+        <section class="health-section">
+            <h2>Git Health</h2>
+            <div class="status-panel status-{{ repo.git_status }}">
+                <h3>Status: {{ repo.git_status|upper }}</h3>
+                {% if repo.git_message %}
+                <p>{{ repo.git_message }}</p>
+                {% endif %}
+            </div>
+
+            <h3>Recommendations</h3>
+            <ul class="recommendations">
+                {% if repo.loose_objects > 1000 %}
+                <li>This repository has a high number of loose objects ({{ repo.loose_objects }}). Consider running
+                    garbage collection to optimize storage and performance.</li>
+                {% endif %}
+
+                {% if repo.packfiles > 20 %}
+                <li>This repository has {{ repo.packfiles }} packfiles. Consider repacking to optimize Git performance.
+                </li>
+                {% endif %}
+
+                {% if repo.size_bytes > 1000000000 %}
+                <li>This is a large repository ({{ repo.size_formatted }}). Consider using Git LFS for large files or
+                    splitting into smaller repositories.</li>
+                {% endif %}
+
+                {% if not repo.last_maintenance %}
+                <li>This repository has never been maintained. Schedule regular maintenance to ensure optimal
+                    performance.</li>
+                {% endif %}
+            </ul>
+        </section>
+
+        <section class="health-section">
+            <h2>Database Health</h2>
+            <div class="status-panel status-{{ repo.db_status }}">
+                <h3>Status: {{ repo.db_status|upper }}</h3>
+                {% if repo.db_message %}
+                <p>{{ repo.db_message }}</p>
+                {% endif %}
+            </div>
+
+            {% if repo.db_status == "needs_reindex" %}
+            <div class="action-panel">
+                <h3>Recommended Actions</h3>
+                <form method="post" action="/maintenance/trigger/{{ repo.name }}">
+                    <input type="hidden" name="task" value="reindex">
+                    <button type="submit" class="btn">Reindex Repository</button>
+                </form>
+                <p class="help-text">Reindexing updates the database with the latest repository information, ensuring
+                    search and other features work correctly.</p>
+            </div>
+            {% endif %}
+        </section>
+
+        <section class="health-section">
+            <h2>Maintenance History</h2>
+            {% if maintenance_history %}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in maintenance_history %}
+                    <tr>
+                        <td>{{ task.task }}</td>
+                        <td>{{ task.start_time }}</td>
+                        <td><span class="status status-{{ task.status }}">{{ task.status }}</span></td>
+                        <td>{{ task.duration|default("--") }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="empty-state">No maintenance history found for this repository.</p>
+            {% endif %}
+        </section>
+    </div>
+
+    <div class="actions-panel">
+        <h2>Maintenance Actions</h2>
+        <div class="action-buttons">
+            <form method="post" action="/maintenance/trigger/{{ repo.name }}" class="inline-form">
+                <input type="hidden" name="task" value="full">
+                <button type="submit" class="btn btn-primary">Run Full Maintenance</button>
+            </form>
+
+            <form method="post" action="/maintenance/trigger/{{ repo.name }}" class="inline-form">
+                <input type="hidden" name="task" value="gc">
+                <button type="submit" class="btn">Run Garbage Collection</button>
+            </form>
+
+            <form method="post" action="/maintenance/trigger/{{ repo.name }}" class="inline-form">
+                <input type="hidden" name="task" value="repack">
+                <button type="submit" class="btn">Repack Repository</button>
+            </form>
+
+            <form method="post" action="/maintenance/trigger/{{ repo.name }}" class="inline-form">
+                <input type="hidden" name="task" value="fsck">
+                <button type="submit" class="btn">Run File System Check</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

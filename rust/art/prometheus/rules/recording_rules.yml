@@ -1,0 +1,30 @@
+groups:
+  - name: art_recording_rules
+    rules:
+      # Average request rate over 5 minutes
+      - record: job:http_requests_total:rate5m
+        expr: sum(rate(http_requests_total[5m])) by (job, method, path)
+
+      # Error rate as a percentage
+      - record: job:http_requests_errors:ratio_rate5m
+        expr: sum(rate(http_response_status{code=~"5.."}[5m])) by (job) / sum(rate(http_requests_total[5m])) by (job)
+
+      # Average request duration over 5 minutes
+      - record: job:http_request_duration_seconds:avg5m
+        expr: avg(rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])) by (job, method, path)
+
+      # 95th percentile request duration over 1 hour
+      - record: job:http_request_duration_seconds:p95_1h
+        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[1h])) by (job, method, path, le))
+
+      # Git operations rate
+      - record: job:git_operations_total:rate5m
+        expr: sum(rate(git_operations_total[5m])) by (job, operation, repository)
+
+      # Cache efficiency ratio (hits / (hits + misses))
+      - record: job:cache_efficiency:ratio
+        expr: sum(cache_hits_total) by (job, cache) / (sum(cache_hits_total) by (job, cache) + sum(cache_misses_total) by (job, cache))
+
+      # Memory usage rate of change
+      - record: job:memory_usage_bytes:deriv5m
+        expr: deriv(memory_usage_bytes[5m])

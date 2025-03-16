@@ -1,0 +1,170 @@
+{% extends "base/layout.html" %}
+
+{% block content %}
+<div class="task-detail">
+    <div class="breadcrumb">
+        <a href="/">Repositories</a> &gt;
+        <a href="/{{ task.repository }}">{{ task.repository }}</a> &gt;
+        <a href="/maintenance/dashboard">Maintenance</a> &gt;
+        <span>Task Details</span>
+    </div>
+
+    <h1>Maintenance Task: {{ task.task }}</h1>
+
+    <div class="task-status-badge status-{{ task.status }}">
+        {{ task.status|upper }}
+    </div>
+
+    <div class="task-overview">
+        <div class="overview-columns">
+            <div class="overview-column">
+                <h2>Task Information</h2>
+                <table class="detail-table">
+                    <tr>
+                        <th>Repository:</th>
+                        <td><a href="/{{ task.repository }}">{{ task.repository }}</a></td>
+                    </tr>
+                    <tr>
+                        <th>Task Type:</th>
+                        <td>{{ task.task }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status:</th>
+                        <td>{{ task.status }}</td>
+                    </tr>
+                    <tr>
+                        <th>Start Time:</th>
+                        <td>{{ task.start_time|default("--") }}</td>
+                    </tr>
+                    <tr>
+                        <th>End Time:</th>
+                        <td>{{ task.end_time|default("--") }}</td>
+                    </tr>
+                    <tr>
+                        <th>Duration:</th>
+                        <td>
+                            {% if task.start_time and task.end_time %}
+                            {{ task.duration }}
+                            {% else %}
+                            --
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="overview-column">
+                <h2>Task Description</h2>
+                <div class="task-description">
+                    {% if task.task == "GarbageCollection" %}
+                    <p>Garbage collection optimizes the repository by cleaning up unnecessary files and compressing
+                        data. This helps reduce repository size and improves performance.</p>
+                    <ul>
+                        <li>Removes unreachable objects</li>
+                        <li>Compresses object files</li>
+                        <li>Optimizes storage efficiency</li>
+                    </ul>
+                    {% elif task.task == "Repack" %}
+                    <p>Repacking reorganizes how Git stores objects to improve access speed and reduce storage
+                        requirements.</p>
+                    <ul>
+                        <li>Consolidates pack files</li>
+                        <li>Improves clone and fetch performance</li>
+                        <li>Reduces disk usage</li>
+                    </ul>
+                    {% elif task.task == "Prune" %}
+                    <p>Pruning removes objects that are no longer reachable from any references, freeing disk space.</p>
+                    <ul>
+                        <li>Removes orphaned objects</li>
+                        <li>Cleans up stale data</li>
+                        <li>Reduces repository size</li>
+                    </ul>
+                    {% elif task.task == "Fsck" %}
+                    <p>File System Check (fsck) verifies the integrity of the repository's data structures.</p>
+                    <ul>
+                        <li>Detects corrupted objects</li>
+                        <li>Validates repository integrity</li>
+                        <li>Identifies data corruption issues</li>
+                    </ul>
+                    {% elif task.task == "Reindex" %}
+                    <p>Reindexing updates the database with the latest repository information, ensuring search
+                        functionality works correctly.</p>
+                    <ul>
+                        <li>Updates database records</li>
+                        <li>Ensures search accuracy</li>
+                        <li>Syncs metadata with Git repository</li>
+                    </ul>
+                    {% elif task.task == "Full" %}
+                    <p>Full maintenance performs all maintenance tasks in sequence to fully optimize the repository.</p>
+                    <ul>
+                        <li>Runs garbage collection</li>
+                        <li>Performs repacking</li>
+                        <li>Prunes unreachable objects</li>
+                        <li>Checks file system integrity</li>
+                        <li>Reindexes the database</li>
+                    </ul>
+                    {% else %}
+                    <p>This task performs maintenance operations on the repository to ensure optimal performance and
+                        data integrity.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if task.error %}
+    <section class="error-details">
+        <h2>Error Details</h2>
+        <div class="error-message">
+            {{ task.error }}
+        </div>
+
+        <div class="error-actions">
+            <form method="post" action="/maintenance/retry/{{ task.repository }}">
+                <input type="hidden" name="task" value="{{ task.task }}">
+                <button type="submit" class="btn btn-primary">Retry Task</button>
+            </form>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if task.status == "running" %}
+    <section class="task-actions">
+        <h2>Task Actions</h2>
+        <div class="action-buttons">
+            <p class="task-running-info">This task is currently running. You can check back later for results.</p>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if similar_tasks %}
+    <section class="similar-tasks">
+        <h2>Related Task History</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in similar_tasks %}
+                <tr>
+                    <td>{{ t.task }}</td>
+                    <td>{{ t.start_time }}</td>
+                    <td><span class="status status-{{ t.status }}">{{ t.status }}</span></td>
+                    <td>{{ t.duration|default("--") }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    {% endif %}
+
+    <div class="back-link">
+        <a href="/maintenance/dashboard">&larr; Back to Maintenance Dashboard</a>
+    </div>
+</div>
+{% endblock %}

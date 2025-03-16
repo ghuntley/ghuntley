@@ -1,0 +1,86 @@
+{% extends "base/layout.html" %}
+
+{% block content %}
+<div class="user-management-container">
+    <h1 class="page-title">User Management</h1>
+
+    {% if error %}
+    <div class="alert alert-error">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    {% if success %}
+    <div class="alert alert-success">
+        {{ success }}
+    </div>
+    {% endif %}
+
+    <div class="action-bar">
+        <a href="/user/create" class="btn btn-primary">Create New User</a>
+    </div>
+
+    <div class="user-list">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Display Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Last Login</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.display_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{% if user.active %}Active{% else %}Inactive{% endif %}</td>
+                    <td>{{ user.created_at }}</td>
+                    <td>{% if user.last_login %}{{ user.last_login }}{% else %}Never{% endif %}</td>
+                    <td class="actions">
+                        <a href="/user/edit/{{ user.id }}" class="btn btn-sm btn-secondary">Edit</a>
+                        <form method="POST" action="/user/delete/{{ user.id }}" class="inline-form"
+                            onsubmit="return confirm('Are you sure you want to delete this user?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if total_pages > 1 %}
+    <div class="pagination">
+        <div class="pagination-info">
+            Showing {{ users|length }} of {{ page_size * total_pages }} users (page {{ page }} of {{ total_pages }})
+        </div>
+        <div class="pagination-controls">
+            {% if page > 1 %}
+            <a href="/user/management?page={{ page - 1 }}" class="btn btn-sm">Previous</a>
+            {% endif %}
+
+            {% for p in range(1, total_pages + 1) %}
+            {% if p == page %}
+            <span class="current-page">{{ p }}</span>
+            {% else %}
+            <a href="/user/management?page={{ p }}" class="page-link">{{ p }}</a>
+            {% endif %}
+            {% endfor %}
+
+            {% if page < total_pages %} <a href="/user/management?page={{ page + 1 }}" class="btn btn-sm">Next</a>
+                {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

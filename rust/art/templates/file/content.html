@@ -1,0 +1,52 @@
+<div class="file-content">
+    <header class="file-header">
+        <h1>{{ path }}</h1>
+        <div class="file-repo">
+            Repository: <a href="/{{ repo.name }}">{{ repo.name }}</a>
+        </div>
+        <div class="file-ref">
+            Branch: <a href="/{{ repo.name }}/tree/{{ current_ref }}">{{ current_ref }}</a>
+        </div>
+        <div class="file-actions">
+            <a href="/{{ repo.name }}/tree/{{ current_ref }}/{{ path|dirname }}" class="btn">Back to Directory</a>
+            <a href="/{{ repo.name }}/raw/{{ current_ref }}/{{ path }}" class="btn">Raw</a>
+            <a href="/{{ repo.name }}/blame/{{ current_ref }}/{{ path }}" class="btn">Blame</a>
+            <a href="/{{ repo.name }}/history/{{ current_ref }}/{{ path }}" class="btn">History</a>
+        </div>
+    </header>
+
+    <div class="file-meta">
+        <div class="file-last-commit">
+            <div class="commit-info">
+                <span class="commit-id">
+                    <a href="/{{ repo.name }}/commit/{{ last_commit_id }}" class="commit-hash">{{ last_commit_id[:8]
+                        }}</a>
+                </span>
+                <span class="commit-message">{{ last_commit_message }}</span>
+            </div>
+            <div class="commit-author">
+                <span class="author-name">{{ last_commit_author }}</span>
+                <span class="commit-time">{{ last_commit_time }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="file-content-container">
+        {% if content_html %}
+        <div class="code-container">
+            <pre class="code-display"><code>{{ content_html|safe }}</code></pre>
+        </div>
+        {% else %}
+        {% if file_info.is_binary %}
+        <div class="binary-file">
+            <p>Binary file, {{ file_info.size|file_size }} bytes</p>
+            <a href="/{{ repo.name }}/raw/{{ current_ref }}/{{ path }}" class="btn">Download</a>
+        </div>
+        {% else %}
+        <div class="plain-text">
+            <pre>{{ content }}</pre>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+</div>
