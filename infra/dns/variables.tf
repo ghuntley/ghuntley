@@ -53,6 +53,11 @@ variable "com_ponderoos_ipv4" {
   sensitive = true
 }
 
+variable "com_ponderoos_ingress_ipv4" {
+  type      = string
+  sensitive = true
+}
+
 variable "com_ghuntley_ipv4" {
   type      = string
   sensitive = true
@@ -77,6 +82,7 @@ variable "net_ghuntley_ipv4" {
   type      = string
   sensitive = true
 }
+
 
 variable "net_ghuntley_media_ipv4" {
   type      = string

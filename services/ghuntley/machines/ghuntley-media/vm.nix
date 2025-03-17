@@ -58,7 +58,7 @@ let
 
         fileSystems."/var/lib/acme" = makeNFSMount {
           nfsServer = "10.10.10.254";
-          nfsPath = "/mnt/rpool/vms/ghuntley-dev/acme";
+          nfsPath = "/mnt/rpool/vms/ghuntley-media/acme";
         };
 
         fileSystems."/var/lib/tailscale" = makeNFSMount {

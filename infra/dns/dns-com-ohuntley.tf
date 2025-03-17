@@ -41,3 +41,11 @@ resource "cloudflare_record" "com_ohuntley_wildcard" {
   value   = var.com_ohuntley_ipv4
   proxied = false
 }
+
+resource "cloudflare_record" "com_ohuntley_mia" {
+  zone_id = var.com_ohuntley_cloudflare_zone_id
+  name    = "mia"
+  type    = "A"
+  value   = var.com_ponderoos_ingress_ipv4
+  proxied = false
+}

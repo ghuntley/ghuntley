@@ -16,14 +16,13 @@ let
           (modulesPath + "/installer/netboot/netboot.nix")
           (depot.path + "/infra/nixos-modules/defaults-netboot-service.nix")
           (depot.path + "/infra/nixos-modules/podman.nix")
-          (depot.path + "/infra/nixos-modules/goatcounter.nix")
-          (depot.path + "/infra/nixos-modules/geoipupdate.nix")
+          (depot.path + "/infra/nixos-modules/libvirt.nix")
         ];
 
-        networking.hostName = "ghuntley-com";
-        networking.domain = "ghuntley";
+        networking.hostName = "router";
+        networking.domain = "ponderoos";
 
-        networking.defaultGateway.address = "51.161.203.254";
+        networking.defaultGateway.address = " 139.99.136.254";
         networking.nameservers = [ "1.1.1.1" ];
 
         networking.bridges."br0".interfaces = [ "eth1" ];
@@ -31,90 +30,24 @@ let
 
         networking.interfaces."br0".ipv4.addresses = [
           {
-            address = "51.161.203.147";
+            address = "139.99.136.94";
             prefixLength = 24;
           }
         ];
 
         fileSystems."/var/lib/acme" = makeNFSMount {
           nfsServer = "10.10.10.254";
-          nfsPath = "/mnt/rpool/vms/ghuntley-com/acme";
+          nfsPath = "/mnt/rpool/vms/ponderoos-router/acme";
         };
 
         fileSystems."/var/lib/tailscale" = makeNFSMount {
           nfsServer = "10.10.10.254";
-          nfsPath = "/mnt/rpool/vms/ghuntley-com/tailscale";
+          nfsPath = "/mnt/rpool/vms/ponderoos-router/tailscale";
         };
 
         fileSystems."/var/lib/netdata" = makeNFSMount {
           nfsServer = "10.10.10.254";
-          nfsPath = "/mnt/rpool/vms/ghuntley-com/netdata";
-        };
-
-        fileSystems."/var/lib/goatcounter" = makeNFSMount {
-          nfsServer = "10.10.10.254";
-          nfsPath = "/mnt/rpool/vms/ghuntley-com/goatcounter";
-        };
-
-        fileSystems."/srv" = makeNFSMount {
-          nfsServer = "10.10.10.254";
-          nfsPath = "/mnt/rpool/vms/ghuntley-com/srv";
-        };
-
-        services.depot.goatcounter = {
-          enable = true;
-          domain = "stats.ghuntley.com";
-          port = 8010;
-          stateDir = "/var/lib/goatcounter";
-        };
-
-        services.depot.geoipupdate = {
-          enable = true;
-          accountId = 1125904;
-          stateDir = "/var/lib/goatcounter";
-          licenseKey = "/var/lib/goatcounter/geoipupdate-license-key";
-        };
-
-        # Ghost container configuration
-        virtualisation.oci-containers.containers."ghost" = {
-          image = "ghost:latest";
-          ports = [
-            "2368:2368"
-          ];
-          volumes = [
-            "/srv/ghuntley.com/ghost:/var/lib/ghost/content:cached"
-            "/srv/ghuntley.com/ghost/config.production.json:/var/lib/ghost/config.production.json"
-          ];
-          environment = {
-            url = "https://ghuntley.com";
-            database__client = "sqlite3";
-            database__connection__filename = "/var/lib/ghost/content/data/ghost.db";
-            #DEBUG = "ghost:*";
-            #NODE_ENV = "development";
-            #logging__level = "debug";
-            #database__debug = "true";
-          };
-          extraOptions = [ "--network=host" ];
-        };
-
-        # Update service configuration
-        systemd.services.docker-pull-ghost = {
-          serviceConfig.User = "root";
-          serviceConfig.Type = "oneshot";
-          path = [
-            pkgs.docker
-            pkgs.systemd
-          ];
-          script = ''
-            ${pkgs.docker}/bin/docker pull ghost
-            ${pkgs.systemd}/bin/systemctl restart docker-ghost
-          '';
-        };
-
-        systemd.timers.docker-pull-ghost = {
-          wantedBy = [ "timers.target" ];
-          partOf = [ "docker-pull-ghost.service" ];
-          timerConfig.OnCalendar = "daily";
+          nfsPath = "/mnt/rpool/vms/ponderoos-router/netdata";
         };
 
         security.acme.acceptTerms = true;
@@ -158,18 +91,20 @@ let
 
             # This might create errors
             proxy_cookie_path / "/; secure; HttpOnly; SameSite=strict";
+
+            # Prevent search engines from indexing the site
+            add_header X-Robots-Tag "none";
           '';
         };
 
-        services.nginx.virtualHosts."ghuntley.com" = {
-          serverAliases = [ "www.ghuntley.com" ];
+        services.nginx.virtualHosts."mia.ohuntley.com" = {
 
           forceSSL = true;
           enableACME = true;
 
           locations."/" = {
             extraConfig = ''
-              proxy_pass http://127.0.0.1:2368;
+              proxy_pass http://chat:8080;
               proxy_pass_header Authorization;
               proxy_http_version 1.1;
               proxy_ssl_server_name on;
@@ -180,14 +115,6 @@ let
               proxy_set_header X-Forwarded-Proto $scheme;
               proxy_set_header Host $host;
             '';
-          };
-
-
-          locations."/linktree/" = {
-            extraConfig = ''
-              alias /srv/linktree/;
-            '';
-
           };
         };
 

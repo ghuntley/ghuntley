@@ -141,73 +141,10 @@ resource "cloudflare_record" "com_ponderoos_www" {
   proxied = false
 }
 
-resource "cloudflare_record" "com_ponderoos_code" {
-  zone_id = var.com_ponderoos_cloudflare_zone_id
-  name    = "code"
-  type    = "A"
-  value   = var.com_ponderoos_ipv4
-  proxied = false
-}
-
-resource "cloudflare_record" "files_ponderoos_code" {
-  zone_id = var.com_ponderoos_cloudflare_zone_id
-  name    = "files"
-  type    = "A"
-  value   = var.com_ponderoos_ipv4
-  proxied = false
-}
 
 resource "cloudflare_record" "com_ponderoos_nix_cache" {
   zone_id = var.com_ponderoos_cloudflare_zone_id
   name    = "nix-cache"
-  type    = "A"
-  value   = var.com_ponderoos_ipv4
-  proxied = false
-}
-
-resource "cloudflare_record" "com_ponderoos_grep" {
-  zone_id = var.com_ponderoos_cloudflare_zone_id
-  name    = "grep"
-  type    = "A"
-  value   = var.com_ponderoos_ipv4
-  proxied = false
-}
-
-resource "cloudflare_record" "com_ponderoos_cl" {
-  zone_id = var.com_ponderoos_cloudflare_zone_id
-  name    = "cl"
-  type    = "A"
-  value   = var.com_ponderoos_ipv4
-  proxied = false
-}
-
-resource "cloudflare_record" "com_ponderoos_b" {
-  zone_id = var.com_ponderoos_cloudflare_zone_id
-  name    = "b"
-  type    = "A"
-  value   = var.com_ponderoos_ipv4
-  proxied = false
-}
-
-resource "cloudflare_record" "com_ponderoos_at" {
-  zone_id = var.com_ponderoos_cloudflare_zone_id
-  name    = "at"
-  type    = "A"
-  value   = var.com_ponderoos_ipv4
-  proxied = false
-}
-
-resource "cloudflare_record" "com_ponderoos_auth" {
-  zone_id = var.com_ponderoos_cloudflare_zone_id
-  name    = "auth"
-  type    = "A"
-  value   = var.com_ponderoos_ipv4
-  proxied = false
-}
-
-resource "cloudflare_record" "com_ponderoos_clip" {
-  zone_id = var.com_ponderoos_cloudflare_zone_id
-  name    = "clip"
   type    = "A"
   value   = var.com_ponderoos_ipv4
   proxied = false
@@ -221,14 +158,6 @@ resource "cloudflare_record" "com_ponderoos_upterm" {
   proxied = false
 }
 
-resource "cloudflare_record" "com_ponderoos_media" {
-  zone_id = var.com_ponderoos_cloudflare_zone_id
-  name    = "media"
-  type    = "A"
-  value   = var.com_ponderoos_ipv4
-  proxied = false
-}
-
 resource "cloudflare_record" "com_ponderoos_vault" {
   zone_id = var.com_ponderoos_cloudflare_zone_id
   name    = "vault"
@@ -237,20 +166,6 @@ resource "cloudflare_record" "com_ponderoos_vault" {
   proxied = false
 }
 
-resource "cloudflare_record" "com_ponderoos_archive" {
-  zone_id = var.com_ponderoos_cloudflare_zone_id
-  name    = "archive"
-  type    = "A"
-  value   = var.com_ponderoos_ipv4
-  proxied = false
-}
-resource "cloudflare_record" "com_ponderoos_healthchecks" {
-  zone_id = var.com_ponderoos_cloudflare_zone_id
-  name    = "healthchecks"
-  type    = "A"
-  value   = var.com_ponderoos_ipv4
-  proxied = false
-}
 
 resource "cloudflare_record" "com_ponderoos_pxe" {
   zone_id = var.com_ponderoos_cloudflare_zone_id
@@ -260,27 +175,10 @@ resource "cloudflare_record" "com_ponderoos_pxe" {
   proxied = false
 }
 
-resource "cloudflare_record" "com_ponderoos_chat" {
+resource "cloudflare_record" "com_ponderoos_ingress" {
   zone_id = var.com_ponderoos_cloudflare_zone_id
-  name    = "chat"
+  name    = "ingress"
   type    = "A"
-  value   = var.com_ponderoos_ipv4
-  proxied = false
-}
-
-resource "cloudflare_record" "com_ponderoos_stats" {
-  zone_id = var.com_ponderoos_cloudflare_zone_id
-  name    = "stats"
-  type    = "A"
-  value   = var.com_ponderoos_ipv4
-  proxied = false
-}
-
-# IRC web client
-resource "cloudflare_record" "com_ponderoos_irc" {
-  zone_id = var.com_ponderoos_cloudflare_zone_id
-  name    = "irc"
-  type    = "A"
-  value   = var.com_ponderoos_ipv4
+  value   = var.com_ponderoos_ingress_ipv4
   proxied = false
 }

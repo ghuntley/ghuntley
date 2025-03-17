@@ -34,8 +34,22 @@ let
     inherit depot pkgs;
   };
 
+  ingressMachine = import (depot.path.origSrc + "/services/ponderoos/machines/router/default.nix") {
+    inherit depot pkgs;
+  };
+
   # Machine configurations for PXE boot
   machines = {
+    "ponderoos-ingress" = {
+      macAddress = "BC:24:11:1E:27:BD";
+      description = "Ponderoos Ingress";
+      netboot = ingressMachine.netboot;
+      netbootIpxe = ingressMachine.netbootIpxe;
+      kernel = ingressMachine.kernel;
+      kernelFile = "bzImage";
+      toplevel = ingressMachine.toplevel;
+    };
+
     "ghuntley-media" = {
       macAddress = "bc:24:11:61:77:72";
       description = "Media Server";
@@ -606,6 +620,8 @@ in
 
   # Explicitly set the netdata claim token path
   services.netdata.claimTokenFile = config.age.secrets.netdata-cloud-claim-token.path;
+
+  nix.settings.trusted-users = [ "root" "ghuntley" ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
