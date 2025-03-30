@@ -4,26 +4,7 @@
 { depot, pkgs, ... }:
 
 let
-  makeNFSMount = { nfsServer, nfsPath }: {
-    device = "${nfsServer}:${nfsPath}";
-    fsType = "nfs";
-    options = [
-      "noatime"
-      "nodiratime"
-      "rsize=1048576"
-      "wsize=1048576"
-      "actimeo=600"
-      "timeo=600"
-      "retrans=2"
-      "vers=4.2"
-      "rw"
-      "x-systemd.requires=network-online.target"
-      "x-systemd.after=network-online.target"
-      "x-systemd.required-by=multi-user.target"
-      "x-systemd.before=multi-user.target"
-      "_netdev"
-    ];
-  };
+  inherit (depot.nix.nfs) makeNFSMount;
 
   nixosSystem = (import (pkgs.path + "/nixos/lib/eval-config.nix")) {
     system = builtins.currentSystem;
@@ -75,6 +56,16 @@ let
         fileSystems."/var/lib/plex" = makeNFSMount {
           nfsServer = "10.10.10.254";
           nfsPath = "/mnt/rpool/vms/ghuntley-media/plex";
+        };
+
+        fileSystems."/var/lib/jellyfin" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/rpool/vms/ghuntley-media/jellyfin";
+        };
+
+        fileSystems."/var/cache/jellyfin" = makeNFSMount {
+          nfsServer = "10.10.10.254";
+          nfsPath = "/mnt/rpool/vms/ghuntley-media/jellyfin-cache";
         };
 
         fileSystems."/var/lib/ombi" = makeNFSMount {
@@ -135,6 +126,10 @@ let
           32400 # Plex Media Server
         ];
 
+        environment.systemPackages = [
+          pkgs.ffmpeg
+        ];
+
         services.plex = {
           enable = true;
           user = "nobody";
@@ -144,6 +139,19 @@ let
         systemd.services.plex = {
           after = [ "var-lib-plex.mount" "mnt-media.mount" ];
           requires = [ "var-lib-plex.mount" "mnt-media.mount" ];
+        };
+
+        services.jellyfin = {
+          enable = true;
+          user = "nobody";
+          group = "nogroup";
+          cacheDir = "/var/cache/jellyfin";
+          dataDir = "/var/lib/jellyfin";
+        };
+
+        systemd.services.jellyfin = {
+          after = [ "var-lib-jellyfin.mount" "var-cache-jellyfin.mount" "mnt-media.mount" ];
+          requires = [ "var-lib-jellyfin.mount" "var-cache-jellyfin.mount" "mnt-media.mount" ];
         };
 
         services.sabnzbd = {
@@ -264,6 +272,47 @@ let
         };
 
         services.nginx.virtualHosts."media.ghuntley.net" = {
+
+          forceSSL = true;
+          enableACME = true;
+
+          locations."/" = {
+            extraConfig = ''
+              proxy_pass http://127.0.0.1:8096;
+              proxy_pass_header Authorization;
+              proxy_http_version 1.1;
+              proxy_ssl_server_name on;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection "upgrade";
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+              proxy_set_header Host $host;
+
+              # Disable buffering when the nginx proxy gets very resource heavy upon streaming
+              proxy_buffering off;
+            '';
+          };
+
+          locations."/socket" = {
+            extraConfig = ''
+              proxy_pass http://127.0.0.1:8096;
+              proxy_pass_header Authorization;
+              proxy_http_version 1.1;
+              proxy_ssl_server_name on;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection "upgrade";
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+              proxy_set_header Host $host;
+            '';
+          };
+
+        };
+
+
+        services.nginx.virtualHosts."requests.media.ghuntley.net" = {
 
           forceSSL = true;
           enableACME = true;
