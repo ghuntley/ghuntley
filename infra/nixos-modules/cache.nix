@@ -9,6 +9,7 @@
   };
 
   config = lib.mkIf config.services.depot.nix-cache.enable {
+
     nix.settings = {
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
@@ -16,6 +17,8 @@
         "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
         "nix-cache.ponderoos.com-1:vEk9xwqywdl9jS/KBz0mbaRF/Qnxrfsi1i5Jhsy4BSs="
       ];
+
+      trusted-users = [ "root" "ghuntley" ];
 
       substituters = [
         (if config.services.depot.nix-cache.enable
