@@ -38,6 +38,7 @@ in
     pkgs.stow # Symlink farm manager
     pkgs.tmux # Terminal multiplexer
     pkgs.tree # Directory listing as tree structure
+    pkgs.ripgrep
   ];
 
   programs.bash.interactiveShellInit = ''

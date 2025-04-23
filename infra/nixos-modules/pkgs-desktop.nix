@@ -63,6 +63,9 @@ in
     pkgs.xdg-user-dirs # Tool to manage user directories (Documents, Downloads, etc.)
     pkgs.xdg-utils # Tools for desktop integration (xdg-open, xdg-mime, etc.)
 
+    # IDE
+    pkgs.vscode
+
     # Qt/KDE Integration
     pkgs.kdePackages.qt6ct # Qt6 configuration tool for non-KDE environments
     pkgs.kdePackages.qtstyleplugin-kvantum # Theme engine for Qt6 applications

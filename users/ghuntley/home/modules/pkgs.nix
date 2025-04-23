@@ -13,6 +13,7 @@
     unzip
     wget
     mosh
+    nodejs_23
   ];
 
   programs.jq.enable = true;

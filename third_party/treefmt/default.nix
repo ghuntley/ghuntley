@@ -6,6 +6,6 @@
 
 pkgs.treefmt.overrideAttrs (old: {
   patches = (old.patches or [ ]) ++ [
-    ./001-skip-format.patch
+    #    ./001-skip-format.patch
   ];
 })
