@@ -19,7 +19,7 @@ jobs:
   depot-src-update:
     runs-on: namespace-profile-cached-amd64
     steps:
-      - uses: namespacelabs/nscloud-checkout-action@v2
+      - uses: namespacelabs/nscloud-checkout-action@v7
 
       - name: Set up Nix cache
         run: |
