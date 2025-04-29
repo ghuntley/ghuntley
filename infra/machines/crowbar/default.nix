@@ -20,7 +20,7 @@ in
     (mod "nvidia.nix")
     (mod "podman.nix")
     (mod "restic.nix")
-    (mod "geesefs.nix")
+    (mod "resilio.nix")
   ];
 
   boot.tmp.cleanOnBoot = true;
@@ -102,6 +102,17 @@ in
     maxFreed = 64; # GiB
     preserveGenerations = "90d";
   };
+
+  services.depot.resilio = {
+    enable = true;
+    enableWebUI = true;
+    checkForUpdates = false;
+    downloadLimit = 0;
+    uploadLimit = 0;
+    deviceName = config.networking.hostName;
+    listeningPort = 4444;
+  };
+
 
   # Offsite backups to OVH
   services.depot.restic = {

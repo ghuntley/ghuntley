@@ -19,6 +19,7 @@ in
     (mod "defaults-laptop.nix")
     (mod "podman.nix")
     (mod "restic.nix")
+    (mod "resilio.nix")
   ];
 
   services.vaultwarden.enable = true;
@@ -177,6 +178,21 @@ in
 
   # Explicitly set the netdata claim token path
   services.netdata.claimTokenFile = config.age.secrets.netdata-cloud-claim-token.path;
+
+  services.depot.resilio = {
+    enable = true;
+    enableWebUI = true;
+    checkForUpdates = false;
+    downloadLimit = 0;
+    uploadLimit = 0;
+    deviceName = config.networking.hostName;
+    listeningPort = 4444;
+  };
+
+  # Create the sync directory with appropriate permissions
+  systemd.tmpfiles.rules = [
+    "d /home/ghuntley/sync 0775 ghuntley users -"
+  ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
