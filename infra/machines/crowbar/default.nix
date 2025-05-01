@@ -20,7 +20,7 @@ in
     (mod "nvidia.nix")
     (mod "podman.nix")
     (mod "restic.nix")
-    (mod "resilio.nix")
+    (mod "syncthing.nix")
   ];
 
   boot.tmp.cleanOnBoot = true;
@@ -101,16 +101,6 @@ in
     diskThreshold = 64; # GiB
     maxFreed = 64; # GiB
     preserveGenerations = "90d";
-  };
-
-  services.depot.resilio = {
-    enable = true;
-    enableWebUI = true;
-    checkForUpdates = false;
-    downloadLimit = 0;
-    uploadLimit = 0;
-    deviceName = config.networking.hostName;
-    listeningPort = 4444;
   };
 
 
