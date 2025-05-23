@@ -27,14 +27,5 @@
     enableZshIntegration = true;
   };
 
-  programs.gh = {
-    enable = true;
-    settings = {
-      editor = "vim";
-      git_protocol = "ssh";
-      prompt = "enabled";
-    };
-  };
-
   programs.lazygit.enable = true;
 }

@@ -9,7 +9,7 @@ let
     set -euo pipefail
     IFS=$'\n\t'
 
-    DRV=$(${depot.tools.depot}/bin/depot build //users/ghuntley/home/$(hostname)Home)
+    DRV=$(${depot.tools.depot}/bin/depot build //users/ghuntley/home/$(hostname -s)Home)
     exec $DRV/activate
   '';
 

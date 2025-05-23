@@ -22,6 +22,7 @@ in
     (mod "editorconfig.nix")
     (mod "gdb.nix")
     (mod "git.nix")
+    (mod "gh.nix")
     (mod "neovim.nix")
     (mod "pkgs.nix")
     (mod "psql.nix")

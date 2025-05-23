@@ -27,12 +27,17 @@ rec {
   crowbarHome = crowbar.activation-script;
 
   prybar = home ./machines/prybar.nix;
-  prybarHome = crowbar.activation-script;
+  prybarHome = prybar.activation-script;
+
+  hammer = home ./machines/hammer.nix;
+  hammerHome = hammer.activation-script;
 
   meta.ci.targets = [
     "crowbar"
     "crowbarHome"
     "prybar"
     "prybarHome"
+    "hammer"
+    "hammerHome"
   ];
 }
