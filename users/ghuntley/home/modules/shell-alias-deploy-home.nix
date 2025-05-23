@@ -7,7 +7,7 @@
   home.file."bin/deploy-home" = {
     text = ''
       #!/usr/bin/env bash
-      cd /depot
+      cd ~/code/ghuntley
       direnv exec . deploy-home
     '';
     executable = true;
