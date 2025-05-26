@@ -18,4 +18,10 @@
     userEmail = lib.mkForce "geoff@sourcegraph.com";
   };
 
+  programs.zsh = {
+    initExtra = ''
+      eval "$(/Users/ghuntley/.local/bin/mise activate zsh)"
+    '';
+  };
+
 }

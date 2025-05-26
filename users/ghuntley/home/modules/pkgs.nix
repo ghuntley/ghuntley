@@ -14,6 +14,7 @@
     wget
     mosh
     nodejs_23
+    lazygit
   ];
 
   programs.jq.enable = true;
