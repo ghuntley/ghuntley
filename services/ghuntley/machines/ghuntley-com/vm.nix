@@ -89,6 +89,7 @@ let
             url = "https://ghuntley.com";
             database__client = "sqlite3";
             database__connection__filename = "/var/lib/ghost/content/data/ghost.db";
+            imageoptimization__resize = "false";
             #DEBUG = "ghost:*";
             #NODE_ENV = "development";
             #logging__level = "debug";
