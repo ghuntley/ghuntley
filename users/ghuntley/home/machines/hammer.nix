@@ -21,6 +21,7 @@
   programs.zsh = {
     initExtra = ''
       eval "$(/Users/ghuntley/.local/bin/mise activate zsh)"
+      eval "$(/opt/homebrew/bin/brew shellenv)"
     '';
   };
 
