@@ -138,7 +138,7 @@ depot.nix.lazy-deps {
   # unmarshal.attr = "third_party.nixpkgs.gotools";
 
   ## typescript
-  node.attr = "third_party.nixpkgs.nodejs-18_x";
+  node.attr = "third_party.nixpkgs.nodejs_22";
   tsc.attr = "third_party.nixpkgs.nodePackages.typescript";
   yarn.attr = "third_party.nixpkgs.nodePackages.yarn";
 

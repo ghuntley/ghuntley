@@ -13,7 +13,7 @@
     unzip
     wget
     mosh
-    nodejs_23
+    nodejs_24
     lazygit
   ];
 

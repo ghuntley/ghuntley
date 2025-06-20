@@ -22,6 +22,13 @@
     initExtra = ''
       eval "$(/Users/ghuntley/.local/bin/mise activate zsh)"
       eval "$(/opt/homebrew/bin/brew shellenv)"
+      export PATH="$PATH:$HOME/.sg";
+
+      export PNPM_HOME="/Users/ghuntley/.pnpm-home"
+      case ":$PATH:" in
+        *":$PNPM_HOME:"*) ;;
+        *) export PATH="$PNPM_HOME:$PATH" ;;
+      esac
     '';
   };
 
