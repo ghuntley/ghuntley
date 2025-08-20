@@ -46,7 +46,7 @@ edition = "2018"
 
 [dependencies]
 clap = "2.33"
-comrak = "0.15"
+comrak = "0.17"
 lazy_static = "1.4"
 rouille = "3.6"
 syntect = "5.0"
