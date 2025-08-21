@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   ops-dns-plan:
-    runs-on: namespace-profile-cached-amd64
+#    runs-on: namespace-profile-cached-amd64
     steps:
       - uses: namespacelabs/nscloud-checkout-action@v2
 
