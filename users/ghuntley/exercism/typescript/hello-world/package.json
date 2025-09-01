@@ -12,7 +12,7 @@
     "node": "^14.13.1 || >=16.0.0"
   },
   "devDependencies": {
-    "@exercism/babel-preset-typescript": "^0.1.0",
+    "@exercism/babel-preset-typescript": "^0.7.0",
     "@exercism/eslint-config-typescript": "^0.4.1",
     "@types/jest": "^27.4.0",
     "@types/node": "^16.11.24",
