@@ -3,6 +3,9 @@
 
 { config, pkgs, lib, ... }:
 
+let
+  depot = pkgs.depot // { third_party = pkgs.third_party; };
+in
 {
   systemd.services.depot-sync = {
     description = "Sync depot repository";
@@ -26,7 +29,7 @@
     };
 
     script = ''
-      ${pkgs.depot.tools.deploy}/bin/deploy sync
+      ${depot.tools.deploy}/bin/deploy sync
     '';
   };
 

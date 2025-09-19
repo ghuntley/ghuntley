@@ -9,7 +9,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "https://registry.npmjs.org/@sourcegraph/amp/-/amp-${version}.tgz";
-    hash = "sha256-0000000000000000000000000000000000000000000=";
+    hash = "sha256-WVyNaLPOaJav9RhubO3UHXLgns51fMrtqjX3w550fCg=";
   };
 
   nativeBuildInputs = [ nodejs ];

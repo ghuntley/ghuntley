@@ -3,6 +3,9 @@
 
 { config, pkgs, ... }:
 
+let
+  depot = pkgs.depot // { third_party = pkgs.third_party; };
+in
 {
   # Package configuration
   nixpkgs.config.allowUnfree = true;
@@ -61,7 +64,7 @@
     pkgs.vscode
 
     # Deployment Tools  
-    pkgs.depot.tools.deploy # Custom deployment tool for managing depot sync and deployments
+    depot.tools.deploy # Custom deployment tool for managing depot sync and deployments
 
     # Qt/KDE Integration
     pkgs.kdePackages.qt6ct # Qt6 configuration tool for non-KDE environments

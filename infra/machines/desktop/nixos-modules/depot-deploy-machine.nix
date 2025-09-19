@@ -3,6 +3,9 @@
 
 { config, pkgs, lib, ... }:
 
+let
+  depot = pkgs.depot // { third_party = pkgs.third_party; };
+in
 {
   systemd.services.depot-deploy-machine = {
     description = "Deploy NixOS configuration from depot";
@@ -17,7 +20,7 @@
       Type = "oneshot";
       User = "root";
       TimeoutStartSec = "30min";
-      ExecStart = "${pkgs.depot.tools.deploy}/bin/deploy machine";
+      ExecStart = "${depot.tools.deploy}/bin/deploy machine";
     };
   };
 

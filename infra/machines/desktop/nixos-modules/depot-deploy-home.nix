@@ -3,6 +3,9 @@
 
 { config, pkgs, lib, ... }:
 
+let
+  depot = pkgs.depot // { third_party = pkgs.third_party; };
+in
 {
   systemd.services.depot-deploy-home = {
     description = "Deploy Home Manager configuration from depot";
@@ -18,7 +21,7 @@
       User = "ghuntley";
       Group = "users";
       TimeoutStartSec = "15min";
-      ExecStart = "${pkgs.depot.tools.deploy}/bin/deploy home";
+      ExecStart = "${depot.tools.deploy}/bin/deploy home";
     };
   };
 

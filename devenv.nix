@@ -6,6 +6,7 @@
 let
   # Import our tools overlay to get access to custom packages
   tools = pkgs.extend (import ./tools/pkgs);
+  depot = tools.depot // { third_party = tools.third_party; };
 in
 {
 
@@ -15,12 +16,12 @@ in
   # https://devenv.sh/packages/
   packages = [ 
     # 1st-party
-    tools.depot.tools.license
-    tools.depot.tools.deploy
+    depot.tools.license
+    depot.tools.deploy
     
     # 3rd-party tools
-    tools.third_party.tools.claude
-    tools.third_party.tools.amp
+    depot.third_party.tools.claude
+    depot.third_party.tools.amp
 
     # 3rd-party
     pkgs.age
