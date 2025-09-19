@@ -17,6 +17,7 @@ in
     # 1st-party
     tools.depot.tools.license
     tools.depot.tools.deploy
+    tools.depot.tools.claude
 
     # 3rd-party
     pkgs.age

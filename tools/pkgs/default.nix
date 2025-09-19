@@ -7,6 +7,7 @@ final: prev: {
     tools = {
       license = final.callPackage ./license.nix { };
       deploy = final.callPackage ./deploy.nix { };
+      claude = final.callPackage ./claude.nix { };
     };
   };
 }
