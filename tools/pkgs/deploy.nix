@@ -5,6 +5,8 @@
   rustPlatform,
   pkg-config,
   openssl,
+  git,
+  makeWrapper,
 }:
 rustPlatform.buildRustPackage {
   pname = "deploy";
@@ -16,8 +18,13 @@ rustPlatform.buildRustPackage {
     lockFile = ../deploy/Cargo.lock;
   };
 
-  nativeBuildInputs = [pkg-config];
+  nativeBuildInputs = [pkg-config makeWrapper];
   buildInputs = [openssl];
+
+  postInstall = ''
+    wrapProgram $out/bin/deploy \
+      --prefix PATH : ${lib.makeBinPath [ git ]}
+  '';
 
   meta = with lib; {
     description = "Deploy tool for managing depot sync and deployments";
