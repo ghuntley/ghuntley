@@ -11,7 +11,7 @@ let
   swappy = pkgs.swappy + "/bin/swappy";
   paste = pkgs.wl-clipboard + "/bin/wl-paste";
   browser = pkgs.firefox + "/bin/firefox";
-  rofi = pkgs.rofi-wayland + "/bin/rofi";
+  rofi = pkgs.rofi + "/bin/rofi";
   launcher = "${rofi} -show drun";
   brightnessctl = pkgs.brightnessctl + "/bin/brightnessctl";
   wpctl = pkgs.wireplumber + "/bin/wpctl";
