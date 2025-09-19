@@ -15,7 +15,8 @@ in
   # https://devenv.sh/packages/
   packages = [ 
     # 1st-party
-    tools.license
+    tools.depot.tools.license
+    tools.depot.tools.deploy
 
     # 3rd-party
     pkgs.age
