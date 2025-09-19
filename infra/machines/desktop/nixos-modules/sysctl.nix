@@ -1,9 +1,11 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ pkgs, config, lib, ... }:
-
 {
+  pkgs,
+  config,
+  lib,
+  ...
+}: {
   # Kernel system control parameters for performance and resource management
   boot.kernel.sysctl = {
     "fs.file-max" = 100000;

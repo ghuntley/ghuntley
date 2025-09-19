@@ -1,28 +1,32 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ pkgs, lib, config, inputs, ... }:
-
-let
+{
+  pkgs,
+  lib,
+  config,
+  inputs,
+  ...
+}: let
   # Import our tools overlay to get access to custom packages
   tools = pkgs.extend (import ./tools/pkgs);
-  depot = tools.depot // { third_party = tools.third_party; };
-in
-{
-
+  depot = tools.depot // {third_party = tools.third_party;};
+in {
   # https://devenv.sh/basics/
   env.GREET = "devenv";
-  
+
   # https://devenv.sh/packages/
-  packages = [ 
+  packages = [
     # 1st-party
     depot.tools.license
     depot.tools.deploy
     depot.tools.depot
-    
+
     # 3rd-party tools
     depot.third_party.tools.claude
     depot.third_party.tools.amp
+
+    # formatters
+    depot.third_party.tools.treefmt
 
     # 3rd-party
     pkgs.age
@@ -53,13 +57,13 @@ in
 
   # https://devenv.sh/languages/
   languages.rust.enable = true;
-  languages.rust.components = [ "rustc" "cargo" "clippy" ];
+  languages.rust.components = ["rustc" "cargo" "clippy"];
   languages.typescript.enable = true;
   languages.javascript.pnpm.enable = true;
 
   # https://devenv.sh/processes/
   processes.cargo-watch.exec = "cargo-watch";
-  
+
   # https://devenv.sh/tasks/
   tasks = {
     "infra:hammer:test".exec = "scripts/infra/hammer-test.sh";
@@ -77,12 +81,12 @@ in
 
   # Shell aliases and helper functions
   enterShell = ''
-    alias claude="$DEVENV_ROOT/node_modules/.bin/claude --dangerously-skip-permissions $@"    
+    alias claude="$DEVENV_ROOT/node_modules/.bin/claude --dangerously-skip-permissions $@"
   '';
 
   # https://devenv.sh/git-hooks/
   git-hooks.hooks = {
-    shellcheck.enable = true;       
+    shellcheck.enable = true;
   };
 
   # See full reference at https://devenv.sh/reference/options/

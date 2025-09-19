@@ -1,15 +1,15 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ config, pkgs, ... }:
-
-let
-  depot = pkgs.depot // { third_party = pkgs.third_party; };
-in
 {
+  config,
+  pkgs,
+  ...
+}: let
+  depot = pkgs.depot // {third_party = pkgs.third_party;};
+in {
   # Package configuration
   nixpkgs.config.allowUnfree = true;
-  
+
   # System packages
   # Core System Configuration
   environment.sessionVariables = {
@@ -63,7 +63,7 @@ in
     # IDE
     pkgs.vscode
 
-    # Deployment Tools  
+    # Deployment Tools
     depot.tools.deploy # Custom deployment tool for managing depot sync and deployments
 
     # Qt/KDE Integration
@@ -111,8 +111,8 @@ in
   # Flatpak Packages
   services.flatpak.enable = true;
   systemd.services.flatpak-repo = {
-    wantedBy = [ "multi-user.target" ];
-    path = [ pkgs.flatpak ];
+    wantedBy = ["multi-user.target"];
+    path = [pkgs.flatpak];
     script = ''
       flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     '';
@@ -247,12 +247,11 @@ in
   services.dbus.enable = true;
   services.blueman.enable = true;
 
-
-   programs.bash.interactiveShellInit = ''
+  programs.bash.interactiveShellInit = ''
     eval "$(starship init bash)"
   '';
 
-   programs.zsh.interactiveShellInit = ''
+  programs.zsh.interactiveShellInit = ''
     eval "$(starship init zsh)"
   '';
 

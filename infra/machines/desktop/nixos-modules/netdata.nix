@@ -1,7 +1,12 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ depot, pkgs, config, lib, ... }: {
+{
+  depot,
+  pkgs,
+  config,
+  lib,
+  ...
+}: {
   # We don't need to import age module here - it's already imported in default-imports.nix
 
   services.netdata = {

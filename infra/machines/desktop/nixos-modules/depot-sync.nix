@@ -1,17 +1,18 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ config, pkgs, lib, ... }:
-
-let
-  depot = pkgs.depot // { third_party = pkgs.third_party; };
-in
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  depot = pkgs.depot // {third_party = pkgs.third_party;};
+in {
   systemd.services.depot-sync = {
     description = "Sync depot repository";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "network-online.target" ];
-    wants = [ "network-online.target" ];
+    wantedBy = ["multi-user.target"];
+    after = ["network-online.target"];
+    wants = ["network-online.target"];
 
     unitConfig = {
       ConditionACPower = true;
@@ -24,7 +25,7 @@ in
       TimeoutStartSec = "5min";
       PrivateTmp = true;
       ProtectSystem = "strict";
-      ReadWritePaths = [ "/var/lib/depot" ];
+      ReadWritePaths = ["/var/lib/depot"];
       ExecStartPost = "${pkgs.systemd}/bin/systemctl start --no-block depot-deploy-machine.service";
     };
 
@@ -35,7 +36,7 @@ in
 
   systemd.timers.depot-sync = {
     description = "Run depot sync every 15 minutes";
-    wantedBy = [ "timers.target" ];
+    wantedBy = ["timers.target"];
 
     timerConfig = {
       OnUnitInactiveSec = "15m";

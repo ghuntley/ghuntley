@@ -1,9 +1,11 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ config, lib, pkgs, ... }:
-
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   home.file."bin/bottles" = {
     text = ''
       flatpak install --noninteractive flathub com.usebottles.bottles
@@ -27,9 +29,8 @@
       icon = "${config.home.homeDirectory}/.icons/bottles.png";
       terminal = false;
       type = "Application";
-      categories = [ "Utility" ];
+      categories = ["Utility"];
       startupNotify = true;
     };
   };
-
 }

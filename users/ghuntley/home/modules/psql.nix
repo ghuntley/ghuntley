@@ -1,9 +1,11 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ config, lib, pkgs, ... }:
-
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   # PostgreSQL client (psql) configuration
   # Configures interactive PostgreSQL terminal behavior and appearance
   home.file.".psqlrc".text = ''

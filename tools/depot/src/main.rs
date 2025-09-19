@@ -1,6 +1,9 @@
+// Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+// SPDX-License-Identifier: Proprietary
+
 use anyhow::Result;
 use clap::{Parser, Subcommand};
-use tracing::{info, warn, error};
+use tracing::{error, info, warn};
 
 #[derive(Parser)]
 #[command(name = "depot")]
@@ -62,40 +65,28 @@ fn init_tracing() {
 #[tokio::main]
 async fn main() -> Result<()> {
     init_tracing();
-    
+
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Build { expression } => {
-            build_expression(&expression).await
-        }
-        Commands::Test { expression } => {
-            test_expression(&expression).await
-        }
-        Commands::License { action } => {
-            handle_license(action).await
-        }
-        Commands::Fmt { expression } => {
-            format_code(expression.as_deref()).await
-        }
-        Commands::Lint { expression } => {
-            lint_code(expression.as_deref()).await
-        }
-        Commands::Check { expression } => {
-            check_code(expression.as_deref()).await
-        }
+        Commands::Build { expression } => build_expression(&expression).await,
+        Commands::Test { expression } => test_expression(&expression).await,
+        Commands::License { action } => handle_license(action).await,
+        Commands::Fmt { expression } => format_code(expression.as_deref()).await,
+        Commands::Lint { expression } => lint_code(expression.as_deref()).await,
+        Commands::Check { expression } => check_code(expression.as_deref()).await,
     }
 }
 
 async fn build_expression(expression: &str) -> Result<()> {
     info!("Building nix flake expression: {}", expression);
-    
+
     // Execute nix build command
     let output = tokio::process::Command::new("nix")
         .args(&["build", expression])
         .output()
         .await?;
-    
+
     if output.status.success() {
         info!("Build succeeded for: {}", expression);
         println!("{}", String::from_utf8_lossy(&output.stdout));
@@ -104,19 +95,19 @@ async fn build_expression(expression: &str) -> Result<()> {
         eprintln!("{}", String::from_utf8_lossy(&output.stderr));
         std::process::exit(1);
     }
-    
+
     Ok(())
 }
 
 async fn test_expression(expression: &str) -> Result<()> {
     info!("Testing nix flake expression: {}", expression);
-    
+
     // Execute nix build with check flag for testing
     let output = tokio::process::Command::new("nix")
         .args(&["build", "--check", expression])
         .output()
         .await?;
-    
+
     if output.status.success() {
         info!("Tests passed for: {}", expression);
         println!("{}", String::from_utf8_lossy(&output.stdout));
@@ -125,7 +116,7 @@ async fn test_expression(expression: &str) -> Result<()> {
         eprintln!("{}", String::from_utf8_lossy(&output.stderr));
         std::process::exit(1);
     }
-    
+
     Ok(())
 }
 
@@ -134,15 +125,21 @@ async fn handle_license(action: LicenseAction) -> Result<()> {
         LicenseAction::Check => "check",
         LicenseAction::Add => "add",
     };
-    
+
     info!("Running license {}", action_str);
-    
+
     // Execute the license tool from tools/license
     let output = tokio::process::Command::new("cargo")
-        .args(&["run", "--manifest-path", "tools/license/Cargo.toml", "--", action_str])
+        .args(&[
+            "run",
+            "--manifest-path",
+            "tools/license/Cargo.toml",
+            "--",
+            action_str,
+        ])
         .output()
         .await?;
-    
+
     if output.status.success() {
         info!("License {} completed successfully", action_str);
         println!("{}", String::from_utf8_lossy(&output.stdout));
@@ -151,35 +148,31 @@ async fn handle_license(action: LicenseAction) -> Result<()> {
         eprintln!("{}", String::from_utf8_lossy(&output.stderr));
         std::process::exit(1);
     }
-    
+
     Ok(())
 }
 
 async fn format_code(expression: Option<&str>) -> Result<()> {
     if let Some(expr) = expression {
         info!("Formatting code for expression: {}", expr);
-        // Run nix fmt for specific expression
-        let output = tokio::process::Command::new("nix")
-            .args(&["fmt", expr])
-            .output()
-            .await?;
-        
+        // TODO: treefmt doesn't support specific expressions, format all for now
+        warn!("treefmt doesn't support specific expressions, formatting all files");
+
+        let output = tokio::process::Command::new("treefmt").output().await?;
+
         if output.status.success() {
-            info!("Format completed for: {}", expr);
+            info!("Format completed");
             println!("{}", String::from_utf8_lossy(&output.stdout));
         } else {
-            error!("Format failed for: {}", expr);
+            error!("Format failed");
             eprintln!("{}", String::from_utf8_lossy(&output.stderr));
             std::process::exit(1);
         }
     } else {
         info!("Formatting all code");
-        // Run nix fmt for entire flake
-        let output = tokio::process::Command::new("nix")
-            .args(&["fmt"])
-            .output()
-            .await?;
-        
+        // Run treefmt for entire project
+        let output = tokio::process::Command::new("treefmt").output().await?;
+
         if output.status.success() {
             info!("Format completed");
             println!("{}", String::from_utf8_lossy(&output.stdout));
@@ -189,7 +182,7 @@ async fn format_code(expression: Option<&str>) -> Result<()> {
             std::process::exit(1);
         }
     }
-    
+
     Ok(())
 }
 
@@ -201,7 +194,7 @@ async fn lint_code(expression: Option<&str>) -> Result<()> {
             .args(&["flake", "check", expr])
             .output()
             .await?;
-        
+
         if output.status.success() {
             info!("Lint completed for: {}", expr);
             println!("{}", String::from_utf8_lossy(&output.stdout));
@@ -217,7 +210,7 @@ async fn lint_code(expression: Option<&str>) -> Result<()> {
             .args(&["flake", "check"])
             .output()
             .await?;
-        
+
         if output.status.success() {
             info!("Lint completed");
             println!("{}", String::from_utf8_lossy(&output.stdout));
@@ -227,7 +220,7 @@ async fn lint_code(expression: Option<&str>) -> Result<()> {
             std::process::exit(1);
         }
     }
-    
+
     Ok(())
 }
 
@@ -239,7 +232,7 @@ async fn check_code(expression: Option<&str>) -> Result<()> {
             .args(&["build", "--dry-run", expr])
             .output()
             .await?;
-        
+
         if output.status.success() {
             info!("Check completed for: {}", expr);
             println!("{}", String::from_utf8_lossy(&output.stdout));
@@ -255,7 +248,7 @@ async fn check_code(expression: Option<&str>) -> Result<()> {
             .args(&["flake", "check"])
             .output()
             .await?;
-        
+
         if output.status.success() {
             info!("Check completed");
             println!("{}", String::from_utf8_lossy(&output.stdout));
@@ -265,6 +258,6 @@ async fn check_code(expression: Option<&str>) -> Result<()> {
             std::process::exit(1);
         }
     }
-    
+
     Ok(())
 }

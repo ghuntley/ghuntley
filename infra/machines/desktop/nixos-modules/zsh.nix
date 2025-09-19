@@ -1,10 +1,12 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ config, lib, pkgs, ... }:
-
 {
-  environment.systemPackages = [ pkgs.starship pkgs.direnv ];
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
+  environment.systemPackages = [pkgs.starship pkgs.direnv];
 
   programs.zsh = {
     enable = true;

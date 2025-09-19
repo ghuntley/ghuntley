@@ -1,16 +1,14 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ config, pkgs, ... }:
-
-let
-
+{
+  config,
+  pkgs,
+  ...
+}: let
   depot = config.lib.depot;
 
   theme = import ../themes/firewatch.nix;
-
-in
-{
+in {
   imports = [
     ../modules/default-imports.nix
     ../modules/hyprland.nix

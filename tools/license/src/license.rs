@@ -25,8 +25,9 @@ impl LicenseChecker {
             }
         }
 
-        let license_keywords = Regex::new(r"(?i)(copyright|mozilla public|spdx-license-identifier)")
-            .expect("Failed to compile license keywords regex");
+        let license_keywords =
+            Regex::new(r"(?i)(copyright|mozilla public|spdx-license-identifier)")
+                .expect("Failed to compile license keywords regex");
 
         let generated_file_patterns = vec![
             Regex::new(r"(?m)^.{1,2} Code generated .* DO NOT EDIT\.$").unwrap(),
@@ -67,7 +68,7 @@ impl LicenseChecker {
 
         // Skip specific files that shouldn't have license headers
         let filename = path.file_name().and_then(|f| f.to_str()).unwrap_or("");
-        if filename.eq_ignore_ascii_case("CLAUDE.md") 
+        if filename.eq_ignore_ascii_case("CLAUDE.md")
             || filename.eq_ignore_ascii_case("AGENTS.md")
             || filename.eq_ignore_ascii_case("AGENT.md")
             || filename.eq_ignore_ascii_case("dprint.json")
@@ -89,15 +90,24 @@ impl LicenseChecker {
 
     pub fn has_license(&self, path: &Path) -> Result<bool> {
         let content = fs::read_to_string(path)?;
-        
+
         // Check if the file is generated (generated files don't need license headers)
         if self.is_generated_file(&content) {
             return Ok(true);
         }
 
         // Special handling for JSON files - look for $license property
-        if path.extension().and_then(|e| e.to_str()).map(|e| e.to_lowercase()) == Some("json".to_string()) 
-            || path.extension().and_then(|e| e.to_str()).map(|e| e.to_lowercase()) == Some("jsonc".to_string()) {
+        if path
+            .extension()
+            .and_then(|e| e.to_str())
+            .map(|e| e.to_lowercase())
+            == Some("json".to_string())
+            || path
+                .extension()
+                .and_then(|e| e.to_str())
+                .map(|e| e.to_lowercase())
+                == Some("jsonc".to_string())
+        {
             return Ok(content.contains("\"$license\":"));
         }
 
@@ -132,7 +142,7 @@ impl LicenseChecker {
         };
 
         let content = fs::read_to_string(path)?;
-        
+
         // Skip if already has license or is generated
         if self.has_license(path)? || self.is_generated_file(&content) {
             return Ok(false);
@@ -140,32 +150,33 @@ impl LicenseChecker {
 
         let license_header = self.format_license_header(&comment_style);
         let new_content = self.insert_license_header(&content, &license_header);
-        
+
         fs::write(path, new_content)?;
         Ok(true)
     }
 
     fn format_license_header(&self, comment_style: &CommentStyle) -> String {
         let mut header = String::new();
-        
+
         // Special handling for JSON files using $license property
         if comment_style.middle == "$license" {
             // Combine all license lines into a single JSON string value
-            let license_text = LICENSE_TEMPLATE.lines()
-                .collect::<Vec<_>>()
-                .join(" - ");
-            header.push_str(&format!("  \"{}\": \"{}\",\n", comment_style.middle, license_text));
+            let license_text = LICENSE_TEMPLATE.lines().collect::<Vec<_>>().join(" - ");
+            header.push_str(&format!(
+                "  \"{}\": \"{}\",\n",
+                comment_style.middle, license_text
+            ));
             return header;
         }
-        
+
         // Standard comment formatting for other file types
-        
+
         // Add opening comment if needed
         if !comment_style.start.is_empty() {
             header.push_str(comment_style.start);
             header.push('\n');
         }
-        
+
         // Add license content with proper comment prefixes
         for line in LICENSE_TEMPLATE.lines() {
             if line.trim().is_empty() {
@@ -179,13 +190,13 @@ impl LicenseChecker {
                 header.push('\n');
             }
         }
-        
+
         // Add closing comment if needed
         if !comment_style.end.is_empty() {
             header.push_str(comment_style.end);
             header.push('\n');
         }
-        
+
         // Add blank line after header
         header.push('\n');
         header
@@ -196,11 +207,16 @@ impl LicenseChecker {
         if license_header.contains("\"$license\":") {
             return self.insert_json_license_property(content, license_header);
         }
-        
+
         // Handle shebang lines - keep them at the top
         if let Some(shebang_end) = self.find_shebang_end(content) {
             let (shebang, rest) = content.split_at(shebang_end);
-            format!("{}{}{}", shebang, license_header, rest.trim_start_matches('\n'))
+            format!(
+                "{}{}{}",
+                shebang,
+                license_header,
+                rest.trim_start_matches('\n')
+            )
         } else {
             format!("{}{}", license_header, content)
         }
@@ -208,12 +224,12 @@ impl LicenseChecker {
 
     fn insert_json_license_property(&self, content: &str, license_header: &str) -> String {
         let content = content.trim_start();
-        
+
         // Find the opening brace
         if let Some(brace_pos) = content.find('{') {
             let (before_brace, after_brace) = content.split_at(brace_pos + 1);
             let after_brace = after_brace.trim_start();
-            
+
             // Insert the $license property right after the opening brace
             if after_brace.starts_with('}') {
                 // Empty JSON object

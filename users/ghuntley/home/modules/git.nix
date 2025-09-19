@@ -1,9 +1,11 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   isDarwin = pkgs.stdenv.isDarwin;
 
   # Common git configuration
@@ -14,8 +16,7 @@ let
     advice.skippedCherryPicks = "false";
     core.excludesFile = "~/.gitignore";
   };
-in
-{
+in {
   config = {
     programs.git = {
       enable = true;
@@ -27,10 +28,12 @@ in
         ".DS_Store"
       ];
 
-      extraConfig = gitConfig // lib.mkIf isDarwin {
-        credential.helper = "osxkeychain";
-        core.trustctime = false; # Recommended for APFS
-      };
+      extraConfig =
+        gitConfig
+        // lib.mkIf isDarwin {
+          credential.helper = "osxkeychain";
+          core.trustctime = false; # Recommended for APFS
+        };
 
       delta = {
         enable = true;

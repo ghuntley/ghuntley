@@ -1,9 +1,10 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ config, pkgs, ... }:
-
 {
+  config,
+  pkgs,
+  ...
+}: {
   # Localization configuration
   i18n.defaultLocale = "en_AU.UTF-8";
   i18n.extraLocaleSettings = {

@@ -19,7 +19,7 @@ impl CommentStyle {
 pub fn get_comment_style(path: &Path) -> Option<CommentStyle> {
     let filename = path.file_name()?.to_string_lossy();
     let filename_lower = filename.to_lowercase();
-    
+
     // Get the extension, or use the full filename if no extension
     let ext = path
         .extension()
@@ -32,12 +32,14 @@ pub fn get_comment_style(path: &Path) -> Option<CommentStyle> {
         "java" | "kt" | "kts" | "scala" => Some(CommentStyle::new("/*", " * ", " */")),
         "gv" => Some(CommentStyle::new("/*", " * ", " */")),
 
-        // JavaScript/CSS style block comments  
+        // JavaScript/CSS style block comments
         "css" | "scss" | "sass" | "less" => Some(CommentStyle::new("/**", " * ", " */")),
         "js" | "mjs" | "cjs" | "jsx" | "ts" | "tsx" => Some(CommentStyle::new("/**", " * ", " */")),
 
         // C++ style line comments
-        "cc" | "cpp" | "cxx" | "c++" | "hh" | "hpp" | "hxx" | "h++" => Some(CommentStyle::new("", "// ", "")),
+        "cc" | "cpp" | "cxx" | "c++" | "hh" | "hpp" | "hxx" | "h++" => {
+            Some(CommentStyle::new("", "// ", ""))
+        }
         "cs" => Some(CommentStyle::new("", "// ", "")),
         "dart" => Some(CommentStyle::new("", "// ", "")),
         "go" => Some(CommentStyle::new("", "// ", "")),

@@ -19,17 +19,20 @@ Each machine can only decrypt its own secrets file using its SSH host key.
 ## Setup
 
 1. **Install age and sops**:
+
    ```bash
    nix-shell -p age sops ssh-to-age
    ```
 
 2. **Generate user age key**:
+
    ```bash
    mkdir -p ~/.config/sops/age
    age-keygen -o ~/.config/sops/age/keys.txt
    ```
 
 3. **Get machine SSH host keys**:
+
    ```bash
    # Get public key
    ssh-keyscan -t ed25519 <hostname>
@@ -42,6 +45,7 @@ Each machine can only decrypt its own secrets file using its SSH host key.
 ## Creating machine-specific secrets
 
 1. **Create secrets file for a machine**:
+
    ```bash
    cp secrets.yaml.example <hostname>.yaml
    # Edit the file with machine-specific secrets

@@ -1,7 +1,6 @@
 # Copyright (c) 2023 Balder W. Holst
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: MIT
-
 rec {
   background = "201022";
   foreground = "FFFED8";

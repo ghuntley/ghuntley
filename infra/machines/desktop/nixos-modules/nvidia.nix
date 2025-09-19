@@ -1,13 +1,14 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ config, pkgs, ... }:
-
+{
+  config,
+  pkgs,
+  ...
+}:
 # Default set of modules that are imported in all Depot nixos systems
 #
 # All modules here should be properly gated behind a `lib.mkEnableOption` with a
 # `lib.mkIf` for the config.
-
 let
   inherit (builtins) listToAttrs;
   inherit (lib) range;
@@ -17,12 +18,9 @@ let
       allowUnfree = true;
     };
   };
-
-in
-{
-
-  boot.initrd.kernelModules = [ "nvidia" ];
-  boot.extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
+in {
+  boot.initrd.kernelModules = ["nvidia"];
+  boot.extraModulePackages = [config.boot.kernelPackages.nvidia_x11];
 
   hardware.graphics = {
     enable = true;
@@ -38,7 +36,7 @@ in
     ];
   };
 
-  services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver.videoDrivers = ["nvidia"];
 
   hardware.nvidia = {
     modesetting.enable = true;
@@ -47,5 +45,4 @@ in
     open = false;
     nvidiaSettings = true;
   };
-
 }

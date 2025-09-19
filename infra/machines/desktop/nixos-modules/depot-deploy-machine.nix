@@ -1,16 +1,17 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ config, pkgs, lib, ... }:
-
-let
-  depot = pkgs.depot // { third_party = pkgs.third_party; };
-in
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  depot = pkgs.depot // {third_party = pkgs.third_party;};
+in {
   systemd.services.depot-deploy-machine = {
     description = "Deploy NixOS configuration from depot";
-    after = [ "network-online.target" ];
-    wants = [ "network-online.target" ];
+    after = ["network-online.target"];
+    wants = ["network-online.target"];
 
     unitConfig = {
       ConditionACPower = true;
@@ -26,7 +27,7 @@ in
 
   systemd.timers.depot-deploy-machine = {
     description = "Run depot machine deploy every hour";
-    wantedBy = [ "timers.target" ];
+    wantedBy = ["timers.target"];
 
     timerConfig = {
       OnCalendar = "hourly";

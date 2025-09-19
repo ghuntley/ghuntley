@@ -1,6 +1,5 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
 {
   description = "NixOS machine configurations";
 
@@ -18,43 +17,66 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixos-vscode-server, sops-nix, home-manager }:
-    let
-      toolsOverlay = import ./tools/pkgs;
-      mkSystem = modules: nixpkgs.lib.nixosSystem {
+  outputs = {
+    self,
+    nixpkgs,
+    nixos-vscode-server,
+    sops-nix,
+    home-manager,
+    treefmt-nix,
+  }: let
+    toolsOverlay = final: prev:
+      (import ./tools/pkgs final prev)
+      // {
+        treefmt-nix = treefmt-nix;
+      };
+    mkSystem = modules:
+      nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = modules ++ [
-          ({ config, pkgs, ... }: {
-            nixpkgs.overlays = [ toolsOverlay ];
-          })
-        ];
+        modules =
+          modules
+          ++ [
+            ({
+              config,
+              pkgs,
+              ...
+            }: {
+              nixpkgs.overlays = [toolsOverlay];
+            })
+          ];
       };
-    in
-    {
-      nixosConfigurations = {
-        "infra:desktop:hammer" = mkSystem [
-          ./infra/machines/desktop/hammer.nix
-          nixos-vscode-server.nixosModules.default
-          sops-nix.nixosModules.sops
-        ];
-      };
-
-      homeConfigurations = {
-        "users:ghuntley:home" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux.extend toolsOverlay;
-          modules = [ ./users/ghuntley/home/machines/hammer.nix ];
-        };
-      };
-
-      packages.x86_64-linux = 
-        let
-          pkgs = nixpkgs.legacyPackages.x86_64-linux.extend toolsOverlay;
-        in
-        {
-          inherit (pkgs.depot.tools) license deploy depot;
-          inherit (pkgs.third_party.tools) claude amp;
-        };
+  in {
+    nixosConfigurations = {
+      "infra:desktop:hammer" = mkSystem [
+        ./infra/machines/desktop/hammer.nix
+        nixos-vscode-server.nixosModules.default
+        sops-nix.nixosModules.sops
+      ];
     };
+
+    homeConfigurations = {
+      "users:ghuntley:home" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux.extend toolsOverlay;
+        modules = [./users/ghuntley/home/machines/hammer.nix];
+      };
+    };
+
+    packages.x86_64-linux = let
+      pkgs = nixpkgs.legacyPackages.x86_64-linux.extend toolsOverlay;
+    in {
+      inherit (pkgs.depot.tools) license deploy depot;
+      inherit (pkgs.third_party.tools) claude amp treefmt;
+    };
+
+    formatter.x86_64-linux = let
+      pkgs = nixpkgs.legacyPackages.x86_64-linux.extend toolsOverlay;
+    in
+      pkgs.third_party.tools.treefmt;
+  };
 }

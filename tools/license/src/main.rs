@@ -4,8 +4,8 @@ use git2::Repository;
 use ignore::WalkBuilder;
 use std::path::{Path, PathBuf};
 
-mod license;
 mod file_types;
+mod license;
 
 use license::LicenseChecker;
 
@@ -105,7 +105,7 @@ fn main() -> Result<()> {
         }
 
         processed_count += 1;
-        
+
         if add_mode {
             // Add mode: first check if license is missing, then try to add it
             let has_license = checker.has_license(&file_path)?;
@@ -146,7 +146,10 @@ fn main() -> Result<()> {
 
     if verbose {
         if add_mode {
-            println!("\nProcessed {} files, added licenses to {} files", processed_count, modified_count);
+            println!(
+                "\nProcessed {} files, added licenses to {} files",
+                processed_count, modified_count
+            );
         } else {
             println!("\nProcessed {} files", processed_count);
         }
@@ -162,24 +165,25 @@ fn main() -> Result<()> {
 fn get_changed_files() -> Result<Vec<PathBuf>> {
     let repo = Repository::open_from_env()
         .map_err(|_| anyhow!("Not in a git repository or git not available"))?;
-    
+
     let mut files = Vec::new();
     let mut status_options = git2::StatusOptions::new();
     status_options.include_untracked(true);
     status_options.include_ignored(false);
-    
+
     let statuses = repo.statuses(Some(&mut status_options))?;
-    
+
     for entry in statuses.iter() {
         if let Some(path) = entry.path() {
             // Only include modified, added, or new files
             let status = entry.status();
-            if status.is_wt_modified() 
-                || status.is_wt_new() 
-                || status.is_index_modified() 
-                || status.is_index_new() {
+            if status.is_wt_modified()
+                || status.is_wt_new()
+                || status.is_index_modified()
+                || status.is_index_new()
+            {
                 let path_buf = PathBuf::from(path);
-                
+
                 // If it's a directory (untracked directories show up as single entries),
                 // expand it to include all files within it
                 if path_buf.is_dir() {
@@ -191,24 +195,22 @@ fn get_changed_files() -> Result<Vec<PathBuf>> {
             }
         }
     }
-    
+
     Ok(files)
 }
 
 fn get_files_recursive(paths: &[&str]) -> Result<Vec<PathBuf>> {
     let mut files = Vec::new();
-    
+
     for path_str in paths {
         let path = Path::new(path_str);
-        
+
         if path.is_file() {
             files.push(path.to_path_buf());
         } else if path.is_dir() {
             // Use ignore crate to respect .gitignore files
-            let walker = WalkBuilder::new(path)
-                .follow_links(false)
-                .build();
-            
+            let walker = WalkBuilder::new(path).follow_links(false).build();
+
             for result in walker {
                 match result {
                     Ok(entry) => {
@@ -223,6 +225,6 @@ fn get_files_recursive(paths: &[&str]) -> Result<Vec<PathBuf>> {
             }
         }
     }
-    
+
     Ok(files)
 }

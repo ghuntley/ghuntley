@@ -1,9 +1,11 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ config, lib, pkgs, ... }:
-
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   home.file."bin/cider" = {
     text = ''
       #!/usr/bin/env bash
@@ -33,9 +35,8 @@
       icon = "${config.home.homeDirectory}/.icons/cider.png";
       terminal = false;
       type = "Application";
-      categories = [ "Music" ];
+      categories = ["Music"];
       startupNotify = true;
     };
   };
-
 }

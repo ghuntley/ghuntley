@@ -1,9 +1,9 @@
-{ lib
-, rustPlatform
-, pkg-config
-, openssl
+{
+  lib,
+  rustPlatform,
+  pkg-config,
+  openssl,
 }:
-
 rustPlatform.buildRustPackage rec {
   pname = "license";
   version = "0.1.0";
@@ -24,7 +24,7 @@ rustPlatform.buildRustPackage rec {
 
   # Environment variables for OpenSSL
   OPENSSL_NO_VENDOR = 1;
-  
+
   # sccache disabled for Nix builds (use in development via devenv instead)
   # Nix builds are already cached at the package level
   # sccache with Redis is available for development builds via devenv
@@ -38,7 +38,7 @@ rustPlatform.buildRustPackage rec {
     '';
     homepage = "https://ponderoos.com";
     license = licenses.mit;
-    maintainers = with maintainers; [ ];
+    maintainers = with maintainers; [];
     mainProgram = "license";
   };
 }

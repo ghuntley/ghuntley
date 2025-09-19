@@ -1,10 +1,12 @@
 # Copyright (c) 2023 Balder W. Holst
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: MIT
-
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   terminal = pkgs.ghostty + "/bin/ghostty";
   grim = pkgs.grim + "/bin/grim";
   slurp = pkgs.slurp + "/bin/slurp";
@@ -28,14 +30,12 @@ let
   steam = pkgs.steam + "/bin/steam";
   cider = "~/bin/cider";
   cursor = "~/bin/cursor";
-in
-
-{
-  options.hyprland.theme = lib.mkOption { type = lib.types.attrs; };
-  options.hyprland.monitor = lib.mkOption { type = lib.types.str; };
-  options.hyprland.size = lib.mkOption { type = lib.types.functionTo lib.types.str; };
-  options.hyprland.swap_escape = lib.mkOption { type = lib.types.bool; };
-  options.hyprland.utilsDir = lib.mkOption { type = lib.types.str; };
+in {
+  options.hyprland.theme = lib.mkOption {type = lib.types.attrs;};
+  options.hyprland.monitor = lib.mkOption {type = lib.types.str;};
+  options.hyprland.size = lib.mkOption {type = lib.types.functionTo lib.types.str;};
+  options.hyprland.swap_escape = lib.mkOption {type = lib.types.bool;};
+  options.hyprland.utilsDir = lib.mkOption {type = lib.types.str;};
 
   config.home.file = {
     ".config/hypr/hypridle.conf".text = ''

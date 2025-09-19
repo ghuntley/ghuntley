@@ -1,3 +1,6 @@
+// Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
+// SPDX-License-Identifier: Proprietary
+
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
 use std::path::Path;
@@ -38,8 +41,7 @@ async fn main() -> Result<()> {
     // Initialize tracing
     tracing_subscriber::fmt()
         .with_env_filter(
-            tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "info".into()),
+            tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into()),
         )
         .init();
 
@@ -63,7 +65,8 @@ async fn sync_depot() -> Result<()> {
         let output = Command::new("git")
             .args(&[
                 "clone",
-                "--depth", "1",
+                "--depth",
+                "1",
                 "--filter=blob:none",
                 REPO_URL,
                 DEPOT_DIR,
@@ -72,7 +75,10 @@ async fn sync_depot() -> Result<()> {
             .context("Failed to execute git clone")?;
 
         if !output.status.success() {
-            error!("Git clone failed: {}", String::from_utf8_lossy(&output.stderr));
+            error!(
+                "Git clone failed: {}",
+                String::from_utf8_lossy(&output.stderr)
+            );
             anyhow::bail!("Git clone failed");
         }
     } else {
@@ -83,7 +89,10 @@ async fn sync_depot() -> Result<()> {
             .context("Failed to execute git pull")?;
 
         if !output.status.success() {
-            error!("Git pull failed: {}", String::from_utf8_lossy(&output.stderr));
+            error!(
+                "Git pull failed: {}",
+                String::from_utf8_lossy(&output.stderr)
+            );
             anyhow::bail!("Git pull failed");
         }
     }
@@ -102,7 +111,9 @@ async fn deploy_machine(local: bool) -> Result<()> {
             .to_string()
     } else {
         // Sync depot first
-        sync_depot().await.context("Failed to sync depot before machine deployment")?;
+        sync_depot()
+            .await
+            .context("Failed to sync depot before machine deployment")?;
         DEPOT_DIR.to_string()
     };
 
@@ -122,26 +133,28 @@ async fn deploy_machine(local: bool) -> Result<()> {
         .to_string();
 
     let flake_target = format!("infra:desktop:{}", hostname);
-    info!("Deploying NixOS configuration for {} using flake target {}", hostname, flake_target);
+    info!(
+        "Deploying NixOS configuration for {} using flake target {}",
+        hostname, flake_target
+    );
 
     // Check if the flake target exists
     let check_output = Command::new("nix")
-        .args(&[
-            "flake",
-            "show",
-            "--json",
-        ])
+        .args(&["flake", "show", "--json"])
         .current_dir(&depot_dir)
         .output()
         .context("Failed to check flake targets")?;
 
     if !check_output.status.success() {
-        error!("Failed to check flake targets: {}", String::from_utf8_lossy(&check_output.stderr));
+        error!(
+            "Failed to check flake targets: {}",
+            String::from_utf8_lossy(&check_output.stderr)
+        );
         anyhow::bail!("Failed to check flake targets");
     }
 
-    let flake_info: serde_json::Value = serde_json::from_slice(&check_output.stdout)
-        .context("Failed to parse flake info JSON")?;
+    let flake_info: serde_json::Value =
+        serde_json::from_slice(&check_output.stdout).context("Failed to parse flake info JSON")?;
 
     if flake_info
         .get("nixosConfigurations")
@@ -183,31 +196,35 @@ async fn deploy_home(local: bool) -> Result<()> {
             .to_string()
     } else {
         // Sync depot first
-        sync_depot().await.context("Failed to sync depot before home deployment")?;
+        sync_depot()
+            .await
+            .context("Failed to sync depot before home deployment")?;
         DEPOT_DIR.to_string()
     };
 
     let flake_target = "users:ghuntley:home";
-    info!("Deploying Home Manager configuration using flake target {}", flake_target);
+    info!(
+        "Deploying Home Manager configuration using flake target {}",
+        flake_target
+    );
 
     // Check if the flake target exists
     let check_output = Command::new("nix")
-        .args(&[
-            "flake",
-            "show",
-            "--json",
-        ])
+        .args(&["flake", "show", "--json"])
         .current_dir(&depot_dir)
         .output()
         .context("Failed to check flake targets")?;
 
     if !check_output.status.success() {
-        error!("Failed to check flake targets: {}", String::from_utf8_lossy(&check_output.stderr));
+        error!(
+            "Failed to check flake targets: {}",
+            String::from_utf8_lossy(&check_output.stderr)
+        );
         anyhow::bail!("Failed to check flake targets");
     }
 
-    let flake_info: serde_json::Value = serde_json::from_slice(&check_output.stdout)
-        .context("Failed to parse flake info JSON")?;
+    let flake_info: serde_json::Value =
+        serde_json::from_slice(&check_output.stdout).context("Failed to parse flake info JSON")?;
 
     if flake_info
         .get("homeConfigurations")

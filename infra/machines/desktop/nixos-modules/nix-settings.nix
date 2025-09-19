@@ -1,14 +1,15 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ config, pkgs, ... }:
-
 {
+  config,
+  pkgs,
+  ...
+}: {
   # Nix configuration
   nix.settings.auto-optimise-store = true;
-  nix.settings.trusted-users = [ "root" "ghuntley" ];
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  
+  nix.settings.trusted-users = ["root" "ghuntley"];
+  nix.settings.experimental-features = ["nix-command" "flakes"];
+
   # Configure binary cache settings
   nix.settings.require-sigs = true;
   nix.settings.substituters = [

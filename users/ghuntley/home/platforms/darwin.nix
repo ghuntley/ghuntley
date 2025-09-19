@@ -1,11 +1,12 @@
 # Copyright (c) 2025 Geoffrey Huntley <ghuntley@ghuntley.com>. All rights reserved.
 # SPDX-License-Identifier: Proprietary
-
-{ config, lib, pkgs, ... }:
-
-with lib;
-
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; {
   imports = [
     ../modules/default-imports.nix
   ];
@@ -17,7 +18,7 @@ with lib;
     #   pinentry_mac
     # ];
 
-    home.activation.linkApplications = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    home.activation.linkApplications = lib.hm.dag.entryAfter ["writeBoundary"] ''
       $DRY_RUN_CMD ln -sf $VERBOSE_ARG \
         ~/.nix-profile/Applications/* ~/Applications/
     '';
