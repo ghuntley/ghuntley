@@ -23,7 +23,7 @@
     pkgs.cliphist # Clipboard manager for Wayland with support for text and images
     pkgs.hypridle # Idle management daemon for Hyprland - handles screen locking/sleeping
     pkgs.pyprland # Python scripts and tools for extending Hyprland functionality
-    pkgs.rofi-wayland # Window switcher, application launcher and dmenu replacement for Wayland
+    pkgs.rofi # Window switcher, application launcher and dmenu replacement for Wayland
     pkgs.swww # Efficient wallpaper daemon for Wayland - supports animations
     pkgs.wallust # Wallpaper manager that can generate and apply color schemes
     pkgs.wlogout # Wayland-native logout menu with customizable layout
