@@ -53,7 +53,7 @@
           pkgs = nixpkgs.legacyPackages.x86_64-linux.extend toolsOverlay;
         in
         {
-          inherit (pkgs.depot) license deploy;
+          inherit (pkgs.depot.tools) license deploy;
         };
     };
 }
