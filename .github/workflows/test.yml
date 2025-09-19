@@ -1,0 +1,48 @@
+name: Test
+
+on:
+  push:
+    branches: [ trunk ]
+  pull_request:
+    branches: [ trunk ]
+
+jobs:
+  devenv-tasks:
+    runs-on: namespace-profile-cached-amd64
+    
+    steps:
+    - name: Checkout repository
+      uses: namespacelabs/nscloud-checkout-action@v7
+      
+    - name: Set up Nix cache
+      run: |
+        sudo mkdir -p /cache/nix /nix
+        sudo mount --bind /cache/nix /nix
+        sudo chown runner /nix
+        
+    - name: Tailscale
+      if: github.ref == 'refs/heads/trunk'
+      uses: tailscale/github-action@v3
+      with:
+        oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+        oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+        tags: tag:ci
+        
+    - name: Setup Nix
+      uses: cachix/install-nix-action@9aaadd8b85853f67fcdf488e6a4e9efa94ee96e2
+      
+    - name: Setup Cachix
+      uses: cachix/cachix-action@ee79db531bfb851a7cf47035057b7cca88d26449
+      with:
+        name: devenv
+        
+    - name: Install devenv.sh
+      run: nix profile install nixpkgs#devenv
+        
+    - name: Run flake check
+      run: |
+        nix flake check
+                
+    - name: Run tests
+      run: |
+        devenv test

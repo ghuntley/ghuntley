@@ -1,0 +1,152 @@
+name: Update DevEnv Dependencies
+
+on:
+  schedule:
+    # Run every Monday at 5:00 AM UTC
+    - cron: '0 5 * * 1'
+  workflow_dispatch:
+    inputs:
+      force_update:
+        description: 'Force update even if no changes detected'
+        type: boolean
+        default: false
+
+concurrency:
+  group: devenv-update
+  cancel-in-progress: true
+
+jobs:
+  update-devenv:
+    runs-on: namespace-profile-cached-amd64
+    
+    steps:
+    - name: Checkout repository
+      uses: namespacelabs/nscloud-checkout-action@v7
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Set up Nix cache
+      run: |
+        sudo mkdir -p /cache/nix /nix
+        sudo mount --bind /cache/nix /nix
+        sudo chown runner /nix
+
+    - name: Setup Nix
+      uses: cachix/install-nix-action@9aaadd8b85853f67fcdf488e6a4e9efa94ee96e2
+      
+    - name: Setup Cachix
+      uses: cachix/cachix-action@ee79db531bfb851a7cf47035057b7cca88d26449
+      with:
+        name: devenv
+
+    - name: Install devenv.sh
+      run: nix profile install nixpkgs#devenv
+      
+    - name: Check for devenv updates
+      id: check-updates
+      run: |
+        # Store current lock content
+        cp devenv.lock devenv.lock.backup
+        
+        # Update devenv
+        devenv update
+        
+        # Check if anything changed
+        if cmp -s devenv.lock devenv.lock.backup; then
+          echo "changes=false" >> $GITHUB_OUTPUT
+          echo "No devenv updates available"
+        else
+          echo "changes=true" >> $GITHUB_OUTPUT
+          echo "DevEnv updates found"
+          
+          # Show what changed
+          echo "Changes detected in devenv.lock:"
+          diff devenv.lock.backup devenv.lock || true
+        fi
+        
+        # Clean up backup
+        rm -f devenv.lock.backup
+        
+    - name: Extract version changes
+      if: steps.check-updates.outputs.changes == 'true' || github.event.inputs.force_update == 'true'
+      id: version-changes
+      run: |
+        # Get current date for commit message
+        current_date=$(date -u +"%Y-%m-%d")
+        echo "date=$current_date" >> $GITHUB_OUTPUT
+        
+        # Parse changes from devenv.lock for PR body
+        changes_summary=""
+        if git diff --name-only | grep -q "devenv.lock"; then
+          # Extract key dependency changes
+          changes_summary=$(git diff devenv.lock | grep -E '^\+.*"(devenv|git-hooks|nixpkgs)".*github:' | sed 's/^+/- Updated: /' || echo "- Updated devenv dependencies")
+        fi
+        
+        # Set multiline output using heredoc
+        {
+          echo "summary<<EOF"
+          echo "$changes_summary"
+          echo "EOF"
+        } >> $GITHUB_OUTPUT
+
+    - name: Create Pull Request
+      if: steps.check-updates.outputs.changes == 'true' || github.event.inputs.force_update == 'true'
+      uses: peter-evans/create-pull-request@v6
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: chore/update-devenv-${{ steps.version-changes.outputs.date }}
+        title: 'chore(deps): update devenv dependencies'
+        body: |
+          ## DevEnv Dependency Update
+          
+          This PR updates the development environment dependencies to their latest versions.
+          
+          ### Changes Made
+          ${{ steps.version-changes.outputs.summary }}
+          
+          ### What's Updated
+          - **devenv**: Core development environment framework
+          - **git-hooks**: Pre-commit hooks and tooling
+          - **nixpkgs**: Nix packages and build dependencies
+          
+          ### Impact
+          - 🔄 Development environment stays current with latest features
+          - 🔒 Security updates and bug fixes included  
+          - 🛠️ Build tooling improvements and optimizations
+          - ⚡ Potential performance improvements
+          
+          ### Testing
+          The updated environment will be tested automatically when this PR triggers the CI workflow.
+          All container images will be rebuilt with the new environment to ensure compatibility.
+          
+          ### Auto-generated
+          This PR was created automatically by the DevEnv Update workflow.
+          
+          ---
+          *Generated on: ${{ steps.version-changes.outputs.date }}*
+        labels: |
+          dependencies
+          devenv
+          infrastructure
+          automated
+        assignees: ${{ github.repository_owner }}
+        reviewers: ${{ github.repository_owner }}
+        commit-message: |
+          chore(deps): update devenv dependencies
+          
+          Automated update of development environment dependencies:
+          ${{ steps.version-changes.outputs.summary }}
+          
+          🤖 Generated automatically by DevEnv Update workflow
+        delete-branch: true
+
+    - name: Summary
+      run: |
+        if [ "${{ steps.check-updates.outputs.changes }}" = "true" ]; then
+          echo "✅ DevEnv updates found and PR created"
+          echo "🔄 New development environment dependencies are available"
+          echo "📋 Check the created PR for detailed changes"
+        else
+          echo "✅ DevEnv is up to date"
+          echo "📅 No updates needed at this time"
+        fi
