@@ -18,6 +18,7 @@ in
     # 1st-party
     depot.tools.license
     depot.tools.deploy
+    depot.tools.depot
     
     # 3rd-party tools
     depot.third_party.tools.claude

@@ -11,6 +11,7 @@ in
     tools = {
       license = final.callPackage ./license.nix { };
       deploy = final.callPackage ./deploy.nix { };
+      depot = final.callPackage ./depot.nix { };
     };
   };
 }
