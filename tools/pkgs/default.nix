@@ -3,6 +3,8 @@
 
 # Tools packages overlay
 final: prev: {
-  license = final.callPackage ./license.nix { };
-  deploy = final.callPackage ./deploy.nix { };
+  depot = {
+    license = final.callPackage ./license.nix { };
+    deploy = final.callPackage ./deploy.nix { };
+  };
 }

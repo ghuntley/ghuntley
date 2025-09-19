@@ -17,7 +17,7 @@
       Type = "oneshot";
       User = "root";
       TimeoutStartSec = "30min";
-      ExecStart = "${pkgs.deploy}/bin/deploy machine";
+      ExecStart = "${pkgs.depot.deploy}/bin/deploy machine";
     };
   };
 

@@ -61,7 +61,7 @@
     pkgs.vscode
 
     # Deployment Tools  
-    pkgs.deploy # Custom deployment tool for managing depot sync and deployments
+    pkgs.depot.deploy # Custom deployment tool for managing depot sync and deployments
 
     # Qt/KDE Integration
     pkgs.kdePackages.qt6ct # Qt6 configuration tool for non-KDE environments

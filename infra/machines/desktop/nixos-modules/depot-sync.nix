@@ -26,7 +26,7 @@
     };
 
     script = ''
-      ${pkgs.deploy}/bin/deploy sync
+      ${pkgs.depot.deploy}/bin/deploy sync
     '';
   };
 

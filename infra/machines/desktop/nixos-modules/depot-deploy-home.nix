@@ -18,7 +18,7 @@
       User = "ghuntley";
       Group = "users";
       TimeoutStartSec = "15min";
-      ExecStart = "${pkgs.deploy}/bin/deploy home";
+      ExecStart = "${pkgs.depot.deploy}/bin/deploy home";
     };
   };
 
