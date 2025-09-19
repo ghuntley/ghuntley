@@ -17,9 +17,17 @@ enum Commands {
     /// Sync the depot repository
     Sync,
     /// Deploy NixOS machine configuration
-    Machine,
+    Machine {
+        /// Deploy from local directory instead of syncing from depot
+        #[arg(long)]
+        local: bool,
+    },
     /// Deploy Home Manager configuration
-    Home,
+    Home {
+        /// Deploy from local directory instead of syncing from depot
+        #[arg(long)]
+        local: bool,
+    },
 }
 
 const DEPOT_DIR: &str = "/var/lib/depot";
@@ -39,8 +47,8 @@ async fn main() -> Result<()> {
 
     match cli.command {
         Commands::Sync => sync_depot().await,
-        Commands::Machine => deploy_machine().await,
-        Commands::Home => deploy_home().await,
+        Commands::Machine { local } => deploy_machine(local).await,
+        Commands::Home { local } => deploy_home(local).await,
     }
 }
 
@@ -84,11 +92,19 @@ async fn sync_depot() -> Result<()> {
     Ok(())
 }
 
-async fn deploy_machine() -> Result<()> {
+async fn deploy_machine(local: bool) -> Result<()> {
     info!("Starting NixOS machine deployment");
 
-    // Sync depot first
-    sync_depot().await.context("Failed to sync depot before machine deployment")?;
+    let depot_dir = if local {
+        std::env::current_dir()
+            .context("Failed to get current directory")?
+            .to_string_lossy()
+            .to_string()
+    } else {
+        // Sync depot first
+        sync_depot().await.context("Failed to sync depot before machine deployment")?;
+        DEPOT_DIR.to_string()
+    };
 
     // Get hostname
     let hostname_output = Command::new("hostname")
@@ -115,7 +131,7 @@ async fn deploy_machine() -> Result<()> {
             "show",
             "--json",
         ])
-        .current_dir(DEPOT_DIR)
+        .current_dir(&depot_dir)
         .output()
         .context("Failed to check flake targets")?;
 
@@ -141,9 +157,9 @@ async fn deploy_machine() -> Result<()> {
         .args(&[
             "switch",
             "--flake",
-            &format!("{}#{}", DEPOT_DIR, flake_target),
+            &format!("{}#{}", depot_dir, flake_target),
             "--sudo",
-            "--verbose"
+            "--verbose",
         ])
         .status()
         .context("Failed to execute nixos-rebuild")?;
@@ -157,11 +173,19 @@ async fn deploy_machine() -> Result<()> {
     Ok(())
 }
 
-async fn deploy_home() -> Result<()> {
+async fn deploy_home(local: bool) -> Result<()> {
     info!("Starting Home Manager deployment");
 
-    // Sync depot first
-    sync_depot().await.context("Failed to sync depot before home deployment")?;
+    let depot_dir = if local {
+        std::env::current_dir()
+            .context("Failed to get current directory")?
+            .to_string_lossy()
+            .to_string()
+    } else {
+        // Sync depot first
+        sync_depot().await.context("Failed to sync depot before home deployment")?;
+        DEPOT_DIR.to_string()
+    };
 
     let flake_target = "users:ghuntley:home";
     info!("Deploying Home Manager configuration using flake target {}", flake_target);
@@ -173,7 +197,7 @@ async fn deploy_home() -> Result<()> {
             "show",
             "--json",
         ])
-        .current_dir(DEPOT_DIR)
+        .current_dir(&depot_dir)
         .output()
         .context("Failed to check flake targets")?;
 
@@ -199,7 +223,7 @@ async fn deploy_home() -> Result<()> {
         .args(&[
             "switch",
             "--flake",
-            &format!("{}#{}", DEPOT_DIR, flake_target),
+            &format!("{}#{}", depot_dir, flake_target),
             "--impure",
         ])
         .status()
