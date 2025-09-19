@@ -103,6 +103,9 @@ in {
     pkgs.wl-clipboard # Command-line clipboard utilities for Wayland
     pkgs.yad # Tool for creating graphical dialogs from shell scripts
     pkgs.yt-dlp # Feature-rich video downloader for YouTube and other sites
+
+    # Password Management
+    pkgs._1password-gui # 1Password desktop application
   ];
 
   # Security
@@ -171,6 +174,11 @@ in {
 
   # Security & Authentication
   programs.ssh.startAgent = true;
+  programs._1password.enable = true;
+  programs._1password-gui = {
+    enable = true;
+    polkitPolicyOwners = ["ghuntley"];
+  };
 
   # NixOS Compatibility
   programs.appimage.enable = true;
