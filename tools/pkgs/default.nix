@@ -2,12 +2,15 @@
 # SPDX-License-Identifier: Proprietary
 
 # Tools packages overlay
-final: prev: {
+final: prev: 
+let
+  thirdPartyOverlay = import ../../third_party/tools/pkgs;
+in
+(thirdPartyOverlay final prev) // {
   depot = {
     tools = {
       license = final.callPackage ./license.nix { };
       deploy = final.callPackage ./deploy.nix { };
-      claude = final.callPackage ./claude.nix { };
     };
   };
 }
