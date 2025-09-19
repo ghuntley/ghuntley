@@ -55,5 +55,16 @@
         {
           inherit (pkgs) license deploy;
         };
+
+      apps.x86_64-linux = 
+        let
+          pkgs = nixpkgs.legacyPackages.x86_64-linux.extend toolsOverlay;
+        in
+        {
+          deploy = {
+            type = "app";
+            program = "${pkgs.deploy}/bin/deploy";
+          };
+        };
     };
 }

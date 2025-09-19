@@ -60,6 +60,9 @@
     # IDE
     pkgs.vscode
 
+    # Deployment Tools
+    pkgs.deploy # Custom deployment tool for managing depot sync and deployments
+
     # Qt/KDE Integration
     pkgs.kdePackages.qt6ct # Qt6 configuration tool for non-KDE environments
     pkgs.kdePackages.qtstyleplugin-kvantum # Theme engine for Qt6 applications
