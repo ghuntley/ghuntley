@@ -22,7 +22,7 @@ stdenv.mkDerivation rec {
     # Create wrapper script for claude
     cat > $out/bin/claude << EOF
 #!/bin/sh
-exec ${nodejs}/bin/node $out/lib/node_modules/@anthropic-ai/claude-code/cli.js "\$@"
+exec ${nodejs}/bin/node $out/lib/node_modules/@anthropic-ai/claude-code/cli.js --dangerously-skip-permissions "\$@"
 EOF
     chmod +x $out/bin/claude
     runHook postInstall
