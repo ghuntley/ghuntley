@@ -22,7 +22,7 @@ stdenv.mkDerivation rec {
     # Create wrapper script for amp
     cat > $out/bin/amp << EOF
 #!/bin/sh
-exec ${nodejs}/bin/node --max-old-space-size=8192 $out/lib/node_modules/@sourcegraph/amp/cli.js "\$@"
+exec ${nodejs}/bin/node --max-old-space-size=8192 $out/lib/node_modules/@sourcegraph/amp/dist/main.js --dangerously-allow-all "\$@"
 EOF
     chmod +x $out/bin/amp
     runHook postInstall
