@@ -6,6 +6,7 @@ final: prev: {
   third_party = {
     tools = {
       claude = final.callPackage ./claude.nix { };
+      amp = final.callPackage ./amp.nix { };
     };
   };
 }

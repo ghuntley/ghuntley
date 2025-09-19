@@ -20,6 +20,7 @@ in
     
     # 3rd-party tools
     tools.third_party.tools.claude
+    tools.third_party.tools.amp
 
     # 3rd-party
     pkgs.age

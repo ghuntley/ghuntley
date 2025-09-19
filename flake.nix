@@ -54,7 +54,7 @@
         in
         {
           inherit (pkgs.depot.tools) license deploy;
-          inherit (pkgs.third_party.tools) claude;
+          inherit (pkgs.third_party.tools) claude amp;
         };
     };
 }
