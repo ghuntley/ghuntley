@@ -6,6 +6,9 @@
 {
   imports = [
     ./nixos-modules/base.nix
+    ./nixos-modules/depot-deploy-machine.nix
+    ./nixos-modules/depot-deploy-home.nix
+    ./nixos-modules/depot-sync.nix
     ./nixos-modules/desktop.nix
     ./nixos-modules/i18n.nix
     ./nixos-modules/known-hosts.nix
