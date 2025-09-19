@@ -34,7 +34,7 @@
     in
     {
       nixosConfigurations = {
-        hammer = mkSystem [
+        "nixos:desktop:hammer" = mkSystem [
           ./infra/machines/desktop/hammer.nix
           nixos-vscode-server.nixosModules.default
           sops-nix.nixosModules.sops
