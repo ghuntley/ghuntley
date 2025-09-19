@@ -36,7 +36,6 @@ in {
     pkgs.cpupower-gui # Change the frequency limits of your cpu and its governor
     pkgs.gnome-system-monitor # GUI system resource and process monitor
     pkgs.inxi # Command line system information tool - shows hardware, software info
-    pkgs.nvtopPackages.full # GPU process monitoring tool with support for NVIDIA/AMD/Intel
 
     # Graphics & Image Tools
     pkgs.eog # Eye of GNOME - lightweight image viewer with basic editing

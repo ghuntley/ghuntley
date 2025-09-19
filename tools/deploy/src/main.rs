@@ -171,8 +171,6 @@ async fn deploy_machine(local: bool) -> Result<()> {
             "switch",
             "--flake",
             &format!("{}#{}", depot_dir, flake_target),
-            "--sudo",
-            "--verbose",
         ])
         .status()
         .context("Failed to execute nixos-rebuild")?;
