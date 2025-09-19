@@ -2,7 +2,7 @@ use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
 use std::path::Path;
 use std::process::Command;
-use tracing::{error, info, warn};
+use tracing::{error, info};
 
 #[derive(Parser)]
 #[command(name = "deploy")]
@@ -111,7 +111,6 @@ async fn deploy_machine() -> Result<()> {
     // Check if the flake target exists
     let check_output = Command::new("nix")
         .args(&[
-            "--no-update-lock-file",
             "flake",
             "show",
             "--json",
@@ -143,23 +142,14 @@ async fn deploy_machine() -> Result<()> {
             "switch",
             "--flake",
             &format!("{}#{}", DEPOT_DIR, flake_target),
+            "--sudo",
+            "--verbose"
         ])
         .status()
         .context("Failed to execute nixos-rebuild")?;
 
     if !deploy_result.success() {
-        warn!("Deploy failed - attempting rollback");
-        let rollback_result = Command::new("nixos-rebuild")
-            .args(&["switch", "--rollback"])
-            .status()
-            .context("Failed to execute nixos-rebuild rollback")?;
-
-        if !rollback_result.success() {
-            error!("Rollback also failed!");
-            anyhow::bail!("Deploy failed and rollback failed");
-        }
-
-        error!("Deploy failed but rollback succeeded");
+        error!("Deploy machine failed");
         anyhow::bail!("Deploy failed");
     }
 
@@ -179,7 +169,6 @@ async fn deploy_home() -> Result<()> {
     // Check if the flake target exists
     let check_output = Command::new("nix")
         .args(&[
-            "--no-update-lock-file",
             "flake",
             "show",
             "--json",

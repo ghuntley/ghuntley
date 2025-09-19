@@ -4,14 +4,6 @@
 { config, pkgs, lib, ... }:
 
 {
-  # Create dedicated system user for git operations
-  users.users.depot = {
-    isSystemUser = true;
-    group = "depot";
-    home = "/var/lib/depot";
-  };
-  users.groups.depot = {};
-
   systemd.services.depot-sync = {
     description = "Sync depot repository";
     wantedBy = [ "multi-user.target" ];
@@ -24,8 +16,7 @@
 
     serviceConfig = {
       Type = "oneshot";
-      User = "depot";
-      Group = "depot";
+      User = "root";
       Nice = 10;
       TimeoutStartSec = "5min";
       PrivateTmp = true;
@@ -40,11 +31,11 @@
   };
 
   systemd.timers.depot-sync = {
-    description = "Run depot sync every 5 minutes";
+    description = "Run depot sync every 15 minutes";
     wantedBy = [ "timers.target" ];
 
     timerConfig = {
-      OnUnitInactiveSec = "5m";
+      OnUnitInactiveSec = "15m";
       RandomizedDelaySec = "30s";
       AccuracySec = "30s";
     };
