@@ -14,6 +14,8 @@ in
     ../platforms/linux.nix
   ];
 
+  nixpkgs.config.allowUnfree = true;
+
   hyprland = { inherit theme; inherit monitor; inherit size; inherit swap_escape; };
 
   programs.home-manager.enable = true;
