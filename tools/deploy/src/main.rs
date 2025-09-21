@@ -224,25 +224,39 @@ async fn deploy_home(local: bool) -> Result<()> {
     let flake_info: serde_json::Value =
         serde_json::from_slice(&check_output.stdout).context("Failed to parse flake info JSON")?;
 
-    if flake_info
-        .get("homeConfigurations")
-        .and_then(|configs| configs.get(flake_target))
-        .is_none()
-    {
-        error!("Flake target {} not found", flake_target);
-        anyhow::bail!("Flake target not found");
+    // Note: homeConfigurations may show as "unknown" in JSON output but still be valid
+    if flake_info.get("homeConfigurations").is_none() {
+        error!("No homeConfigurations found in flake");
+        anyhow::bail!("No homeConfigurations found");
     }
 
     // Deploy the home configuration
-    let deploy_result = Command::new("home-manager")
-        .args(&[
-            "switch",
-            "--flake",
-            &format!("{}#{}", depot_dir, flake_target),
-            "--impure",
-        ])
-        .status()
-        .context("Failed to execute home-manager")?;
+    // If running as root (via sudo), run home-manager as the original user
+    let deploy_result = if std::env::var("SUDO_USER").is_ok() {
+        let sudo_user = std::env::var("SUDO_USER").unwrap();
+        Command::new("sudo")
+            .args(&[
+                "-u",
+                &sudo_user,
+                "home-manager",
+                "switch",
+                "--flake",
+                &format!("{}#{}", depot_dir, flake_target),
+                "--impure",
+            ])
+            .status()
+            .context("Failed to execute home-manager via sudo")?
+    } else {
+        Command::new("home-manager")
+            .args(&[
+                "switch",
+                "--flake",
+                &format!("{}#{}", depot_dir, flake_target),
+                "--impure",
+            ])
+            .status()
+            .context("Failed to execute home-manager")?
+    };
 
     if !deploy_result.success() {
         error!("Home Manager deployment failed");
