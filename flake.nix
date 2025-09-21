@@ -66,7 +66,7 @@
         modules = [
           ./users/ghuntley/home/machines/hammer.nix
           {
-            _module.args.keys = import ./users/ghuntley/keys;
+            _module.args.keys = import ./users/ghuntley/keys {};
           }
         ];
       };
