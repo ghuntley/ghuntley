@@ -30,6 +30,10 @@ in {
     };
 
     script = ''
+      export GIT_CONFIG_SYSTEM=${pkgs.writeText "gitconfig" ''
+        [safe]
+          directory = /var/lib/depot
+      ''}
       ${depot.tools.deploy}/bin/deploy sync
     '';
   };

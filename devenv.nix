@@ -66,13 +66,6 @@ in {
 
   # https://devenv.sh/tasks/
   tasks = {
-    "infra:hammer:test".exec = "scripts/infra/hammer-test.sh";
-    "infra:hammer:deploy".exec = "scripts/infra/hammer-deploy.sh";
-
-    "license:check".exec = "scripts/license/check.sh";
-    "license:check:all".exec = "scripts/license/check-all.sh";
-    "license:add".exec = "scripts/license/add.sh";
-    "license:add:all".exec = "scripts/license/add-all.sh";
   };
 
   # https://devenv.sh/tests/
