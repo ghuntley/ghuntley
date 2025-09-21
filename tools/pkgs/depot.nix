@@ -24,7 +24,7 @@ rustPlatform.buildRustPackage {
   meta = with lib; {
     description = "A build system for nix flake expressions";
     homepage = "https://github.com/ghuntley/ghuntley";
-    license = licenses.unfree;
+    license = licenses.mit;
     maintainers = ["ghuntley@ghuntley.com"];
   };
 }

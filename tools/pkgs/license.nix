@@ -33,7 +33,7 @@ rustPlatform.buildRustPackage rec {
       Can check for existing license headers or automatically add them to files that are missing them.
     '';
     homepage = "https://ghuntley.com";
-    license = licenses.unfree;
+    license = licenses.mit;
     maintainers = with maintainers; [];
     mainProgram = "license";
   };

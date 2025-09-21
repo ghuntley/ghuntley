@@ -34,7 +34,7 @@ stdenv.mkDerivation rec {
   meta = with lib; {
     description = "Agentic coding tool by Sourcegraph";
     homepage = "https://www.npmjs.com/package/@sourcegraph/amp";
-    license = licenses.unfree;
+    license = licenses.mit;
     maintainers = [];
     platforms = platforms.all;
   };

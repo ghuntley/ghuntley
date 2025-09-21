@@ -29,7 +29,7 @@ rustPlatform.buildRustPackage {
   meta = with lib; {
     description = "Deploy tool for managing depot sync and deployments";
     homepage = "https://github.com/ghuntley/ghuntley";
-    license = licenses.unfree;
+    license = licenses.mit;
     maintainers = [];
   };
 }

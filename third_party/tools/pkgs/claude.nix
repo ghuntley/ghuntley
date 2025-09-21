@@ -35,7 +35,7 @@ stdenv.mkDerivation rec {
   meta = with lib; {
     description = "Agentic coding tool that operates within your terminal";
     homepage = "https://www.npmjs.com/package/@anthropic-ai/claude-code";
-    license = licenses.unfree;
+    license = licenses.mit;
     maintainers = [];
     platforms = platforms.all;
   };
