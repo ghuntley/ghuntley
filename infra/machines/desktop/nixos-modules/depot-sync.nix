@@ -27,7 +27,6 @@ in {
       PrivateTmp = true;
       ProtectSystem = "strict";
       ReadWritePaths = ["/var/lib/depot"];
-      ExecStartPost = "${pkgs.systemd}/bin/systemctl start --no-block depot-deploy-machine.service";
     };
 
     script = ''
