@@ -11,7 +11,7 @@
     autosuggestion.enable = true;
     enableCompletion = true;
 
-    initExtra = ''
+    initContent = ''
       export PATH="$PATH:$HOME/bin:"
       eval "$(direnv hook zsh)"
     '';

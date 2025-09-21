@@ -25,7 +25,10 @@ in {
     inherit swap_escape;
   };
 
-  programs.home-manager.enable = true;
+  programs.home-manager = {
+    enable = true;
+    news.display = "silent";
+  };
 
   home.username = "ghuntley";
   home.homeDirectory = "/home/ghuntley";
