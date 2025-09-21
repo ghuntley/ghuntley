@@ -23,6 +23,13 @@ in {
       Group = "users";
       TimeoutStartSec = "15min";
       ExecStart = "${depot.tools.deploy}/bin/deploy home";
+      Environment = [
+        "PATH=${lib.makeBinPath [pkgs.hostname pkgs.git pkgs.nix pkgs.home-manager]}"
+        "GIT_CONFIG_GLOBAL=${pkgs.writeText "gitconfig" ''
+          [safe]
+            directory = /var/lib/depot
+        ''}"
+      ];
     };
   };
 
