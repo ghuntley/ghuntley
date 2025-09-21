@@ -17,7 +17,6 @@ in {
   # https://devenv.sh/packages/
   packages = [
     # 1st-party
-    depot.tools.license
     depot.tools.deploy
 
     # 3rd-party tools
@@ -68,6 +67,12 @@ in {
     # Preserve caller CWD, build and run the depot binary from tools/depot
     RUST_LOG="''${RUST_LOG:-info}" \
     cargo run --manifest-path "$DEVENV_ROOT/tools/depot/Cargo.toml" -- "$@"
+  '';
+
+  scripts.license.exec = ''
+    # Preserve caller CWD, build and run the license binary from tools/license
+    RUST_LOG="''${RUST_LOG:-info}" \
+    cargo run --manifest-path "$DEVENV_ROOT/tools/license/Cargo.toml" -- "$@"
   '';
 
   # https://devenv.sh/tasks/
