@@ -23,7 +23,7 @@ rustPlatform.buildRustPackage {
 
   postInstall = ''
     wrapProgram $out/bin/deploy \
-      --prefix PATH : ${lib.makeBinPath [ git ]}
+      --prefix PATH : ${lib.makeBinPath [git]}
   '';
 
   meta = with lib; {

@@ -14,11 +14,11 @@ rustPlatform.buildRustPackage {
 
   cargoHash = "sha256-z7MmKDX7Jgw/eKAnh6j8/bQOz4wJCxHWpcrkqnmFHHU=";
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [makeWrapper];
 
   postInstall = ''
     wrapProgram $out/bin/depot \
-      --prefix PATH : ${lib.makeBinPath [ git ]}
+      --prefix PATH : ${lib.makeBinPath [git]}
   '';
 
   meta = with lib; {

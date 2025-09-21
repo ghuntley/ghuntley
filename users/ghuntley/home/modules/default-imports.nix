@@ -18,17 +18,17 @@ let
   mod = name: modulesPath + "/${name}";
 in {
   imports = [
-  (mod "bat.nix")
-  (mod "editorconfig.nix")
-  (mod "gdb.nix")
-  (mod "git.nix")
-  (mod "gh.nix")
-  (mod "neovim.nix")
-  (mod "pkgs.nix")
-  (mod "psql.nix")
-  (mod "readline.nix")
-  (mod "ssh.nix")
-  (mod "tmux.nix")
-  (mod "zsh.nix")
+    (mod "bat.nix")
+    (mod "editorconfig.nix")
+    (mod "gdb.nix")
+    (mod "git.nix")
+    (mod "gh.nix")
+    (mod "neovim.nix")
+    (mod "pkgs.nix")
+    (mod "psql.nix")
+    (mod "readline.nix")
+    (mod "ssh.nix")
+    (mod "tmux.nix")
+    (mod "zsh.nix")
   ];
 }

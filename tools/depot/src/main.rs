@@ -130,14 +130,9 @@ async fn handle_license(action: LicenseAction) -> Result<()> {
 
     // Execute the license tool from tools/license
     let mut cmd = tokio::process::Command::new("cargo");
-    cmd.args(&[
-        "run",
-        "--manifest-path",
-        "tools/license/Cargo.toml",
-        "--",
-    ]);
+    cmd.args(&["run", "--manifest-path", "tools/license/Cargo.toml", "--"]);
     cmd.args(&args);
-    
+
     let output = cmd.output().await?;
 
     if output.status.success() {
