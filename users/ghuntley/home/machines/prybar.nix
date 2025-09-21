@@ -16,6 +16,8 @@ in {
     ../platforms/linux.nix
   ];
 
+  nixpkgs.config.allowUnfree = true;
+
   hyprland = {
     inherit theme;
     inherit monitor;

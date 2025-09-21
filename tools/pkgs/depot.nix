@@ -8,11 +8,11 @@
 }:
 rustPlatform.buildRustPackage {
   pname = "depot";
-  version = "0.1.0";
+  version = "0.2.0";
 
   src = ../depot;
 
-  cargoHash = "sha256-z7MmKDX7Jgw/eKAnh6j8/bQOz4wJCxHWpcrkqnmFHHU=";
+  cargoHash = "sha256-cR3+DP49mPmaEltfAqBvZI14ASI8I59huJCmVXGMASM=";
 
   nativeBuildInputs = [makeWrapper];
 
