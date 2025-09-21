@@ -23,7 +23,7 @@ with lib; {
         ~/.nix-profile/Applications/* ~/Applications/
     '';
 
-    programs.zsh.initExtra = ''
+    programs.zsh.initContent = ''
       export NIX_PATH=$HOME/.nix-defexpr/channels:$NIX_PATH
 
       if [[ "$TERM" == "ghostty" ]]; then
