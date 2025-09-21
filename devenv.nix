@@ -19,7 +19,6 @@ in {
     # 1st-party
     depot.tools.license
     depot.tools.deploy
-    depot.tools.depot
 
     # 3rd-party tools
     depot.third_party.tools.claude
@@ -63,6 +62,13 @@ in {
 
   # https://devenv.sh/processes/
   processes.cargo-watch.exec = "cargo-watch";
+
+  # https://devenv.sh/scripts/
+  scripts.depot.exec = ''
+    # Preserve caller CWD, build and run the depot binary from tools/depot
+    RUST_LOG="''${RUST_LOG:-info}" \
+    cargo run --manifest-path "$DEVENV_ROOT/tools/depot/Cargo.toml" -- "$@"
+  '';
 
   # https://devenv.sh/tasks/
   tasks = {
