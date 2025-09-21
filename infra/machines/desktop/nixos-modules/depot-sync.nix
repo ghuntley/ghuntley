@@ -20,7 +20,8 @@ in {
 
     serviceConfig = {
       Type = "oneshot";
-      User = "root";
+      User = "ghuntley";
+      Group = "users";
       Nice = 10;
       TimeoutStartSec = "5min";
       PrivateTmp = true;
@@ -51,6 +52,6 @@ in {
 
   # Ensure /var/lib/depot directory exists with proper permissions
   systemd.tmpfiles.rules = [
-    "d /var/lib/depot 0755 depot depot -"
+    "d /var/lib/depot 0755 ghuntley users -"
   ];
 }
