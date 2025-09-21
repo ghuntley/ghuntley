@@ -106,19 +106,19 @@ in {
           workspace_back_and_forth = true
       }
 
-      plugin {
-        touch_gestures {
-          sensitivity = 4.0
+      #plugin {
+      #  touch_gestures {
+      #    sensitivity = 4.0
+      #
+      #    # must be >= 3
+      #    workspace_swipe_fingers = 3
+      #  }
+      #}
 
-          # must be >= 3
-          workspace_swipe_fingers = 3
-        }
-      }
-
-      gestures {
-        workspace_swipe = true
-        workspace_swipe_cancel_ratio = 0.15
-      }
+      #gestures {
+      #  workspace_swipe = true
+      #  workspace_swipe_cancel_ratio = 0.15
+      #}
 
 
       # See https://wiki.hyprland.org/Configuring/Monitors/
@@ -215,10 +215,10 @@ in {
           #new_is_master = true
       }
 
-      gestures {
-          # See https://wiki.hyprland.org/Configuring/Variables/ for more
-          workspace_swipe = on
-      }
+      #gestures {
+      #    # See https://wiki.hyprland.org/Configuring/Variables/ for more
+      #    workspace_swipe = on
+      #}
 
       misc {
           disable_hyprland_logo = true
