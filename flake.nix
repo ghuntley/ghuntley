@@ -63,7 +63,12 @@
     homeConfigurations = {
       "users:ghuntley:home" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux.extend toolsOverlay;
-        modules = [./users/ghuntley/home/machines/hammer.nix];
+        modules = [
+          ./users/ghuntley/home/machines/hammer.nix
+          {
+            _module.args.keys = import ./users/ghuntley/keys;
+          }
+        ];
       };
     };
 
