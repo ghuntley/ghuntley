@@ -10,6 +10,10 @@ use tracing::{error, info, warn};
 #[command(about = "A build system for nix flake expressions")]
 #[command(version)]
 struct Cli {
+    /// Enable verbose output
+    #[arg(short, long, global = true)]
+    verbose: bool,
+
     #[command(subcommand)]
     command: Commands,
 }
@@ -56,29 +60,35 @@ enum LicenseAction {
     Add,
 }
 
-fn init_tracing() {
+fn init_tracing(verbose: bool) {
+    let filter = if verbose {
+        "debug".to_string()
+    } else {
+        std::env::var("RUST_LOG").unwrap_or_else(|_| "info".to_string())
+    };
+
     tracing_subscriber::fmt()
-        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+        .with_env_filter(tracing_subscriber::EnvFilter::new(filter))
         .init();
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    init_tracing();
-
     let cli = Cli::parse();
 
+    init_tracing(cli.verbose);
+
     match cli.command {
-        Commands::Build { expression } => build_expression(&expression).await,
-        Commands::Test { expression } => test_expression(&expression).await,
-        Commands::License { action } => handle_license(action).await,
-        Commands::Fmt { expression } => format_code(expression.as_deref()).await,
-        Commands::Lint { expression } => lint_code(expression.as_deref()).await,
-        Commands::Check { expression } => check_code(expression.as_deref()).await,
+        Commands::Build { expression } => build_expression(&expression, cli.verbose).await,
+        Commands::Test { expression } => test_expression(&expression, cli.verbose).await,
+        Commands::License { action } => handle_license(action, cli.verbose).await,
+        Commands::Fmt { expression } => format_code(expression.as_deref(), cli.verbose).await,
+        Commands::Lint { expression } => lint_code(expression.as_deref(), cli.verbose).await,
+        Commands::Check { expression } => check_code(expression.as_deref(), cli.verbose).await,
     }
 }
 
-async fn build_expression(expression: &str) -> Result<()> {
+async fn build_expression(expression: &str, verbose: bool) -> Result<()> {
     info!("Building nix flake expression: {}", expression);
 
     // Execute nix build command
@@ -99,7 +109,7 @@ async fn build_expression(expression: &str) -> Result<()> {
     Ok(())
 }
 
-async fn test_expression(expression: &str) -> Result<()> {
+async fn test_expression(expression: &str, verbose: bool) -> Result<()> {
     info!("Testing nix flake expression: {}", expression);
 
     // Execute nix build with check flag for testing
@@ -120,7 +130,7 @@ async fn test_expression(expression: &str) -> Result<()> {
     Ok(())
 }
 
-async fn handle_license(action: LicenseAction) -> Result<()> {
+async fn handle_license(action: LicenseAction, verbose: bool) -> Result<()> {
     let (action_str, args) = match action {
         LicenseAction::Check => ("check", vec!["--check"]),
         LicenseAction::Add => ("add", vec![]),
@@ -147,13 +157,17 @@ async fn handle_license(action: LicenseAction) -> Result<()> {
     Ok(())
 }
 
-async fn format_code(expression: Option<&str>) -> Result<()> {
+async fn format_code(expression: Option<&str>, verbose: bool) -> Result<()> {
     if let Some(expr) = expression {
         info!("Formatting code for expression: {}", expr);
         // TODO: treefmt doesn't support specific expressions, format all for now
         warn!("treefmt doesn't support specific expressions, formatting all files");
 
-        let output = tokio::process::Command::new("treefmt").output().await?;
+        let mut cmd = tokio::process::Command::new("treefmt");
+        if verbose {
+            cmd.args(&["--verbose"]);
+        }
+        let output = cmd.output().await?;
 
         if output.status.success() {
             info!("Format completed");
@@ -166,7 +180,11 @@ async fn format_code(expression: Option<&str>) -> Result<()> {
     } else {
         info!("Formatting all code");
         // Run treefmt for entire project
-        let output = tokio::process::Command::new("treefmt").output().await?;
+        let mut cmd = tokio::process::Command::new("treefmt");
+        if verbose {
+            cmd.args(&["--verbose"]);
+        }
+        let output = cmd.output().await?;
 
         if output.status.success() {
             info!("Format completed");
@@ -181,7 +199,7 @@ async fn format_code(expression: Option<&str>) -> Result<()> {
     Ok(())
 }
 
-async fn lint_code(expression: Option<&str>) -> Result<()> {
+async fn lint_code(expression: Option<&str>, verbose: bool) -> Result<()> {
     if let Some(expr) = expression {
         info!("Linting code for expression: {}", expr);
         // Run nix flake check for specific expression
@@ -219,7 +237,7 @@ async fn lint_code(expression: Option<&str>) -> Result<()> {
     Ok(())
 }
 
-async fn check_code(expression: Option<&str>) -> Result<()> {
+async fn check_code(expression: Option<&str>, verbose: bool) -> Result<()> {
     if let Some(expr) = expression {
         info!("Checking code for expression: {}", expr);
         // Run nix build with dry-run for checking

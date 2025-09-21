@@ -87,6 +87,9 @@ in {
     pkgs.ghostty # Modern terminal emulator with GPU acceleration and ligatures
     pkgs.kitty # Fast, feature-rich terminal emulator with GPU acceleration
 
+    # Editors
+    pkgs.neovim # Vim-fork focused on extensibility and usability
+
     # Browsers
     pkgs.google-chrome # Google Chrome web browser
 
