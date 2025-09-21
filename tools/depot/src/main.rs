@@ -121,24 +121,24 @@ async fn test_expression(expression: &str) -> Result<()> {
 }
 
 async fn handle_license(action: LicenseAction) -> Result<()> {
-    let action_str = match action {
-        LicenseAction::Check => "check",
-        LicenseAction::Add => "add",
+    let (action_str, args) = match action {
+        LicenseAction::Check => ("check", vec!["--check"]),
+        LicenseAction::Add => ("add", vec![]),
     };
 
     info!("Running license {}", action_str);
 
     // Execute the license tool from tools/license
-    let output = tokio::process::Command::new("cargo")
-        .args(&[
-            "run",
-            "--manifest-path",
-            "tools/license/Cargo.toml",
-            "--",
-            action_str,
-        ])
-        .output()
-        .await?;
+    let mut cmd = tokio::process::Command::new("cargo");
+    cmd.args(&[
+        "run",
+        "--manifest-path",
+        "tools/license/Cargo.toml",
+        "--",
+    ]);
+    cmd.args(&args);
+    
+    let output = cmd.output().await?;
 
     if output.status.success() {
         info!("License {} completed successfully", action_str);
