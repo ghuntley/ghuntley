@@ -22,6 +22,9 @@ in {
       User = "root";
       TimeoutStartSec = "30min";
       ExecStart = "${depot.tools.deploy}/bin/deploy machine";
+      Environment = [
+        "PATH=${lib.makeBinPath [pkgs.hostname pkgs.git pkgs.nix pkgs.nixos-rebuild]}"
+      ];
     };
   };
 
