@@ -10,7 +10,7 @@ I write from Kangaroo Island, Australia 🦘 at **[ghuntley.com](https://ghuntle
 
 #### 🔁 Ralph
 - [**how-to-ralph-wiggum**](https://github.com/ghuntley/how-to-ralph-wiggum): the Ralph Wiggum Technique. `while :; do cat PROMPT.md | agent ; done`, plus everything I've learned about running that loop well.
-- [**cursed**](https://github.com/ghuntley/cursed): 💀 a programming language built by Ralph. Programming, but make it gen z.
+- [**cursed**](https://cursed-lang.org): 💀 a programming language built by Ralph. Programming, but make it gen z.
 
 #### 🛠️ Build your own agent
 - [**how-to-build-a-coding-agent**](https://github.com/ghuntley/how-to-build-a-coding-agent): a workshop where you build a coding agent from scratch. Once you see how it works, the magic goes away and you get better at driving the tools.
