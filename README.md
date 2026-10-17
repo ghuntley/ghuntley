@@ -20,6 +20,9 @@ I write from Kangaroo Island, Australia 🦘 at **[ghuntley.com](https://ghuntle
 - [**underclass**](https://github.com/ghuntley/underclass): an OpenAI-compatible pooling proxy that keeps prompt caches warm and cools down exhausted subscriptions.
 - [**preflight**](https://github.com/ghuntley/preflight): a local proxy that scans LLM requests and attachments for secrets before they reach the model.
 
+#### 🚨 Public service announcements
+- [**noyaml.com**](https://noyaml.com): no body wants to write YAML. A lovingly curated list of YAML pain.
+
 ---
 
 <p>
