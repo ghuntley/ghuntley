@@ -34,4 +34,6 @@ I write from Kangaroo Island, Australia 🦘 at **[ghuntley.com](https://ghuntle
   <a href="https://ghuntley.com/contact"><img src="https://img.shields.io/badge/email-ghuntley@ghuntley.com-000?style=flat-square&logo=gmail&logoColor=white" alt="email"></a>
 </p>
 
-> If you're a software engineer and you aren't using these tools yet, that's the warning. The people who learn how to steer them are going to outcompete you.
+> The world lacks curious, ambitious people. That's your edge; that's your alpha. Be way more ambitious than you are right now. You need to think bigger.
+>
+> — [if your team is too busy doing their 'normal job' to experiment with AI, you're preparing them to be replaced](https://ghuntley.com/replaced/)
