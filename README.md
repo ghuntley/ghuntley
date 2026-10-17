@@ -20,7 +20,6 @@ I write from Kangaroo Island, Australia 🦘 at **[ghuntley.com](https://ghuntle
 - [**overalls**](https://github.com/ghuntley/overalls): *[experimental]* an AI-first developer platform that you own. Launches **3 November 2026**.
 - [**underclass**](https://github.com/ghuntley/underclass): an OpenAI-compatible pooling proxy that keeps prompt caches warm and cools down exhausted subscriptions.
 - [**preflight**](https://github.com/ghuntley/preflight): a local proxy that scans LLM requests and attachments for secrets before they reach the model.
-- [**rizzler**](https://github.com/ghuntley/rizzler): stop crying over git merge conflicts and let AI handle the drama.
 
 #### 🔬 Taking things apart
 - [claude-code-source-code-deobfuscation](https://github.com/ghuntley/claude-code-source-code-deobfuscation) · [amazon-kiro source analysis](https://github.com/ghuntley/amazon-kiro.kiro-agent-source-code-analysis) · [atlassian-rovo z80 dump](https://github.com/ghuntley/atlassian-rovo-source-code-z80-dump)
