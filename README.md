@@ -20,9 +20,6 @@ I write from Kangaroo Island, Australia 🦘 at **[ghuntley.com](https://ghuntle
 - [**underclass**](https://github.com/ghuntley/underclass): an OpenAI-compatible pooling proxy that keeps prompt caches warm and cools down exhausted subscriptions.
 - [**preflight**](https://github.com/ghuntley/preflight): a local proxy that scans LLM requests and attachments for secrets before they reach the model.
 
-#### 🔬 Taking things apart
-- [claude-code-source-code-deobfuscation](https://github.com/ghuntley/claude-code-source-code-deobfuscation) · [amazon-kiro source analysis](https://github.com/ghuntley/amazon-kiro.kiro-agent-source-code-analysis) · [atlassian-rovo z80 dump](https://github.com/ghuntley/atlassian-rovo-source-code-z80-dump)
-
 ---
 
 <p>
