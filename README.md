@@ -25,7 +25,7 @@ I write from Kangaroo Island, Australia 🦘 at **[ghuntley.com](https://ghuntle
 <p>
   <a href="https://ghuntley.com"><img src="https://img.shields.io/badge/blog-ghuntley.com-000?style=flat-square" alt="blog"></a>
   <a href="https://x.com/GeoffreyHuntley"><img src="https://img.shields.io/badge/x-@GeoffreyHuntley-000?style=flat-square&logo=x" alt="x"></a>
-  <a href="mailto:ghuntley@ghuntley.com"><img src="https://img.shields.io/badge/email-ghuntley@ghuntley.com-000?style=flat-square&logo=gmail&logoColor=white" alt="email"></a>
+  <a href="https://ghuntley.com/contact"><img src="https://img.shields.io/badge/email-ghuntley@ghuntley.com-000?style=flat-square&logo=gmail&logoColor=white" alt="email"></a>
 </p>
 
 > If you're a software engineer and you aren't using these tools yet, that's the warning. The people who learn how to steer them are going to outcompete you.
