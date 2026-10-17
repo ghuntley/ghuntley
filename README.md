@@ -31,9 +31,12 @@ I write from Kangaroo Island, Australia 🦘 at **[ghuntley.com](https://ghuntle
 <p>
   <a href="https://ghuntley.com"><img src="https://img.shields.io/badge/blog-ghuntley.com-000?style=flat-square" alt="blog"></a>
   <a href="https://x.com/GeoffreyHuntley"><img src="https://img.shields.io/badge/x-@GeoffreyHuntley-000?style=flat-square&logo=x" alt="x"></a>
+  <a href="https://www.youtube.com/c/geoffreyhuntley"><img src="https://img.shields.io/badge/youtube-geoffreyhuntley-000?style=flat-square&logo=youtube&logoColor=white" alt="youtube"></a>
   <a href="https://ghuntley.com/contact"><img src="https://img.shields.io/badge/email-ghuntley@ghuntley.com-000?style=flat-square&logo=gmail&logoColor=white" alt="email"></a>
 </p>
 
+> Usage of AI in the profession of software engineering is no longer optional.
+>
 > The world lacks curious, ambitious people. That's your edge; that's your alpha. Be way more ambitious than you are right now. You need to think bigger.
 >
 > — [if your team is too busy doing their 'normal job' to experiment with AI, you're preparing them to be replaced](https://ghuntley.com/replaced/)
