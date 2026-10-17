@@ -12,7 +12,7 @@ I write from Kangaroo Island, Australia 🦘 at **[ghuntley.com](https://ghuntle
 ---
 
 #### 🔁 Ralph
-- [**how-to-ralph-wiggum**](https://github.com/ghuntley/how-to-ralph-wiggum): the Ralph Wiggum Technique. `while :; do cat PROMPT.md | agent ; done`, plus everything I've learned about running that loop well.
+- [**how-to-ralph-wiggum**](https://ghuntley.com/ralph): the Ralph Wiggum Technique. `while :; do cat PROMPT.md | agent ; done`, plus everything I've learned about running that loop well.
 - [**cursed**](https://cursed-lang.org): 💀 a programming language built by Ralph. Programming, but make it gen z.
 
 #### 🛠️ Build your own agent
