@@ -4,8 +4,7 @@ I spend my days pondering the ponderoos about using AI in unhinged ways, and the
 
 I'm a software engineer who writes about AI-assisted software development.
 
-- I created the **[Ralph loop](https://ghuntley.com/ralph/)**, which runs a coding agent in a loop until the work is done. It's the technique [loop engineering](https://ghuntley.com/loop/) grew out of.
-- I defined **[agent back pressure](https://ghuntley.com/pressure/)**: letting compilers, tests and type checkers push back on an agent's output so it corrects itself.
+- I created the **[Ralph loop](https://ghuntley.com/ralph/)**, which runs a coding agent in a loop until the work is done. It's the technique [loop engineering](https://ghuntley.com/loop/) grew out of and defined **[agent back pressure](https://ghuntley.com/pressure/)**: a technique for letting compilers, tests, and type checkers push back on an agent's output so it corrects itself.
 
 I write from Kangaroo Island, Australia 🦘 at **[ghuntley.com](https://ghuntley.com)**.
 
@@ -35,8 +34,6 @@ I write from Kangaroo Island, Australia 🦘 at **[ghuntley.com](https://ghuntle
   <a href="https://ghuntley.com/contact"><img src="https://img.shields.io/badge/email-ghuntley@ghuntley.com-000?style=flat-square&logo=gmail&logoColor=white" alt="email"></a>
 </p>
 
-> Usage of AI in the profession of software engineering is no longer optional.
->
-> The world lacks curious, ambitious people. That's your edge; that's your alpha. Be way more ambitious than you are right now. You need to think bigger.
+> Usage of AI in the profession of software engineering is no longer optional. The world lacks curious, ambitious people. That's your edge; that's your alpha. Be way more ambitious than you are right now. You need to think bigger.
 >
 > — [if your team is too busy doing their 'normal job' to experiment with AI, you're preparing them to be replaced](https://ghuntley.com/replaced/)
