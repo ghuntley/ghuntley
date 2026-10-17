@@ -2,7 +2,10 @@
 
 I spend my days pondering the ponderoos about using AI in unhinged ways, and then verifying the outcomes at [@antithesishq](https://github.com/antithesishq).
 
-I created the **Ralph loop**. Software is now cheaper than a fast food worker's wage, and most people haven't noticed yet.
+I'm a software engineer who writes about AI-assisted software development.
+
+- I created the **[Ralph loop](https://ghuntley.com/ralph/)**, which runs a coding agent in a loop until the work is done. It's the technique [loop engineering](https://ghuntley.com/loop/) grew out of.
+- I defined **[agent back pressure](https://ghuntley.com/pressure/)**: letting compilers, tests and type checkers push back on an agent's output so it corrects itself.
 
 I write from Kangaroo Island, Australia 🦘 at **[ghuntley.com](https://ghuntley.com)**.
 
