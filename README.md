@@ -14,7 +14,6 @@ I write from Kangaroo Island, Australia 🦘 at **[ghuntley.com](https://ghuntle
 
 #### 🛠️ Build your own agent
 - [**how-to-build-a-coding-agent**](https://github.com/ghuntley/how-to-build-a-coding-agent): a workshop where you build a coding agent from scratch. Once you see how it works, the magic goes away and you get better at driving the tools.
-- [**groundhog**](https://github.com/ghuntley/groundhog): how Cursor and friends work under the hood, from first principles.
 
 #### 🧰 Things I've shipped recently
 - [**overalls**](https://github.com/ghuntley/overalls): *[experimental]* an AI-first developer platform that you own. Launches **3 November 2026**.
